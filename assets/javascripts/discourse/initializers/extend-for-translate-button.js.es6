@@ -13,11 +13,16 @@ export default {
 
     PostMenuComponent.reopen({
       clickTranslate: function(post) {
+        const self = this;
+
         Discourse.ajax('/translator/translate', {
           type: 'POST',
           data: { post_id: post.get('id') }
         }).then(function(res) {
-          alert(res['translation']);
+          const cooked = post.get('cooked');
+          post.set('cooked', cooked + "<hr>" +
+            I18n.t('translator.translated_from', { language: 'Some Language', translator: self.siteSettings.translator }) +
+            "<p>" + res['translation'])  +"</p>";
         }).catch(popupAjaxError);
       }
     });

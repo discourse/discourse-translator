@@ -39,10 +39,10 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate(post)
+    def self.translate(post, current_user = nil)
       query = URI.encode_www_form(
         text: Nokogiri::HTML(post.cooked).text, # TODO translation cannot exceed 10000 characters.
-        to: SiteSetting.default_locale
+        to: translation_locale(current_user)
       )
 
       response = Excon.get(TRANSLATE_URI,

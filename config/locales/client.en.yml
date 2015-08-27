@@ -2,3 +2,4 @@ en:
   js:
     translator:
       view_translation: "View translation"
+      translated_from: "Translated from %{language} by %{translator}"

@@ -29,8 +29,8 @@ after_initialize do
       begin
         translation =
           case SiteSetting.translator
-          when 'microsoft'
-            DiscourseTranslator::Microsoft.translate(post)
+          when 'Microsoft'
+            DiscourseTranslator::Microsoft.translate(post, current_user)
           end
 
         render json: { translation: translation }, status: 200

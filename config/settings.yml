@@ -3,10 +3,11 @@ plugins:
     default: true
     client: true
   translator:
-    default: 'microsoft'
+    default: 'Microsoft'
+    client: true
     type: enum
     choices:
-      - microsoft
+      - Microsoft
   translator_client_id:
     default: ''
   translator_client_secret:

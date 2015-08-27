@@ -23,5 +23,13 @@ module DiscourseTranslator
     def self.access_token
       raise "Not Implemented"
     end
+
+    def self.translation_locale(current_user)
+      if current_user && SiteSetting.allow_user_locale && !current_user.locale.empty?
+        current_user.locale
+      else
+        SiteSetting.default_locale
+      end
+    end
   end
 end
