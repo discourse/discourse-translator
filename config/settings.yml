@@ -1,0 +1,13 @@
+plugins:
+  translator_enabled:
+    default: true
+    client: true
+  translator:
+    default: 'microsoft'
+    type: enum
+    choices:
+      - microsoft
+  translator_client_id:
+    default: ''
+  translator_client_secret:
+    default: ''

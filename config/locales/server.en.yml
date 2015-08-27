@@ -1,0 +1,6 @@
+en:
+  site_settings:
+    translator_enabled: "Allow inline translation of posts."
+    translator: "The provider of the translation service."
+    translator_client_id: "Client ID"
+    translator_client_secret: "Client Secret"
