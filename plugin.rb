@@ -54,7 +54,7 @@ after_initialize do
   end
 
   DiscourseTranslator::Engine.routes.draw do
-    post "/translate" => "translator#translate"
+    post "translate" => "translator#translate"
   end
 
   Discourse::Application.routes.append do
