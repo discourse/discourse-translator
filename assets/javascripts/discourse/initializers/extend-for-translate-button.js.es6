@@ -20,9 +20,9 @@ export default {
           data: { post_id: post.get('id') }
         }).then(function(res) {
           const cooked = post.get('cooked');
-          post.set('cooked', cooked + "<hr>" +
-            I18n.t('translator.translated_from', { language: 'Some Language', translator: self.siteSettings.translator }) +
-            "<p>" + res['translation'])  +"</p>";
+          $('#post-cloak-' + post.get('post_number') + ' .cooked').append(
+            "<hr>" + I18n.t('translator.translated_from', { language: 'Some Language', translator: self.siteSettings.translator }) + res.translation
+          )
         }).catch(popupAjaxError);
       }
     });

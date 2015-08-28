@@ -41,8 +41,9 @@ module DiscourseTranslator
 
     def self.translate(post)
       query = URI.encode_www_form(
-        text: Nokogiri::HTML(post.cooked).text, # TODO translation cannot exceed 10000 characters.
-        to: I18n.locale
+        text: post.cooked.gsub(/\n/, '<br/>'),
+        to: I18n.locale,
+        contentType: 'text/html'
       )
 
       response = Excon.get(TRANSLATE_URI,
@@ -55,7 +56,9 @@ module DiscourseTranslator
         raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
       end
 
-      response.body.force_encoding("utf-8")
+      response.body
+        .force_encoding("utf-8") # Body is returned as ASCII-8BIT
+        .delete('\\')[2..-2] # HTML returned from Microsoft is malformed.
     end
   end
 end
