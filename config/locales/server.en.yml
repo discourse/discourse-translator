@@ -4,3 +4,6 @@ en:
     translator: "The provider of the translation service."
     translator_client_id: "Client ID"
     translator_client_secret: "Client Secret"
+  translator:
+    failed: "The translator is unable to translate this language."
+    not_supported: "This language is not supported by the translator."

@@ -85,6 +85,9 @@ module DiscourseTranslator
 
     def self.translate(post)
       detected_lang = detect(post)
+
+      raise I18n.t('translator.failed') if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym)
+
       post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}.to_json
       post_translated_custom_field = JSON.parse(post_translated_custom_field).with_indifferent_access
 
@@ -108,7 +111,7 @@ module DiscourseTranslator
     private
 
     def self.locale
-      SUPPORTED_LANG[I18n.locale] || (raise "This language is not supported by the translator")
+      SUPPORTED_LANG[I18n.locale] || (raise I18n.t("translator.not_supported"))
     end
 
     def self.result(uri, query)
