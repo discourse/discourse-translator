@@ -29,8 +29,12 @@ after_initialize do
       params.require(:post_id)
       post = Post.find(params[:post_id].to_i)
 
-      detected_lang, translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
-      render json: { translation: translation, detected_lang: detected_lang }, status: 200
+      begin
+        detected_lang, translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
+        render json: { translation: translation, detected_lang: detected_lang }, status: 200
+      rescue Exception => e
+        render_json_error e.message, status: 422
+      end
     end
   end
 
