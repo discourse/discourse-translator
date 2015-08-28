@@ -1,0 +1,6 @@
+ja:
+  js:
+    translator:
+      view_translation: "ビュー翻訳"
+      hide_translation: "隠す翻訳"
+      translated_from: "からの翻訳 %{language} によって %{translator}"
