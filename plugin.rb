@@ -5,6 +5,7 @@
 # url: https://github.com/tgxworld/discourse-translator
 
 enabled_site_setting :translator_enabled
+register_asset "stylesheets/common/post.scss"
 
 after_initialize do
   module ::DiscourseTranslator
