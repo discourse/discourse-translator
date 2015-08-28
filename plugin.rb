@@ -43,7 +43,7 @@ after_initialize do
     def clear_translator_custom_fields
       if raw_changed?
         self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
-        self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = nil
+        self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {}
       end
     end
   end

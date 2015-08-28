@@ -6,6 +6,38 @@ module DiscourseTranslator
     TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Http.svc/Translate".freeze
     DETECT_URI = "http://api.microsofttranslator.com/V2/Http.svc/Detect".freeze
 
+    SUPPORTED_LANG = {
+      en: 'en',
+      bs_BA: 'bs-Latn',
+      cs: 'cs',
+      da: 'da',
+      de: 'de',
+      ar: 'ar',
+      es: 'es',
+      fi: 'fi',
+      fr: 'fr',
+      he: 'he',
+      id: 'id',
+      it: 'it',
+      ja: 'ja',
+      ko: 'ko',
+      nl: 'nl',
+      pt: 'pt',
+      ro: 'ro',
+      ru: 'ru',
+      sv: 'sv',
+      uk: 'uk',
+      zh_CN: 'zh-CHT',
+      zh_TW: 'zh-CHS',
+      tr_TR: 'tr',
+      te: nil,
+      sq: nil,
+      pt_BR: 'pt',
+      pl_PL: 'pl',
+      no_NO: 'no',
+      fa_IR: 'fa'
+    }
+
     def self.access_token_key
       "microsoft-translator"
     end
@@ -53,16 +85,20 @@ module DiscourseTranslator
 
     def self.translate(post)
       detected_lang = detect(post)
+      post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}.to_json
+      post_translated_custom_field = JSON.parse(post_translated_custom_field).with_indifferent_access
 
-      if !(translated_text = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD])
+      if !post_translated_custom_field || !(translated_text = post_translated_custom_field[I18n.locale])
         translated_text = result(TRANSLATE_URI,
           text: post.cooked,
           from: detected_lang,
-          to: I18n.locale,
+          to: locale,
           contentType: 'text/html'
         )
 
-        post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = translated_text
+        post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] =
+          post_translated_custom_field.merge({ I18n.locale => translated_text  })
+
         post.save!
       end
 
@@ -70,6 +106,10 @@ module DiscourseTranslator
     end
 
     private
+
+    def self.locale
+      SUPPORTED_LANG[I18n.locale] || (raise "This language is not supported by the translator")
+    end
 
     def self.result(uri, query)
       response = Excon.get(uri,
