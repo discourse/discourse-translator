@@ -4,6 +4,7 @@ module DiscourseTranslator
     SCOPE_URI = "http://api.microsofttranslator.com".freeze
     GRANT_TYPE = "client_credentials".freeze
     TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Http.svc/Translate".freeze
+    DETECT_URI = "http://api.microsofttranslator.com/V2/Http.svc/Detect".freeze
 
     def self.access_token_key
       "microsoft-translator"
@@ -39,14 +40,24 @@ module DiscourseTranslator
       end
     end
 
+    def self.detect(post)
+      result(DETECT_URI, text: post.cooked)
+    end
+
     def self.translate(post)
-      query = URI.encode_www_form(
-        text: post.cooked.gsub(/\n/, '<br/>'),
+      body = result(TRANSLATE_URI,
+        text: post.cooked,
         to: I18n.locale,
         contentType: 'text/html'
       )
 
-      response = Excon.get(TRANSLATE_URI,
+      Nokogiri::XML(body).text
+    end
+
+    private
+
+    def result(uri, query)
+      response = Excon.get(uri,
         query: query,
         headers: { 'Authorization' => "Bearer #{access_token}" }
       )
@@ -56,7 +67,7 @@ module DiscourseTranslator
         raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
       end
 
-      Nokogiri::XML(response.body).text
+      response.body
     end
   end
 end
