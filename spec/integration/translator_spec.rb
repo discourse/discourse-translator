@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe DiscourseTranslator::TranslatorController do
   before do
     SiteSetting.translator_enabled = true
-    SiteSetting.translator = 'microsoft'
+    SiteSetting.translator = 'Microsoft'
   end
 
   describe "when disable" do

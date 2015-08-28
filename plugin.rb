@@ -27,12 +27,7 @@ after_initialize do
       post = Post.find(params[:post_id].to_i)
 
       begin
-        translation =
-          case SiteSetting.translator
-          when 'Microsoft'
-            DiscourseTranslator::Microsoft.translate(post, current_user)
-          end
-
+        translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
         render json: { translation: translation }, status: 200
       rescue
         render json: failed_json, status: 422
