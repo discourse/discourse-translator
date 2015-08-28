@@ -22,6 +22,7 @@ after_initialize do
   class DiscourseTranslator::TranslatorController < ::ApplicationController
     def translate
       raise PluginDisabled if !SiteSetting.translator_enabled
+      RateLimiter.new(current_user, "translate_post", 3, 1.minute).performed! unless current_user.staff?
 
       params.require(:post_id)
       post = Post.find(params[:post_id].to_i)
