@@ -3,7 +3,7 @@ module DiscourseTranslator
     DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13".freeze
     SCOPE_URI = "http://api.microsofttranslator.com".freeze
     GRANT_TYPE = "client_credentials".freeze
-    TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate".freeze
+    TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Http.svc/Translate".freeze
 
     def self.access_token_key
       "microsoft-translator"
@@ -56,9 +56,7 @@ module DiscourseTranslator
         raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
       end
 
-      response.body
-        .force_encoding("utf-8") # Body is returned as ASCII-8BIT
-        .delete('\\')[2..-2] # HTML returned from Microsoft is malformed.
+      Nokogiri::XML(response.body).text
     end
   end
 end
