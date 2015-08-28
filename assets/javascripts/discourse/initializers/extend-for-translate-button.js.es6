@@ -21,7 +21,7 @@ export default {
         }).then(function(res) {
           const cooked = post.get('cooked');
           $('#post-cloak-' + post.get('post_number') + ' .cooked').append(
-            "<hr><b>" + I18n.t('translator.translated_from', { language: 'Some Language', translator: self.siteSettings.translator }) + "</b>" + res.translation
+            "<hr><b>" + I18n.t('translator.translated_from', { language: res.detected_lang, translator: self.siteSettings.translator }) + "</b>" + res.translation
           )
         }).catch(popupAjaxError);
       }

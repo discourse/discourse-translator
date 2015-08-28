@@ -9,6 +9,8 @@ enabled_site_setting :translator_enabled
 after_initialize do
   module ::DiscourseTranslator
     PLUGIN_NAME = "discourse_translator".freeze
+    DETECTED_LANG_CUSTOM_FIELD = 'post_detected_lang'.freeze
+    TRANSLATED_CUSTOM_FIELD = 'translated_text'.freeze
 
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME
@@ -27,11 +29,21 @@ after_initialize do
       params.require(:post_id)
       post = Post.find(params[:post_id].to_i)
 
-      begin
-        translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
-        render json: { translation: translation }, status: 200
-      rescue
-        render json: failed_json, status: 422
+      detected_lang, translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
+      render json: { translation: translation, detected_lang: detected_lang }, status: 200
+    end
+  end
+
+  require_dependency "post"
+  class ::Post < ActiveRecord::Base
+    before_update :clear_translator_custom_fields
+
+    private
+
+    def clear_translator_custom_fields
+      if raw_changed?
+        self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
+        self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = nil
       end
     end
   end

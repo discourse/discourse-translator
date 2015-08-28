@@ -41,22 +41,37 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      result(DETECT_URI, text: post.cooked)
+      if detected_lang = post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+        detected_lang
+      else
+        detected_lang = result(DETECT_URI, text: post.cooked)
+        post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = detected_lang
+        post.save!
+        detected_lang
+      end
     end
 
     def self.translate(post)
-      body = result(TRANSLATE_URI,
-        text: post.cooked,
-        to: I18n.locale,
-        contentType: 'text/html'
-      )
+      detected_lang = detect(post)
 
-      Nokogiri::XML(body).text
+      if !(translated_text = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD])
+        translated_text = result(TRANSLATE_URI,
+          text: post.cooked,
+          from: detected_lang,
+          to: I18n.locale,
+          contentType: 'text/html'
+        )
+
+        post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = translated_text
+        post.save!
+      end
+
+      [detected_lang, translated_text]
     end
 
     private
 
-    def result(uri, query)
+    def self.result(uri, query)
       response = Excon.get(uri,
         query: query,
         headers: { 'Authorization' => "Bearer #{access_token}" }
@@ -67,7 +82,7 @@ module DiscourseTranslator
         raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
       end
 
-      response.body
+      Nokogiri::XML(response.body).text
     end
   end
 end
