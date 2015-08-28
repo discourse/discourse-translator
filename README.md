@@ -29,5 +29,8 @@ To register your application with Azure DataMarket, visit https://datamarket.azu
 * Images are enlarged upon translating.
 
 ## TODOS
-* Allow admin to set quote and disable translation once quota has been exceeded.
-* Google Translate Adapter
+* Allow admin to set quota and disable translation once quota has been exceeded.
+* Google Translate Adapter.
+* Add more specs to boost confidence!
+* Detect language so that we don't show the translation button when it is the same locale.
+* Show some indication when translation is being fetched.
