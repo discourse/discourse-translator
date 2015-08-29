@@ -7,11 +7,8 @@ export default {
   name: 'extend-for-translate-button',
   initialize: function() {
     PostMenuComponent.registerButton(function(visibleButtons){
-      if (!this.get('isTranslated')) {
-        visibleButtons.splice(0, 0, new Button('translate', 'translator.view_translation', 'globe'));
-      } else {
-        visibleButtons.splice(0, 0, new Button('hideTranslation', 'translator.hide_translation', 'globe'));
-      }
+      let [action, label] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation'];
+      visibleButtons.splice(-(visibleButtons.length - 2), 0, new Button(action, label, 'globe'));
     });
 
     PostMenuComponent.reopen({
