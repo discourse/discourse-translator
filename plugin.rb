@@ -33,7 +33,7 @@ after_initialize do
       begin
         detected_lang, translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
         render json: { translation: translation, detected_lang: detected_lang }, status: 200
-      rescue Exception => e
+      rescue ::DiscourseTranslator::TranslatorError => e
         render_json_error e.message, status: 422
       end
     end
