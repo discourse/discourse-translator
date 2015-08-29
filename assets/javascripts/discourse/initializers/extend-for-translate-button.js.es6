@@ -31,7 +31,16 @@ export default {
         }).then(function(res) {
           const cooked = post.get('cooked');
           self._cookedElement(post).after(
-            '<div class="post-translation"><hr><div class="post-attribution">' + I18n.t('translator.translated_from', { language: res.detected_lang, translator: self.siteSettings.translator }) + "</div>" + res.translation + "</div>"
+            `<div class="post-translation">
+              <hr>
+              <div class="post-attribution">
+                ${I18n.t('translator.translated_from', {
+                  language: res.detected_lang,
+                  translator: self.siteSettings.translator
+                })}
+              </div>
+              ${res.translation}
+            </div>`
           );
         }).catch(function(error) {
           popupAjaxError(error);
