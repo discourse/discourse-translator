@@ -10,7 +10,7 @@ export default {
       if (!this.get('isTranslated')) {
         visibleButtons.splice(0, 0, new Button('translate', 'translator.view_translation', 'globe'));
       } else {
-        visibleButtons.splice(0, 0, new Button('hideTranslation', 'translator.hide_traslation', 'globe'));
+        visibleButtons.splice(0, 0, new Button('hideTranslation', 'translator.hide_translation', 'globe'));
       }
     });
 
