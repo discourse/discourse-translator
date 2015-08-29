@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ::DiscourseTranslator::TranslatorController do
+RSpec.describe ::DiscourseTranslator::TranslatorController do
   routes { ::DiscourseTranslator::Engine.routes }
 
   let!(:user) { log_in }
