@@ -33,12 +33,10 @@ RSpec.describe DiscourseTranslator::Microsoft do
     end
 
     it 'raises an error on failure' do
-      response = mock_response.new(
+      Excon.expects(:post).returns(mock_response.new(
         400,
         { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
-      )
-
-      Excon.expects(:post).returns(response)
+      ))
 
       expect { described_class.access_token }.to raise_error DiscourseTranslator::TranslatorError
     end
@@ -48,13 +46,13 @@ RSpec.describe DiscourseTranslator::Microsoft do
     let(:post) { Fabricate(:post) }
 
     it 'raises an error on failure' do
-      pending 'Urgh I dont know why this is failing'
-      response = mock_response.new(
+      described_class.expects(:access_token).returns('12345')
+      described_class.expects(:detect).returns('en')
+
+      Excon.expects(:get).returns(mock_response.new(
         400,
         { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
-      )
-
-      Excon.expects(:get).returns(response)
+      ))
 
       expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
     end
