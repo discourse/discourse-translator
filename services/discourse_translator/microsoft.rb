@@ -120,12 +120,13 @@ module DiscourseTranslator
         headers: { 'Authorization' => "Bearer #{access_token}" }
       )
 
-      if response.status != 200
-        body = JSON.parse(response.body)
-        raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
-      end
+      body = Nokogiri::XML(response.body).text
 
-      Nokogiri::XML(response.body).text
+      if response.status != 200
+        raise TranslatorError.new(body)
+      else
+        body
+      end
     end
   end
 end
