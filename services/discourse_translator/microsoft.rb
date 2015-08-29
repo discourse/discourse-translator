@@ -88,10 +88,10 @@ module DiscourseTranslator
 
       raise I18n.t('translator.failed') if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym)
 
-      post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}.to_json
-      post_translated_custom_field = JSON.parse(post_translated_custom_field).with_indifferent_access
+      post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}
+      post_translated_custom_field = post_translated_custom_field.with_indifferent_access
 
-      if !post_translated_custom_field || !(translated_text = post_translated_custom_field[I18n.locale])
+      if !(translated_text = post_translated_custom_field[I18n.locale])
         translated_text = result(TRANSLATE_URI,
           text: post.cooked,
           from: detected_lang,

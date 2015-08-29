@@ -39,6 +39,8 @@ after_initialize do
     end
   end
 
+  Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
+
   require_dependency "post"
   class ::Post < ActiveRecord::Base
     before_update :clear_translator_custom_fields
