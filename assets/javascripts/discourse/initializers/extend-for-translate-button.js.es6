@@ -57,7 +57,7 @@ export default {
       },
 
       _cookedElement: function(post) {
-        return $('#post-cloak-' + post.get('post_number') + ' .cooked');
+        return $(`#post-cloak-${post.get('post_number')} .cooked`);
       }
     });
   }
