@@ -34,3 +34,4 @@ To register your application with Azure DataMarket, visit https://datamarket.azu
 * Add more specs to boost confidence!
 * Detect language so that we don't show the translation button when it is the same locale.
 * Show some indication when translation is being fetched.
+* `Translated from #{language}` should be localized too.
