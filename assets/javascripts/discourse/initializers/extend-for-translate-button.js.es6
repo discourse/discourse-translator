@@ -8,7 +8,8 @@ export default {
   initialize: function() {
     PostMenuComponent.registerButton(function(visibleButtons){
       let [action, label] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation'];
-      visibleButtons.splice(-(visibleButtons.length - 2), 0, new Button(action, label, 'globe'));
+      const position = visibleButtons.map((button) => { return button.action; }).indexOf('like');
+      visibleButtons.splice(position + 1, 0, new Button(action, label, 'globe'));
     });
 
     PostMenuComponent.reopen({
