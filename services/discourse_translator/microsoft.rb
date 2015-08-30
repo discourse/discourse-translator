@@ -3,8 +3,8 @@ module DiscourseTranslator
     DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13".freeze
     SCOPE_URI = "http://api.microsofttranslator.com".freeze
     GRANT_TYPE = "client_credentials".freeze
-    TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Http.svc/Translate".freeze
-    DETECT_URI = "http://api.microsofttranslator.com/V2/Http.svc/Detect".freeze
+    TRANSLATE_URI = "https://api.microsofttranslator.com/V2/Http.svc/Translate".freeze
+    DETECT_URI = "https://api.microsofttranslator.com/V2/Http.svc/Detect".freeze
 
     SUPPORTED_LANG = {
       en: 'en',
