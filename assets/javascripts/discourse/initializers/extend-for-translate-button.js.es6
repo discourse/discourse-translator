@@ -2,6 +2,7 @@ import PostMenuComponent from 'discourse/components/post-menu';
 import { Button } from 'discourse/components/post-menu';
 import { default as computed, observes } from 'ember-addons/ember-computed-decorators';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
+import { renderSpinner } from 'discourse/helpers/loading-spinner';
 
 export default {
   name: 'extend-for-translate-button',
@@ -21,15 +22,20 @@ export default {
       },
 
       clickTranslate: function(post) {
-        const self = this;
+        const self = this,
+              $cookedElement = this._cookedElement(post);
+
         this.set('isTranslated', true);
+        $cookedElement.after(renderSpinner('small'));
 
         Discourse.ajax('/translator/translate', {
           type: 'POST',
           data: { post_id: post.get('id') }
         }).then(function(res) {
           const cooked = post.get('cooked');
-          self._cookedElement(post).after(
+          $cookedElement.next('.spinner').remove();
+
+          $cookedElement.after(
             `<div class="post-translation">
               <hr>
               <div class="post-attribution">
@@ -50,7 +56,9 @@ export default {
       },
 
       clickHideTranslation: function(post) {
-        this._cookedElement(post).next('.post-translation').remove();
+        const $cookedElement = this._cookedElement(post);
+        $cookedElement.next('.spinner').remove();
+        $cookedElement.next('.post-translation').remove();
         this.set('isTranslated', false);
         return false;
       },
