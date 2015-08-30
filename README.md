@@ -25,12 +25,10 @@ To register your application with Azure DataMarket, visit https://datamarket.azu
 4. Under Admin > Settings > Basic Setup, enable allow user locale.
 
 ## Known Issues
-* Does not work well with [discourse-solved plugin](https://github.com/discourse/discourse-solved).
-* Images are enlarged upon translating.
+* Does not translate text within polls plugin.
 
 ## TODOS
 * Allow admin to set quota and disable translation once quota has been exceeded.
 * Google Translate Adapter.
-* Add more specs to boost confidence!
 * Detect language so that we don't show the translation button when it is the same locale.
 * `Translated from #{language}` should be localized too.
