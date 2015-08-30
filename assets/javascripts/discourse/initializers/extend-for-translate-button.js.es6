@@ -1,6 +1,6 @@
 import PostMenuComponent from 'discourse/components/post-menu';
 import { Button } from 'discourse/components/post-menu';
-import computed from 'ember-addons/ember-computed-decorators';
+import { default as computed, observes } from 'ember-addons/ember-computed-decorators';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 
 export default {
@@ -15,9 +15,10 @@ export default {
     PostMenuComponent.reopen({
       isTranslated: false,
 
-      toggleTranslation: function() {
+      @observes('isTranslated')
+      toggleTranslation() {
         this.rerender();
-      }.observes('isTranslated'),
+      },
 
       clickTranslate: function(post) {
         const self = this;
