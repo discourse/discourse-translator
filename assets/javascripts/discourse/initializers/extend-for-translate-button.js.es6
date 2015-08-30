@@ -8,9 +8,10 @@ export default {
   name: 'extend-for-translate-button',
   initialize: function() {
     PostMenuComponent.registerButton(function(visibleButtons){
+      if (!Discourse.User.current()) return;
       let [action, label] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation'];
       const position = visibleButtons.map(button => button.action).indexOf('like');
-      visibleButtons.splice(position + 1, 0, new Button(action, label, 'globe'));
+      return visibleButtons.splice(position + 1, 0, new Button(action, label, 'globe'));
     });
 
     PostMenuComponent.reopen({

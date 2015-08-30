@@ -23,6 +23,8 @@ after_initialize do
   Dir["#{Rails.root}/plugins/discourse-translator/services/**/*.rb"].each { |file| require file }
 
   class DiscourseTranslator::TranslatorController < ::ApplicationController
+    before_filter :ensure_logged_in
+
     def translate
       raise PluginDisabled if !SiteSetting.translator_enabled
       RateLimiter.new(current_user, "translate_post", 3, 1.minute).performed! unless current_user.staff?
