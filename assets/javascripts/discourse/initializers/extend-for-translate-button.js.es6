@@ -50,6 +50,7 @@ export default {
           );
         }).catch(function(error) {
           popupAjaxError(error);
+          $cookedElement.next('.spinner').remove();
           self.set('isTranslated', false);
         });
 
