@@ -8,7 +8,7 @@ export default {
   name: 'extend-for-translate-button',
   initialize: function() {
     PostMenuComponent.registerButton(function(visibleButtons){
-      if (!Discourse.User.current()) return;
+      if (!this.siteSettings.translator_enabled || !Discourse.User.current()) return;
       let [action, label] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation'];
       const position = visibleButtons.map(button => button.action).indexOf('like');
       return visibleButtons.splice(position + 1, 0, new Button(action, label, 'globe'));
