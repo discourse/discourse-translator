@@ -20,6 +20,10 @@ module DiscourseTranslator
       raise "Not Implemented"
     end
 
+    def self.detect(post)
+      raise "Not Implemented"
+    end
+
     def self.access_token
       raise "Not Implemented"
     end

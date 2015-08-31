@@ -73,14 +73,7 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      if detected_lang = post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
-        detected_lang
-      else
-        detected_lang = result(DETECT_URI, text: post.cooked)
-        post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = detected_lang
-        post.save!
-        detected_lang
-      end
+      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(DETECT_URI, text: post.cooked)
     end
 
     def self.translate(post)

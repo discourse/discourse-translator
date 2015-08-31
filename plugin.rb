@@ -1,6 +1,6 @@
 # name: discourse-translator
 # about: Provides inline translation of posts.
-# version: 0.0.1
+# version: 0.0.2
 # authors: Alan Tan
 # url: https://github.com/tgxworld/discourse-translator
 
@@ -53,6 +53,34 @@ after_initialize do
       if raw_changed?
         self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
         self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {}
+      end
+    end
+  end
+
+  require_dependency "cooked_post_processor"
+  class ::CookedPostProcessor
+    def post_process(bypass_bump = false)
+      DistributedMutex.synchronize("post_process_#{@post.id}") do
+        "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(@post)
+        @post.save!
+        @post.publish_change_to_clients! :revised
+      end
+
+      super
+    end
+  end
+
+  require_dependency "post_serializer"
+  class ::PostSerializer
+    attributes :can_translate
+
+    def can_translate
+      detected_lang = object.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+
+      if !detected_lang
+        return false
+      else
+        detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG".constantize[I18n.locale]
       end
     end
   end
