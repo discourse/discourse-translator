@@ -45,15 +45,13 @@ after_initialize do
 
   require_dependency "post"
   class ::Post < ActiveRecord::Base
-    before_update :clear_translator_custom_fields
+    before_update :clear_translator_custom_fields, if: :raw_changed?
 
     private
 
     def clear_translator_custom_fields
-      if raw_changed?
-        self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
-        self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {}
-      end
+      self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
+      self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {}
     end
   end
 
