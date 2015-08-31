@@ -60,10 +60,12 @@ after_initialize do
   require_dependency "cooked_post_processor"
   class ::CookedPostProcessor
     def post_process(bypass_bump = false)
-      DistributedMutex.synchronize("post_process_#{@post.id}") do
-        "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(@post)
-        @post.save!
-        @post.publish_change_to_clients! :revised
+      if SiteSetting.translator_enabled
+        DistributedMutex.synchronize("post_process_#{@post.id}") do
+          "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(@post)
+          @post.save!
+          @post.publish_change_to_clients! :revised
+        end
       end
 
       super
