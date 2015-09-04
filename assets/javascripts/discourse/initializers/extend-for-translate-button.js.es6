@@ -12,9 +12,8 @@ export default {
       if (!this.get('post.can_translate')) return;
       if (!Discourse.User.current()) return;
 
-      let [action, label] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation'];
-      const position = visibleButtons.map(button => button.action).indexOf('like');
-      return visibleButtons.splice(position + 1, 0, new Button(action, label, 'globe'));
+      let [action, label, opts] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation', { className: 'translated' }];
+      return visibleButtons.splice(0, 0, new Button(action, label, 'globe', opts));
     });
 
     PostMenuComponent.reopen({
