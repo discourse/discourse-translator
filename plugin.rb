@@ -66,7 +66,7 @@ after_initialize do
         end
       end
 
-      super
+      super(bypass_bump)
     end
   end
 
