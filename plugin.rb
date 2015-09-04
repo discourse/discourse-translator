@@ -55,20 +55,25 @@ after_initialize do
     end
   end
 
-  require_dependency "cooked_post_processor"
-  class ::CookedPostProcessor
-    def post_process(bypass_bump = false)
-      if SiteSetting.translator_enabled
-        DistributedMutex.synchronize("post_process_#{@post.id}") do
-          "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(@post)
-          @post.save!
-          @post.publish_change_to_clients! :revised
+  require_dependency "jobs/base"
+  module ::Jobs
+    class DetectTranslation < Jobs::Base
+      def execute(args)
+        post = Post.find(args[:post_id])
+
+        DistributedMutex.synchronize("detect_translation_#{post.id}") do
+          "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(post)
+          post.save!
+          post.publish_change_to_clients! :revised
         end
       end
-
-      super(bypass_bump)
     end
   end
+
+  def post_process(post)
+    Jobs.enqueue(:detect_translation, { post_id: post.id })
+  end
+  listen_for :post_process
 
   require_dependency "post_serializer"
   class ::PostSerializer
@@ -78,6 +83,7 @@ after_initialize do
       detected_lang = object.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
       if !detected_lang
+        Jobs.enqueue(:detect_translation, { post_id: object.id })
         return false
       else
         detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG".constantize[I18n.locale]
