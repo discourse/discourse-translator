@@ -63,7 +63,7 @@ after_initialize do
 
         DistributedMutex.synchronize("detect_translation_#{post.id}") do
           "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(post)
-          post.save!
+          post.save_custom_fields unless post.custom_fields_clean?
           post.publish_change_to_clients! :revised
         end
       end
