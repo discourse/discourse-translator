@@ -25,34 +25,21 @@ export default {
       },
 
       clickTranslate: function(post) {
-        const self = this,
-              $cookedElement = this._cookedElement(post);
-
+        const self = this;
         this.set('isTranslated', true);
-        $cookedElement.after(renderSpinner('small'));
+        post.set("translated_text", true);
 
         Discourse.ajax('/translator/translate', {
           type: 'POST',
           data: { post_id: post.get('id') }
         }).then(function(res) {
-          const cooked = post.get('cooked');
-          $cookedElement.next('.spinner').remove();
-
-          $cookedElement.after(
-            `<div class="post-translation">
-              <hr>
-              <div class="post-attribution">
-                ${I18n.t('translator.translated_from', {
-                  language: res.detected_lang,
-                  translator: self.siteSettings.translator
-                })}
-              </div>
-              ${res.translation}
-            </div>`
-          );
+          post.setProperties({
+            "translated_text": res.translation,
+            "detected_lang": res.detected_lang
+          });
         }).catch(function(error) {
           popupAjaxError(error);
-          $cookedElement.next('.spinner').remove();
+          post.set("translated_text", null);
           self.set('isTranslated', false);
         });
 
@@ -60,15 +47,9 @@ export default {
       },
 
       clickHideTranslation: function(post) {
-        const $cookedElement = this._cookedElement(post);
-        $cookedElement.next('.spinner').remove();
-        $cookedElement.next('.post-translation').remove();
+        post.set("translated_text", null);
         this.set('isTranslated', false);
         return false;
-      },
-
-      _cookedElement: function(post) {
-        return $(`#post-cloak-${post.get('post_number')} .cooked`);
       }
     });
   }
