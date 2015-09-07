@@ -73,7 +73,7 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(DETECT_URI, text: post.cooked)
+      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(DETECT_URI, text: Nokogiri::HTML(post.cooked).text)
     end
 
     def self.translate(post)
