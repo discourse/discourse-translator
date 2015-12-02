@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe PostSerializer do
   let(:post) { Fabricate(:post) }

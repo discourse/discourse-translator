@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe DiscourseTranslator::Microsoft do
   let(:mock_response) { Struct.new(:status, :body) }
