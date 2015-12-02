@@ -3,6 +3,7 @@ import { Button } from 'discourse/components/post-menu';
 import { default as computed, observes } from 'ember-addons/ember-computed-decorators';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { renderSpinner } from 'discourse/helpers/loading-spinner';
+import User from 'discourse/models/user';
 
 export default {
   name: 'extend-for-translate-button',
@@ -10,7 +11,7 @@ export default {
     PostMenuComponent.registerButton(function(visibleButtons){
       if (!this.siteSettings.translator_enabled) return;
       if (!this.get('post.can_translate')) return;
-      if (!Discourse.User.current()) return;
+      if (!User.current()) return;
 
       let [action, label, opts] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation', { className: 'translated' }];
       return visibleButtons.splice(0, 0, new Button(action, label, 'globe', opts));
