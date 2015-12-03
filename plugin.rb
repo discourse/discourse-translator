@@ -1,6 +1,6 @@
 # name: discourse-translator
 # about: Provides inline translation of posts.
-# version: 0.1
+# version: 0.1.1
 # authors: Alan Tan
 # url: https://github.com/tgxworld/discourse-translator
 
@@ -13,6 +13,8 @@ after_initialize do
     DETECTED_LANG_CUSTOM_FIELD = 'post_detected_lang'.freeze
     TRANSLATED_CUSTOM_FIELD = 'translated_text'.freeze
 
+    autoload :Microsoft, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
+
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME
       isolate_namespace DiscourseTranslator
@@ -20,8 +22,6 @@ after_initialize do
   end
 
   require_dependency "application_controller"
-  Dir["#{Rails.root}/plugins/discourse-translator/services/**/*.rb"].each { |file| require file }
-
   class DiscourseTranslator::TranslatorController < ::ApplicationController
     before_filter :ensure_logged_in
 

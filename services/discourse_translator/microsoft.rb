@@ -1,3 +1,5 @@
+require_relative 'base'
+
 module DiscourseTranslator
   class Microsoft < Base
     DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13".freeze
