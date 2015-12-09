@@ -1,0 +1,9 @@
+es:
+  site_settings:
+    translator_enabled: "Permitir la traducción de posts."
+    translator: "El proveedor del servicio de traducción."
+    translator_client_id: "Client ID"
+    translator_client_secret: "Client Secret"
+  translator:
+    failed: "El traductor no fue capaz de traducir este idioma."
+    not_supported: "Este idioma no está disponible en el traductor."
