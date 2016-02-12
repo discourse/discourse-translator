@@ -1,6 +1,6 @@
 # name: discourse-translator
 # about: Provides inline translation of posts.
-# version: 0.1.1
+# version: 0.1.2
 # authors: Alan Tan
 # url: https://github.com/tgxworld/discourse-translator
 
@@ -75,12 +75,16 @@ after_initialize do
   end
   listen_for :post_process
 
+  TopicView.add_post_custom_fields_whitelister do |user|
+    [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+  end
+
   require_dependency "post_serializer"
   class ::PostSerializer
     attributes :can_translate
 
     def can_translate
-      detected_lang = object.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+      detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
       if !detected_lang
         Jobs.enqueue(:detect_translation, { post_id: object.id })
