@@ -93,6 +93,7 @@ after_initialize do
         detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG".constantize[I18n.locale]
       end
     end
+
   end
 
   DiscourseTranslator::Engine.routes.draw do
