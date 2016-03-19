@@ -113,10 +113,7 @@ module DiscourseTranslator
 
       raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
 
-      post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}
-      post_translated_custom_field = post_translated_custom_field.with_indifferent_access
-
-      if !(translated_text = post_translated_custom_field[I18n.locale])
+      translated_text = from_custom_fields(post) do
         body = <<-XML.strip_heredoc
         <GetTranslationsArrayRequest>
           <AppId></AppId>
@@ -133,12 +130,7 @@ module DiscourseTranslator
         XML
 
         xml_doc = result(TRANSLATE_URI, body, default_headers.merge({ 'Content-Type' => 'text/xml' }))
-        translated_text = Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//TranslatedText").text
-
-        post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] =
-          post_translated_custom_field.merge({ I18n.locale => translated_text  })
-
-        post.save!
+        Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//TranslatedText").text
       end
 
       [detected_lang, translated_text]

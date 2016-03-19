@@ -14,6 +14,7 @@ after_initialize do
     TRANSLATED_CUSTOM_FIELD = 'translated_text'.freeze
 
     autoload :Microsoft, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
+    autoload :Google, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/google"
 
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME

@@ -4,6 +4,7 @@ en:
     translator: "翻訳サービスの提供。"
     translator_client_id: "クライアントID"
     translator_client_secret: "クライアントの秘密"
+    translator_google_api_key: "Google Api Key"
   translator:
     failed: "翻訳者は、この言語を翻訳することができません。"
     not_supported: "この言語は翻訳者によってサポートされていません。"

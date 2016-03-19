@@ -8,9 +8,12 @@ plugins:
     type: enum
     choices:
       - Microsoft
+      - Google
   translator_client_id:
     default: ''
   translator_client_secret:
     default: ''
   azure_subscription_key:
+    default: ''
+  translator_google_api_key:
     default: ''
