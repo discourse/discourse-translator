@@ -40,7 +40,7 @@ module DiscourseTranslator
         res = result(TRANSLATE_URI,
           q: post.cooked,
           source: detected_lang,
-          target: locale
+          target: I18n.locale
         )
         res["translations"][0]["translatedText"]
       end
