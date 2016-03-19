@@ -16,11 +16,10 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      res = result(DETECT_URI,
-        q: post.cooked
-      )
-      best_detect = res["detections"][0].max{ |a, b| a.confidence <=> b.confidence }
-      best_detect["language"]
+      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||=
+        result(DETECT_URI,
+          q: post.cooked
+        )["detections"][0].max{ |a, b| a.confidence <=> b.confidence }["language"]
     end
 
     def self.translate_supported?(source, target)
