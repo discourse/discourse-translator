@@ -7,6 +7,38 @@ module DiscourseTranslator
     DETECT_URI = "https://www.googleapis.com/language/translate/v2/detect".freeze
     SUPPORT_URI = "https://www.googleapis.com/language/translate/v2/languages".freeze
 
+    SUPPORTED_LANG = {
+      en: 'en',
+      bs_BA: 'bs',
+      cs: 'cs',
+      da: 'da',
+      de: 'de',
+      ar: 'ar',
+      es: 'es',
+      fi: 'fi',
+      fr: 'fr',
+      he: 'iw',
+      id: 'id',
+      it: 'it',
+      ja: 'ja',
+      ko: 'ko',
+      nl: 'nl',
+      pt: 'pt',
+      ro: 'ro',
+      ru: 'ru',
+      sv: 'sv',
+      uk: 'uk',
+      zh_CN: 'zh-CN',
+      zh_TW: 'zh-TW',
+      tr_TR: 'tr',
+      te: 'te',
+      sq: nil,
+      pt_BR: 'pt',
+      pl_PL: 'pl',
+      no_NO: 'no',
+      fa_IR: 'fa'
+    }
+
     def self.access_token_key
       "google-translator"
     end
