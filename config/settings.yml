@@ -1,6 +1,6 @@
 plugins:
   translator_enabled:
-    default: true
+    default: false
     client: true
   translator:
     default: 'Microsoft'
