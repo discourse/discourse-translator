@@ -16,7 +16,7 @@ module DiscourseTranslator
       "#{key_prefix}#{access_token_key}"
     end
 
-    def self.translate(text, opts)
+    def self.translate(post)
       raise "Not Implemented"
     end
 
@@ -26,6 +26,22 @@ module DiscourseTranslator
 
     def self.access_token
       raise "Not Implemented"
+    end
+
+    def self.from_custom_fields(post)
+      post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}
+      post_translated_custom_field = post_translated_custom_field.with_indifferent_access
+
+      if !(translated_text = post_translated_custom_field[I18n.locale])
+        translated_text = yield
+
+        post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] =
+          post_translated_custom_field.merge({ I18n.locale => translated_text  })
+
+        post.save!
+      end
+
+      translated_text
     end
   end
 end

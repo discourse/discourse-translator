@@ -83,21 +83,13 @@ module DiscourseTranslator
 
       raise I18n.t('translator.failed') if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym)
 
-      post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}
-      post_translated_custom_field = post_translated_custom_field.with_indifferent_access
-
-      if !(translated_text = post_translated_custom_field[I18n.locale])
-        translated_text = result(TRANSLATE_URI,
+      translated_text = from_custom_fields(post) do
+        result(TRANSLATE_URI,
           text: post.cooked,
           from: detected_lang,
           to: locale,
           contentType: 'text/html'
         )
-
-        post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] =
-          post_translated_custom_field.merge({ I18n.locale => translated_text  })
-
-        post.save!
       end
 
       [detected_lang, translated_text]
