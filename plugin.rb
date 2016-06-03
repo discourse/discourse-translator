@@ -71,6 +71,7 @@ after_initialize do
   end
 
   def post_process(post)
+    return if !SiteSetting.translator_enabled
     Jobs.enqueue(:detect_translation, { post_id: post.id })
   end
   listen_for :post_process
