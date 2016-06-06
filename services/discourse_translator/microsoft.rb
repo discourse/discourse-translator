@@ -71,15 +71,15 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      text = Nokogiri::HTML(post.cooked).text.truncate(LENGTH_LIMIT)
-
-      body = <<-XML.strip_heredoc
-      <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-        <string>#{text}</string>
-      </ArrayOfstring>
-      XML
-
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+        text = Nokogiri::HTML(post.cooked).text.truncate(LENGTH_LIMIT)
+
+        body = <<-XML.strip_heredoc
+        <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+          <string>#{text}</string>
+        </ArrayOfstring>
+        XML
+
         xml_doc = result(DETECT_URI, body, default_headers.merge({ 'Content-Type' => 'text/xml' }))
         Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//string").text
       end
@@ -88,7 +88,8 @@ module DiscourseTranslator
     def self.translate(post)
       detected_lang = detect(post)
 
-      raise I18n.t('translator.failed') if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym)
+      raise TranslatorError.new(I18n.t('translator.failed')) if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym)
+      raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
 
       post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}
       post_translated_custom_field = post_translated_custom_field.with_indifferent_access

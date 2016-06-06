@@ -7,3 +7,4 @@ en:
   translator:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."
+    too_long: "This post is too long to be translated by the translator."

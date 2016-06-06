@@ -62,10 +62,34 @@ RSpec.describe DiscourseTranslator::Microsoft do
   describe '.translate' do
     let(:post) { Fabricate(:post) }
 
-    it 'raises an error on failure' do
-      described_class.expects(:access_token).returns('12345')
-      described_class.expects(:detect).returns('en')
+    before do
+      $redis.set(described_class.cache_key, '12345')
+      post.custom_fields = { DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => 'en' }
+      post.save_custom_fields
+    end
 
+    after do
+      $redis.del(described_class.cache_key)
+    end
+
+    it 'raises an error if detected language of the post is not supported' do
+      post.custom_fields = { DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => 'dodge' }
+      post.save_custom_fields
+
+      expect { described_class.translate(post) }.to raise_error(
+        DiscourseTranslator::TranslatorError, I18n.t('translator.failed')
+      )
+    end
+
+    it 'raises an error if the post is too long to be translated' do
+      post.update_columns(cooked: "*" * (DiscourseTranslator::Microsoft::LENGTH_LIMIT + 1))
+
+      expect { described_class.translate(post) }.to raise_error(
+        DiscourseTranslator::TranslatorError, I18n.t('translator.too_long')
+      )
+    end
+
+    it 'raises an error on failure' do
       Excon.expects(:post).returns(mock_response.new(
         400,
         { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
