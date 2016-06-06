@@ -91,7 +91,11 @@ function initializeTranslation(api) {
     const post = this.findAncestorModel();
 
     if (post) {
-      return translatePost(post).finally(() => state.isTranslating = false);
+      return translatePost(post).catch(error => {
+        popupAjaxError(error);
+        state.isTranslating = false;
+        state.isTranslated = false;
+      }).finally(() => state.isTranslating = false);
     }
   });
 
