@@ -72,7 +72,7 @@ module DiscourseTranslator
 
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = Nokogiri::HTML(post.cooked).text.truncate(LENGTH_LIMIT)
+        text = CGI.escapeHTML(post.raw.truncate(LENGTH_LIMIT))
 
         body = <<-XML.strip_heredoc
         <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
