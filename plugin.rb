@@ -58,6 +58,8 @@ after_initialize do
   require_dependency "jobs/base"
   module ::Jobs
     class DetectTranslation < Jobs::Base
+      sidekiq_options retry: 3
+
       def execute(args)
         post = Post.find(args[:post_id])
 
