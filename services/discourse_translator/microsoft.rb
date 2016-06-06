@@ -1,12 +1,12 @@
 require_relative 'base'
-
 module DiscourseTranslator
   class Microsoft < Base
     DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13".freeze
     SCOPE_URI = "http://api.microsofttranslator.com".freeze
     GRANT_TYPE = "client_credentials".freeze
-    TRANSLATE_URI = "https://api.microsofttranslator.com/V2/Http.svc/Translate".freeze
-    DETECT_URI = "https://api.microsofttranslator.com/V2/Http.svc/Detect".freeze
+    TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Http.svc/GetTranslationsArray".freeze
+    DETECT_URI = "https://api.microsofttranslator.com/V2/Http.svc/DetectArray".freeze
+    LENGTH_LIMIT = 10240.freeze
 
     SUPPORTED_LANG = {
       en: 'en',
@@ -45,10 +45,10 @@ module DiscourseTranslator
     end
 
     def self.access_token
-      access_token = $redis.get(cache_key)
+      existing_token = $redis.get(cache_key)
 
-      if access_token
-        return access_token
+      if existing_token
+        return existing_token
       else
         body = URI.encode_www_form(
           client_id: SiteSetting.translator_client_id,
@@ -57,17 +57,13 @@ module DiscourseTranslator
           grant_type: GRANT_TYPE
         )
 
-        response = Excon.post(DATA_URI,
-          headers: { "Content-Type" => "application/x-www-form-urlencoded" },
-          body: body
-        )
-
+        response = post(DATA_URI, body, { "Content-Type" => "application/x-www-form-urlencoded" })
         body = JSON.parse(response.body)
 
         if response.status == 200
-          access_token = body["access_token"]
-          $redis.setex(cache_key, body["expires_in"].to_i - 1.minute, access_token)
-          access_token
+          existing_token = body["access_token"]
+          $redis.setex(cache_key, body["expires_in"].to_i - 1.minute, existing_token)
+          existing_token
         else
           raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
         end
@@ -75,7 +71,18 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(DETECT_URI, text: Nokogiri::HTML(post.cooked).text)
+      text = Nokogiri::HTML(post.cooked).text.truncate(LENGTH_LIMIT)
+
+      body = <<-XML.strip_heredoc
+      <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+        <string>#{text}</string>
+      </ArrayOfstring>
+      XML
+
+      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+        xml_doc = result(DETECT_URI, body, default_headers.merge({ 'Content-Type' => 'text/xml' }))
+        Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//string").text
+      end
     end
 
     def self.translate(post)
@@ -87,12 +94,23 @@ module DiscourseTranslator
       post_translated_custom_field = post_translated_custom_field.with_indifferent_access
 
       if !(translated_text = post_translated_custom_field[I18n.locale])
-        translated_text = result(TRANSLATE_URI,
-          text: post.cooked,
-          from: detected_lang,
-          to: locale,
-          contentType: 'text/html'
-        )
+        body = <<-XML.strip_heredoc
+        <GetTranslationsArrayRequest>
+          <AppId></AppId>
+          <From>#{detected_lang}</From>
+          <Options>
+            <ContentType xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2">text/html</ContentType>
+          </Options>
+          <Texts>
+            <string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">#{CGI.escapeHTML(post.cooked)}</string>
+          </Texts>
+          <To>#{locale}</To>
+          <MaxTranslations>1</MaxTranslations>
+        </GetTranslationsArrayRequest>
+        XML
+
+        xml_doc = result(TRANSLATE_URI, body, default_headers.merge({ 'Content-Type' => 'text/xml' }))
+        translated_text = Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//TranslatedText").text
 
         post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] =
           post_translated_custom_field.merge({ I18n.locale => translated_text  })
@@ -109,19 +127,23 @@ module DiscourseTranslator
       SUPPORTED_LANG[I18n.locale] || (raise I18n.t("translator.not_supported"))
     end
 
-    def self.result(uri, query)
-      response = Excon.get(uri,
-        query: query,
-        headers: { 'Authorization' => "Bearer #{access_token}" }
-      )
+    def self.post(uri, body, headers = {})
+      Excon.post(uri, body: body, headers: headers)
+    end
 
-      body = Nokogiri::XML(response.body).text
+    def self.result(uri, body, headers)
+      response  = post(uri, body, headers)
+      response_body = response.body
 
       if response.status != 200
-        raise TranslatorError.new(body)
+        raise TranslatorError.new(Nokogiri::XML(response_body).text)
       else
-        body
+        response_body
       end
+    end
+
+    def self.default_headers
+      { 'Authorization' => "Bearer #{access_token}" }
     end
   end
 end

@@ -8,6 +8,10 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
     SiteSetting.translator = 'Microsoft'
   end
 
+  after do
+    SiteSetting.translator_enabled = false
+  end
+
   describe "#translate" do
     describe 'anon user' do
       it 'should not allow translation of posts' do
@@ -19,12 +23,13 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
     describe 'logged in user' do
       let!(:user) { log_in }
 
-      describe "when disable" do
+      describe "when disabled" do
         before { SiteSetting.translator_enabled = false }
 
         it 'should deny request to translate' do
-          expect{ xhr :post, :translate, { post_id: 1 } }
-            .to raise_error ApplicationController::PluginDisabled
+          response = xhr :post, :translate, { post_id: 1 }
+
+          expect(response.status).to eq(404)
         end
       end
 

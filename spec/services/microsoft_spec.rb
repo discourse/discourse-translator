@@ -48,7 +48,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
     it 'should store the detected language in a custom field' do
       detected_lang = 'en'
       described_class.expects(:access_token).returns('12345')
-      Excon.expects(:get).returns(mock_response.new(200, "<html><p>en</p></html>")).once
+      Excon.expects(:post).returns(mock_response.new(200, "<ArrayOfstring><string>en</string></ArrayOfstring>")).once
       described_class.detect(post)
 
       2.times do
@@ -66,7 +66,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
       described_class.expects(:access_token).returns('12345')
       described_class.expects(:detect).returns('en')
 
-      Excon.expects(:get).returns(mock_response.new(
+      Excon.expects(:post).returns(mock_response.new(
         400,
         { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
       ))

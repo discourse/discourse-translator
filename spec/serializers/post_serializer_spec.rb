@@ -5,6 +5,14 @@ RSpec.describe PostSerializer do
   let(:user) { Fabricate(:user, locale: 'en') }
   let(:serializer) { PostSerializer.new(post, scope: Guardian.new(user)) }
 
+  before do
+    SiteSetting.translator_enabled = true
+  end
+
+  after do
+    SiteSetting.translator_enabled = false
+  end
+
   describe '#can_translate' do
     it { expect(serializer.can_translate).to eq(false) }
 
