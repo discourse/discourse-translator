@@ -8,7 +8,7 @@ import User from 'discourse/models/user';
 function translatePost(post) {
   return Discourse.ajax('/translator/translate', {
     type: 'POST',
-    data: { post_id: post.get('id') }
+    data: { post_id: post.get('id'), locale: I18n.locale }
   }).then(function(res) {
     post.setProperties({
       "translated_text": res.translation,
