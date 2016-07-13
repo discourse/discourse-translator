@@ -1,5 +1,3 @@
-import PostMenuComponent from 'discourse/components/post-menu';
-import { Button } from 'discourse/components/post-menu';
 import { observes } from 'ember-addons/ember-computed-decorators';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { withPluginApi } from 'discourse/lib/plugin-api';
@@ -18,6 +16,10 @@ function translatePost(post) {
 }
 
 function oldPluginCode() {
+  const module = require('discourse/components/post-menu');
+  const PostMenuComponent = module.default;
+  const Button = module.Button;
+
   PostMenuComponent.registerButton(function(visibleButtons){
     if (!this.siteSettings.translator_enabled) return;
     if (!this.get('post.can_translate')) return;
