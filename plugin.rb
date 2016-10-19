@@ -50,6 +50,8 @@ after_initialize do
     private
 
     def clear_translator_custom_fields
+      return if !SiteSetting.translator_enabled
+
       self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
       self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {}
     end
@@ -61,6 +63,8 @@ after_initialize do
       sidekiq_options retry: false
 
       def execute(args)
+        return if !SiteSetting.translator_enabled
+
         post = Post.find(args[:post_id])
 
         DistributedMutex.synchronize("detect_translation_#{post.id}") do
