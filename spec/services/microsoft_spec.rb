@@ -72,8 +72,23 @@ RSpec.describe DiscourseTranslator::Microsoft do
       $redis.del(described_class.cache_key)
     end
 
+    it 'should return the right value when post has already been translated' do
+      I18n.locale = 'en'
+
+      post.custom_fields = {
+        DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => 'tr',
+        DiscourseTranslator::TRANSLATED_CUSTOM_FIELD => {
+          'en' => 'some english text'
+        }
+      }
+
+      post.save_custom_fields
+
+      expect(described_class.translate(post)).to eq(['tr', 'some english text'])
+    end
+
     it 'raises an error if detected language of the post is not supported' do
-      post.custom_fields = { DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => 'dodge' }
+      post.custom_fields = { DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => 'donkey' }
       post.save_custom_fields
 
       expect { described_class.translate(post) }.to raise_error(

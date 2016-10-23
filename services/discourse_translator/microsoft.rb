@@ -88,7 +88,12 @@ module DiscourseTranslator
     def self.translate(post)
       detected_lang = detect(post)
 
-      raise TranslatorError.new(I18n.t('translator.failed')) if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym)
+      if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym) &&
+         !SUPPORTED_LANG.values.include?(detected_lang.to_s)
+
+        raise TranslatorError.new(I18n.t('translator.failed'))
+      end
+
       raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
 
       post_translated_custom_field = post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] ||= {}
