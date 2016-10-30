@@ -1,10 +1,11 @@
 import { observes } from 'ember-addons/ember-computed-decorators';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { withPluginApi } from 'discourse/lib/plugin-api';
+import { ajax } from 'discourse/lib/ajax';
 import User from 'discourse/models/user';
 
 function translatePost(post) {
-  return Discourse.ajax('/translator/translate', {
+  return ajax('/translator/translate', {
     type: 'POST',
     data: { post_id: post.get('id') }
   }).then(function(res) {
