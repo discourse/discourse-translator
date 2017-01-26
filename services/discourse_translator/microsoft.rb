@@ -1,4 +1,5 @@
 require_relative 'base'
+
 module DiscourseTranslator
   class Microsoft < Base
     DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13".freeze
@@ -6,6 +7,9 @@ module DiscourseTranslator
     GRANT_TYPE = "client_credentials".freeze
     TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Http.svc/GetTranslationsArray".freeze
     DETECT_URI = "https://api.microsofttranslator.com/V2/Http.svc/DetectArray".freeze
+
+    ISSUE_TOKEN_URI = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken".freeze
+
     LENGTH_LIMIT = 10240.freeze
 
     SUPPORTED_LANG = {
@@ -50,22 +54,35 @@ module DiscourseTranslator
       if existing_token
         return existing_token
       else
-        body = URI.encode_www_form(
-          client_id: SiteSetting.translator_client_id,
-          client_secret: SiteSetting.translator_client_secret,
-          scope: SCOPE_URI,
-          grant_type: GRANT_TYPE
-        )
+        if !SiteSetting.azure_subscription_key.blank?
+          response = Excon.post("#{ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.azure_subscription_key}")
 
-        response = post(DATA_URI, body, { "Content-Type" => "application/x-www-form-urlencoded" })
-        body = JSON.parse(response.body)
-
-        if response.status == 200
-          existing_token = body["access_token"]
-          $redis.setex(cache_key, body["expires_in"].to_i - 1.minute, existing_token)
-          existing_token
+          if response.status == 200
+            token = response.body
+            $redis.setex(cache_key, 8.minutes, token)
+            token
+          else
+            body = JSON.parse(response.body)
+            raise TranslatorError.new("#{body['statusCode']}: #{body['message']}")
+          end
         else
-          raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
+          body = URI.encode_www_form(
+            client_id: SiteSetting.translator_client_id,
+            client_secret: SiteSetting.translator_client_secret,
+            scope: SCOPE_URI,
+            grant_type: GRANT_TYPE
+          )
+
+          response = post(DATA_URI, body, { "Content-Type" => "application/x-www-form-urlencoded" })
+          body = JSON.parse(response.body)
+
+          if response.status == 200
+            existing_token = body["access_token"]
+            $redis.setex(cache_key, body["expires_in"].to_i - 1.minute, existing_token)
+            existing_token
+          else
+            raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
+          end
         end
       end
     end

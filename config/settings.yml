@@ -12,3 +12,5 @@ plugins:
     default: ''
   translator_client_secret:
     default: ''
+  azure_subscription_key:
+    default: ''
