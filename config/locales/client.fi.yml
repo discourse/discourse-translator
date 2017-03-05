@@ -1,0 +1,6 @@
+fi:
+  js:
+    translator:
+      view_translation: "Näytä käännös"
+      hide_translation: "Piilota käännös"
+      translated_from: "%{translator} käänsi kielestä %{language}"
