@@ -41,6 +41,11 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
             .to raise_error(ActionController::ParameterMissing)
         end
 
+        it 'raises the right error when post_id is invalid' do
+          expect { xhr :post, :translate, post_id: -1 }
+            .to raise_error(Discourse::InvalidParameters)
+        end
+
         it 'rescues translator errors' do
           DiscourseTranslator::Microsoft.expects(:translate).raises(::DiscourseTranslator::TranslatorError)
 

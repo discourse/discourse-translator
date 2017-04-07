@@ -31,7 +31,8 @@ after_initialize do
       RateLimiter.new(current_user, "translate_post", 3, 1.minute).performed! unless current_user.staff?
 
       params.require(:post_id)
-      post = Post.find(params[:post_id].to_i)
+      post = Post.find_by(id: params[:post_id])
+      raise Discourse::InvalidParameters.new(:post_id) if post.blank?
 
       begin
         detected_lang, translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
@@ -66,7 +67,8 @@ after_initialize do
       def execute(args)
         return if !SiteSetting.translator_enabled
 
-        post = Post.find(args[:post_id])
+        post = Post.find_by(id: args[:post_id])
+        return unless post
 
         DistributedMutex.synchronize("detect_translation_#{post.id}") do
           "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(post)
