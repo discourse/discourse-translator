@@ -1,0 +1,6 @@
+it:
+  js:
+    translator:
+      view_translation: "Visualizza traduzione"
+      hide_translation: "Nascondi traduzione"
+      translated_from: "Tradotto da %{language} con %{translator}"
