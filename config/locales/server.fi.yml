@@ -2,9 +2,7 @@ fi:
   site_settings:
     translator_enabled: "Salli viestien käännökset niiden yhteydessä."
     translator: "Käännösten palveluntuottaja."
-    translator_client_id: "Client ID -tunniste"
-    translator_client_secret: "Client Secret -salasana"
-    azure_subscription_key: "Azure Subscription Key -tilaustunniste"
+    translator_azure_subscription_key: "Azure Subscription Key -tilaustunniste"
     translator_google_api_key: "Google API Key -rajapinta-avain"
   translator:
     failed: "Kääntäjä ei osaa kääntää tätä kieltä."

@@ -60,7 +60,24 @@ after_initialize do
   end
 
   require_dependency "jobs/base"
+
   module ::Jobs
+    class TranslatorMigrateToAzurePortal < Jobs::Onceoff
+      def execute_onceoff(args)
+        ["translator_client_id", "translator_client_secret"].each do |name|
+          SiteSetting.exec_sql <<~SQL
+          DELETE FROM site_settings WHERE name = '#{name}'
+          SQL
+        end
+
+        SiteSetting.exec_sql <<~SQL
+        UPDATE site_settings
+        SET name = 'translator_azure_subscription_key'
+        WHERE name = 'azure_subscription_key'
+        SQL
+      end
+    end
+
     class DetectTranslation < Jobs::Base
       sidekiq_options retry: false
 

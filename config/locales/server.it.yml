@@ -2,9 +2,7 @@ it:
   site_settings:
     translator_enabled: "Consenti la traduzione in linea dei messaggi."
     translator: "Il fornitore del servizio di traduzione."
-    translator_client_id: "Client ID"
-    translator_client_secret: "Client Secret"
-    azure_subscription_key: "Azure Subscription Key"
+    translator_azure_subscription_key: "Azure Subscription Key"
     translator_google_api_key: "Google API Key"
   translator:
     failed: "Il traduttore non è in grado di tradurre questo linguaggio."

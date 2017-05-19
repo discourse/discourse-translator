@@ -54,34 +54,16 @@ module DiscourseTranslator
       if existing_token
         return existing_token
       else
-        if !SiteSetting.azure_subscription_key.blank?
-          response = Excon.post("#{ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.azure_subscription_key}")
+        if !SiteSetting.translator_azure_subscription_key.blank?
+          response = Excon.post("#{ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}")
 
           if response.status == 200
             token = response.body
-            $redis.setex(cache_key, 8.minutes, token)
+            $redis.setex(cache_key, 8.minutes.to_i, token)
             token
           else
             body = JSON.parse(response.body)
             raise TranslatorError.new("#{body['statusCode']}: #{body['message']}")
-          end
-        else
-          body = URI.encode_www_form(
-            client_id: SiteSetting.translator_client_id,
-            client_secret: SiteSetting.translator_client_secret,
-            scope: SCOPE_URI,
-            grant_type: GRANT_TYPE
-          )
-
-          response = post(DATA_URI, body, { "Content-Type" => "application/x-www-form-urlencoded" })
-          body = JSON.parse(response.body)
-
-          if response.status == 200
-            existing_token = body["access_token"]
-            $redis.setex(cache_key, body["expires_in"].to_i - 1.minute, existing_token)
-            existing_token
-          else
-            raise TranslatorError.new("#{body['error']}: #{body['error_description']}")
           end
         end
       end
