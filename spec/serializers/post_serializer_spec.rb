@@ -7,10 +7,7 @@ RSpec.describe PostSerializer do
 
   before do
     SiteSetting.translator_enabled = true
-  end
-
-  after do
-    SiteSetting.translator_enabled = false
+    SiteSetting.queue_jobs = true
   end
 
   describe '#can_translate' do

@@ -18,7 +18,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
     end
 
     describe 'azure portal' do
-      site_setting(:azure_subscription_key, 'some key')
+      SiteSetting.translator_azure_subscription_key = 'some key'
 
       it 'should return the access_token and cache it' do
         access_token = 'some token'
@@ -38,11 +38,11 @@ RSpec.describe DiscourseTranslator::Microsoft do
 
       response = mock_response.new(
         200,
-        { access_token: access_token, expires_in: '600' }.to_json
+        access_token
       )
 
       Excon.expects(:post).returns(response)
-      $redis.expects(:setex).with(described_class.cache_key, 540, access_token)
+      $redis.expects(:setex).with(described_class.cache_key, 480, access_token)
 
       described_class.access_token
     end
