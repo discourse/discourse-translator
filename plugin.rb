@@ -1,6 +1,6 @@
 # name: discourse-translator
 # about: Provides inline translation of posts.
-# version: 0.1.6
+# version: 0.2.0
 # authors: Alan Tan
 # url: https://github.com/tgxworld/discourse-translator
 
