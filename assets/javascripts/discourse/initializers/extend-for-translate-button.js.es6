@@ -1,8 +1,6 @@
-import { observes } from 'ember-addons/ember-computed-decorators';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { ajax } from 'discourse/lib/ajax';
-import User from 'discourse/models/user';
 
 function translatePost(post) {
   return ajax('/translator/translate', {
@@ -13,50 +11,6 @@ function translatePost(post) {
       "translated_text": res.translation,
       "detected_lang": res.detected_lang
     });
-  });
-}
-
-function oldPluginCode() {
-  const module = require('discourse/components/post-menu');
-  const PostMenuComponent = module.default;
-  const Button = module.Button;
-
-  PostMenuComponent.registerButton(function(visibleButtons){
-    if (!this.siteSettings.translator_enabled) return;
-    if (!this.get('post.can_translate')) return;
-    if (!User.current()) return;
-
-    let [action, label, opts] = !this.get('isTranslated') ? ['translate', 'translator.view_translation'] : ['hideTranslation', 'translator.hide_translation', { className: 'translated' }];
-    return visibleButtons.splice(0, 0, new Button(action, label, 'globe', opts));
-  });
-
-  PostMenuComponent.reopen({
-    isTranslated: false,
-
-    @observes('isTranslated', 'post.can_translate')
-    toggleTranslation() {
-      this.rerender();
-    },
-
-    clickTranslate(post) {
-      const self = this;
-      this.set('isTranslated', true);
-      post.set("translated_text", true);
-
-      translatePost(post).catch(function(error) {
-        popupAjaxError(error);
-        post.set("translated_text", null);
-        self.set('isTranslated', false);
-      });
-
-      return false;
-    },
-
-    clickHideTranslation(post) {
-      post.set("translated_text", null);
-      this.set('isTranslated', false);
-      return false;
-    }
   });
 }
 
@@ -129,6 +83,6 @@ function initializeTranslation(api) {
 export default {
   name: 'extend-for-translate-button',
   initialize() {
-    withPluginApi('0.1', api => initializeTranslation(api), { noApi: oldPluginCode });
+    withPluginApi('0.1', api => initializeTranslation(api));
   }
 };
