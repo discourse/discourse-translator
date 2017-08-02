@@ -98,7 +98,7 @@ after_initialize do
 
   def post_process(post)
     return if !SiteSetting.translator_enabled
-    Jobs.enqueue(:detect_translation, { post_id: post.id })
+    Jobs.enqueue(:detect_translation, post_id: post.id)
   end
   listen_for :post_process
 
@@ -116,7 +116,7 @@ after_initialize do
       detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
       if !detected_lang
-        Jobs.enqueue(:detect_translation, { post_id: object.id })
+        Jobs.enqueue(:detect_translation, post_id: object.id)
         false
       else
         detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG".constantize[I18n.locale]

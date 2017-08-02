@@ -36,7 +36,7 @@ module DiscourseTranslator
         translated_text = yield
 
         post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] =
-          post_translated_custom_field.merge({ I18n.locale => translated_text  })
+          post_translated_custom_field.merge(I18n.locale => translated_text)
 
         post.save!
       end

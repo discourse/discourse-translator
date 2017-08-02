@@ -79,7 +79,7 @@ module DiscourseTranslator
         </ArrayOfstring>
         XML
 
-        xml_doc = result(DETECT_URI, body, default_headers.merge({ 'Content-Type' => 'text/xml' }))
+        xml_doc = result(DETECT_URI, body, default_headers.merge('Content-Type' => 'text/xml'))
         Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//string").text
       end
     end
@@ -111,7 +111,7 @@ module DiscourseTranslator
         </GetTranslationsArrayRequest>
         XML
 
-        xml_doc = result(TRANSLATE_URI, body, default_headers.merge({ 'Content-Type' => 'text/xml' }))
+        xml_doc = result(TRANSLATE_URI, body, default_headers.merge('Content-Type' => 'text/xml'))
         Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//TranslatedText").text
       end
 
@@ -129,7 +129,7 @@ module DiscourseTranslator
     end
 
     def self.result(uri, body, headers)
-      response  = post(uri, body, headers)
+      response = post(uri, body, headers)
       response_body = response.body
 
       if response.status != 200
