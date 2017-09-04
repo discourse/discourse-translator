@@ -24,7 +24,7 @@ after_initialize do
 
   require_dependency "application_controller"
   class DiscourseTranslator::TranslatorController < ::ApplicationController
-    before_filter :ensure_logged_in
+    before_action :ensure_logged_in
 
     def translate
       raise PluginDisabled if !SiteSetting.translator_enabled
