@@ -8,3 +8,6 @@ en:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."
     too_long: "This post is too long to be translated by the translator."
+
+    microsoft:
+      missing_token: "The translator was unable to retrieve a valid token."

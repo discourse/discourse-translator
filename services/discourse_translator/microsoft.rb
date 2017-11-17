@@ -57,12 +57,13 @@ module DiscourseTranslator
         if !SiteSetting.translator_azure_subscription_key.blank?
           response = Excon.post("#{ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}")
 
-          if response.status == 200
-            token = response.body
-            $redis.setex(cache_key, 8.minutes.to_i, token)
-            token
+          if response.status == 200 && (response_body = response.body).present?
+            $redis.setex(cache_key, 8.minutes.to_i, response_body)
+            response_body
+          elsif response_body.blank?
+            raise TranslatorError.new(I18n.t("translator.microsoft.missing_token"))
           else
-            body = JSON.parse(response.body)
+            body = JSON.parse(response_body)
             raise TranslatorError.new("#{body['statusCode']}: #{body['message']}")
           end
         end

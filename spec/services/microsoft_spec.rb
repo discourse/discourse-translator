@@ -3,17 +3,17 @@ require 'rails_helper'
 RSpec.describe DiscourseTranslator::Microsoft do
   let(:mock_response) { Struct.new(:status, :body) }
 
+  after do
+    $redis.del(described_class.cache_key)
+  end
+
   describe '.access_token' do
     describe 'when access_token has been cached' do
       let(:cache_key) { 'KEY' }
 
       it 'should return from cache' do
-        begin
-          $redis.set(described_class.cache_key, cache_key)
-          expect(described_class.access_token).to eq(cache_key)
-        ensure
-          $redis.del(described_class.cache_key)
-        end
+        $redis.set(described_class.cache_key, cache_key)
+        expect(described_class.access_token).to eq(cache_key)
       end
     end
 
@@ -29,6 +29,16 @@ RSpec.describe DiscourseTranslator::Microsoft do
         $redis.expects(:setex).with(described_class.cache_key, 8.minutes, access_token)
 
         described_class.access_token
+      end
+
+      describe 'when access_token is not valid' do
+        it 'should raise the right error' do
+          stub_request(:post, "https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=some%20key").
+            to_return(status: 200, body: "")
+
+          expect { described_class.access_token }
+            .to raise_error(DiscourseTranslator::TranslatorError)
+        end
       end
     end
 
