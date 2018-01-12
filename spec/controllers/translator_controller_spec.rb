@@ -15,8 +15,8 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
   describe "#translate" do
     describe 'anon user' do
       it 'should not allow translation of posts' do
-        expect { post :translate, params: { post_id: 1 }, format: :json }
-          .to raise_error Discourse::NotLoggedIn
+        post :translate, params: { post_id: 1 }, format: :json
+        expect(response.status).to eq(403)
       end
     end
 
@@ -42,8 +42,8 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
         end
 
         it 'raises the right error when post_id is invalid' do
-          expect { post :translate, params: { post_id: -1 }, format: :json }
-            .to raise_error(Discourse::InvalidParameters)
+          post :translate, params: { post_id: -1 }, format: :json
+          expect(response.status).to eq(400)
         end
 
         it 'rescues translator errors' do
