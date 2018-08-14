@@ -60,10 +60,10 @@ module DiscourseTranslator
           if response.status == 200 && (response_body = response.body).present?
             $redis.setex(cache_key, 8.minutes.to_i, response_body)
             response_body
-          elsif response_body.blank?
+          elsif response.body.blank?
             raise TranslatorError.new(I18n.t("translator.microsoft.missing_token"))
           else
-            body = JSON.parse(response_body)
+            body = JSON.parse(response.body)
             raise TranslatorError.new("#{body['statusCode']}: #{body['message']}")
           end
         end
