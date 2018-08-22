@@ -72,9 +72,9 @@ module DiscourseTranslator
 
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = CGI.escapeHTML(post.raw.truncate(LENGTH_LIMIT))
+        text = escape(post.raw).truncate(LENGTH_LIMIT)
 
-        body = <<-XML.strip_heredoc
+        body = <<~XML
         <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
           <string>#{text}</string>
         </ArrayOfstring>
@@ -97,7 +97,7 @@ module DiscourseTranslator
       raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
 
       translated_text = from_custom_fields(post) do
-        body = <<-XML.strip_heredoc
+        body = <<~XML
         <GetTranslationsArrayRequest>
           <AppId></AppId>
           <From>#{detected_lang}</From>
@@ -105,7 +105,7 @@ module DiscourseTranslator
             <ContentType xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2">text/html</ContentType>
           </Options>
           <Texts>
-            <string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">#{CGI.escapeHTML(post.cooked)}</string>
+            <string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">#{escape(post.cooked)}</string>
           </Texts>
           <To>#{locale}</To>
           <MaxTranslations>1</MaxTranslations>
@@ -142,6 +142,10 @@ module DiscourseTranslator
 
     def self.default_headers
       { 'Authorization' => "Bearer #{access_token}" }
+    end
+
+    def self.escape(text)
+      CGI.escapeHTML(text.gsub(/[^[:print:][:space:]]/, ""))
     end
   end
 end

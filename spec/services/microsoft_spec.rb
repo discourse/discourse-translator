@@ -82,6 +82,23 @@ RSpec.describe DiscourseTranslator::Microsoft do
         ).to eq(detected_lang)
       end
     end
+
+    it 'escapes the post content' do
+      post.update_columns(raw: "This is aw\esome.\nIsn't it?")
+      described_class.expects(:access_token).returns('67890')
+
+      url = "https://api.microsofttranslator.com/V2/Http.svc/DetectArray"
+      body = <<~XML
+        <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+          <string>This is awsome.\nIsn&#39;t it?</string>
+        </ArrayOfstring>
+      XML
+      headers = {"Authorization" => "Bearer 67890", "Content-Type" => "text/xml"}
+
+      described_class.expects(:result).with(url, body, headers)
+
+      described_class.detect(post)
+    end
   end
 
   describe '.translate' do
