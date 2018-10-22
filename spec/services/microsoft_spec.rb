@@ -93,7 +93,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
           <string>This is awsome.\nIsn&#39;t it?</string>
         </ArrayOfstring>
       XML
-      headers = {"Authorization" => "Bearer 67890", "Content-Type" => "text/xml"}
+      headers = { "Authorization" => "Bearer 67890", "Content-Type" => "text/xml" }
 
       described_class.expects(:result).with(url, body, headers)
 
