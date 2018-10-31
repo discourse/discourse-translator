@@ -37,8 +37,8 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
         let(:reply) { Fabricate(:post) }
 
         it 'raises an error with a missing parameter' do
-          expect { post :translate, format: :json }
-            .to raise_error(ActionController::ParameterMissing)
+          post :translate, format: :json
+          expect(response.status).to eq(400)
         end
 
         it 'raises the right error when post_id is invalid' do
@@ -59,7 +59,7 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
 
           post :translate, params: { post_id: reply.id }, format: :json
 
-          expect(response).to be_success
+          expect(response).to be_successful
           expect(response.body).to eq({ translation: 'ニャン猫', detected_lang: 'ja' }.to_json)
         end
       end
