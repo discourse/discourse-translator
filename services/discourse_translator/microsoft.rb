@@ -1,16 +1,17 @@
+# frozen_string_literal: true
+
 require_relative 'base'
 
 module DiscourseTranslator
   class Microsoft < Base
-    DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13".freeze
-    SCOPE_URI = "http://api.microsofttranslator.com".freeze
-    GRANT_TYPE = "client_credentials".freeze
-    TRANSLATE_URI = "http://api.microsofttranslator.com/V2/Http.svc/GetTranslationsArray".freeze
-    DETECT_URI = "https://api.microsofttranslator.com/V2/Http.svc/DetectArray".freeze
+    DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13"
+    SCOPE_URI = "api.cognitive.microsofttranslator.com"
+    GRANT_TYPE = "client_credentials"
+    TRANSLATE_URI = "https://api.cognitive.microsofttranslator.com/translate"
+    DETECT_URI = "https://api.cognitive.microsofttranslator.com/detect"
+    ISSUE_TOKEN_URI = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken"
 
-    ISSUE_TOKEN_URI = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken".freeze
-
-    LENGTH_LIMIT = 10240.freeze
+    LENGTH_LIMIT = 10240
 
     SUPPORTED_LANG = {
       en: 'en',
@@ -55,7 +56,7 @@ module DiscourseTranslator
         return existing_token
       else
         if !SiteSetting.translator_azure_subscription_key.blank?
-          response = Excon.post("#{ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}")
+          response = Excon.post("#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}")
 
           if response.status == 200 && (response_body = response.body).present?
             $redis.setex(cache_key, 8.minutes.to_i, response_body)
@@ -72,16 +73,22 @@ module DiscourseTranslator
 
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = escape(post.raw).truncate(LENGTH_LIMIT)
+        text = post.raw.truncate(LENGTH_LIMIT)
 
-        body = <<~XML
-        <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-          <string>#{text}</string>
-        </ArrayOfstring>
-        XML
+        body = [
+          { "Text" => text }
+        ].to_json
 
-        xml_doc = result(DETECT_URI, body, default_headers.merge('Content-Type' => 'text/xml'))
-        Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//string").text
+        uri = URI(DETECT_URI)
+        uri.query = URI.encode_www_form(self.default_query)
+
+        response_body = result(
+          uri.to_s,
+          body,
+          default_headers
+        )
+
+        response_body.first["language"]
       end
     end
 
@@ -97,23 +104,20 @@ module DiscourseTranslator
       raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
 
       translated_text = from_custom_fields(post) do
-        body = <<~XML
-        <GetTranslationsArrayRequest>
-          <AppId></AppId>
-          <From>#{detected_lang}</From>
-          <Options>
-            <ContentType xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2">text/html</ContentType>
-          </Options>
-          <Texts>
-            <string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">#{escape(post.cooked)}</string>
-          </Texts>
-          <To>#{locale}</To>
-          <MaxTranslations>1</MaxTranslations>
-        </GetTranslationsArrayRequest>
-        XML
+        query = default_query.merge({
+          "from" => detected_lang,
+          "to" => 'de'
+        })
 
-        xml_doc = result(TRANSLATE_URI, body, default_headers.merge('Content-Type' => 'text/xml'))
-        Nokogiri::XML(xml_doc).remove_namespaces!.xpath("//TranslatedText").text
+        body = [
+          { "Text" => post.cooked }
+        ].to_json
+
+        uri = URI(TRANSLATE_URI)
+        uri.query = URI.encode_www_form(query)
+
+        response_body = result(uri.to_s, body, default_headers)
+        response_body.first["translations"].first["text"]
       end
 
       [detected_lang, translated_text]
@@ -131,21 +135,26 @@ module DiscourseTranslator
 
     def self.result(uri, body, headers)
       response = post(uri, body, headers)
-      response_body = response.body
+      response_body = JSON.parse(response.body)
 
       if response.status != 200
-        raise TranslatorError.new(Nokogiri::XML(response_body).text)
+        raise TranslatorError.new(response_body)
       else
         response_body
       end
     end
 
     def self.default_headers
-      { 'Authorization' => "Bearer #{access_token}" }
+      {
+        'Authorization' => "Bearer #{access_token}",
+        'Content-Type' => 'application/json'
+      }
     end
 
-    def self.escape(text)
-      CGI.escapeHTML(text.gsub(/[^[:print:][:space:]]/, ""))
+    def self.default_query
+      {
+        "api-version" => "3.0"
+      }
     end
   end
 end

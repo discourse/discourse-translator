@@ -70,10 +70,22 @@ RSpec.describe DiscourseTranslator::Microsoft do
   describe '.detect' do
     let(:post) { Fabricate(:post) }
 
+    let(:url) do
+      uri = URI(described_class::DETECT_URI)
+      uri.query = URI.encode_www_form(described_class.default_query)
+      uri.to_s
+    end
+
+    let(:detected_lang) { 'en' }
+
+    before do
+      $redis.set(described_class.cache_key, '12345')
+
+      stub_request(:post, url)
+        .to_return(status: 200, body: [{ "language" => detected_lang }].to_json)
+    end
+
     it 'should store the detected language in a custom field' do
-      detected_lang = 'en'
-      described_class.expects(:access_token).returns('12345')
-      Excon.expects(:post).returns(mock_response.new(200, "<ArrayOfstring><string>en</string></ArrayOfstring>")).once
       described_class.detect(post)
 
       2.times do
@@ -81,23 +93,6 @@ RSpec.describe DiscourseTranslator::Microsoft do
           post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
         ).to eq(detected_lang)
       end
-    end
-
-    it 'escapes the post content' do
-      post.update_columns(raw: "This is aw\esome.\nIsn't it?")
-      described_class.expects(:access_token).returns('67890')
-
-      url = "https://api.microsofttranslator.com/V2/Http.svc/DetectArray"
-      body = <<~XML
-        <ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-          <string>This is awsome.\nIsn&#39;t it?</string>
-        </ArrayOfstring>
-      XML
-      headers = { "Authorization" => "Bearer 67890", "Content-Type" => "text/xml" }
-
-      described_class.expects(:result).with(url, body, headers)
-
-      described_class.detect(post)
     end
   end
 
@@ -112,6 +107,25 @@ RSpec.describe DiscourseTranslator::Microsoft do
 
     after do
       $redis.del(described_class.cache_key)
+    end
+
+    it 'should work' do
+      I18n.locale = 'de'
+
+      uri = URI(described_class::TRANSLATE_URI)
+
+      uri.query = URI.encode_www_form(described_class.default_query.merge(
+        "from" => "en", "to" => I18n.locale
+      ))
+
+      stub_request(:post, uri.to_s).to_return(
+        status: 200,
+        body: [{ "translations" => [{ "text" => "some de text" }] }].to_json
+      )
+
+      expect(described_class.translate(post)).to eq([
+        "en", "some de text"
+      ])
     end
 
     it 'should return the right value when post has already been translated' do
