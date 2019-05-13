@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # name: discourse-translator
 # about: Provides inline translation of posts.
 # version: 0.2.0

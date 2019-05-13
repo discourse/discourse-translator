@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module DiscourseTranslator
   extend ActiveSupport::Concern
 
-  class TranslatorError < ::StandardError; end;
+  class TranslatorError < ::StandardError; end
 
   class Base
     def self.key_prefix

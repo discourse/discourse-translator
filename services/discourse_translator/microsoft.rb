@@ -104,10 +104,10 @@ module DiscourseTranslator
       raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
 
       translated_text = from_custom_fields(post) do
-        query = default_query.merge({
+        query = default_query.merge(
           "from" => detected_lang,
           "to" => locale
-        })
+        )
 
         body = [
           { "Text" => post.cooked }
