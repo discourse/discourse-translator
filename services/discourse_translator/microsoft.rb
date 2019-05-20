@@ -15,6 +15,7 @@ module DiscourseTranslator
 
     SUPPORTED_LANG = {
       en: 'en',
+      en_US: 'en',
       bs_BA: 'bs-Latn',
       cs: 'cs',
       da: 'da',
