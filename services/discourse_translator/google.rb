@@ -30,6 +30,8 @@ module DiscourseTranslator
       ru: 'ru',
       sv: 'sv',
       uk: 'uk',
+      lv: 'lv',
+      et: 'et',
       zh_CN: 'zh-CN',
       zh_TW: 'zh-TW',
       tr_TR: 'tr',
