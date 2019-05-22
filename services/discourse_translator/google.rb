@@ -38,6 +38,7 @@ module DiscourseTranslator
       pt_BR: 'pt',
       pl_PL: 'pl',
       no_NO: 'no',
+      nb_NO: 'no',
       fa_IR: 'fa'
     }
 
