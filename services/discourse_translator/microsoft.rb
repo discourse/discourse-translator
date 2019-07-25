@@ -107,7 +107,8 @@ module DiscourseTranslator
       translated_text = from_custom_fields(post) do
         query = default_query.merge(
           "from" => detected_lang,
-          "to" => locale
+          "to" => locale,
+          "textType" => "html"
         )
 
         body = [
