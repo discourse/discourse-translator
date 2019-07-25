@@ -117,12 +117,14 @@ RSpec.describe DiscourseTranslator::Microsoft do
       uri = URI(described_class::TRANSLATE_URI)
 
       uri.query = URI.encode_www_form(described_class.default_query.merge(
-        "from" => "en", "to" => I18n.locale
+        "from" => "en",
+        "to" => I18n.locale,
+        "textType" => "html"
       ))
 
       stub_request(:post, uri.to_s).to_return(
         status: 200,
-        body: [{ "translations" => [{ "text" => "some de text" }] }].to_json
+        body: [{ "translations" => [{ "text" => "some de text" }] }].to_json,
       )
 
       expect(described_class.translate(post)).to eq([
