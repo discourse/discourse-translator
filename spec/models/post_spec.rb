@@ -23,7 +23,7 @@ RSpec.describe Post do
     end
 
     it 'should reset custom fields when post has been updated' do
-      post.update_attributes!(raw: 'this is an updated post')
+      post.update!(raw: 'this is an updated post')
 
       expect(
         post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
