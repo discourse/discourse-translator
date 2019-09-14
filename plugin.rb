@@ -64,7 +64,7 @@ after_initialize do
   require_dependency "jobs/base"
 
   module ::Jobs
-    class TranslatorMigrateToAzurePortal < Jobs::Onceoff
+    class TranslatorMigrateToAzurePortal < ::Jobs::Onceoff
       def execute_onceoff(args)
         ["translator_client_id", "translator_client_secret"].each do |name|
 
@@ -95,7 +95,7 @@ after_initialize do
       end
     end
 
-    class DetectTranslation < Jobs::Base
+    class DetectTranslation < ::Jobs::Base
       sidekiq_options retry: false
 
       def execute(args)
