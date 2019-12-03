@@ -6,7 +6,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
   let(:mock_response) { Struct.new(:status, :body) }
 
   after do
-    $redis.del(described_class.cache_key)
+    Discourse.redis.del(described_class.cache_key)
   end
 
   describe '.access_token' do
@@ -14,7 +14,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
       let(:cache_key) { 'KEY' }
 
       it 'should return from cache' do
-        $redis.set(described_class.cache_key, cache_key)
+        Discourse.redis.set(described_class.cache_key, cache_key)
         expect(described_class.access_token).to eq(cache_key)
       end
     end
@@ -28,7 +28,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
         response = mock_response.new(200, access_token)
 
         Excon.expects(:post).returns(response)
-        $redis.expects(:setex).with(described_class.cache_key, 8.minutes, access_token)
+        Discourse.redis.expects(:setex).with(described_class.cache_key, 8.minutes, access_token)
 
         described_class.access_token
       end
@@ -54,7 +54,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
       )
 
       Excon.expects(:post).returns(response)
-      $redis.expects(:setex).with(described_class.cache_key, 480, access_token)
+      Discourse.redis.expects(:setex).with(described_class.cache_key, 480, access_token)
 
       described_class.access_token
     end
@@ -81,7 +81,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
     let(:detected_lang) { 'en' }
 
     before do
-      $redis.set(described_class.cache_key, '12345')
+      Discourse.redis.set(described_class.cache_key, '12345')
 
       stub_request(:post, url)
         .to_return(status: 200, body: [{ "language" => detected_lang }].to_json)
@@ -102,13 +102,13 @@ RSpec.describe DiscourseTranslator::Microsoft do
     let(:post) { Fabricate(:post) }
 
     before do
-      $redis.set(described_class.cache_key, '12345')
+      Discourse.redis.set(described_class.cache_key, '12345')
       post.custom_fields = { DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => 'en' }
       post.save_custom_fields
     end
 
     after do
-      $redis.del(described_class.cache_key)
+      Discourse.redis.del(described_class.cache_key)
     end
 
     it 'should work' do

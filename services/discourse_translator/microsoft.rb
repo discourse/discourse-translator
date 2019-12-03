@@ -52,7 +52,7 @@ module DiscourseTranslator
     end
 
     def self.access_token
-      existing_token = $redis.get(cache_key)
+      existing_token = Discourse.redis.get(cache_key)
 
       if existing_token
         return existing_token
@@ -61,7 +61,7 @@ module DiscourseTranslator
           response = Excon.post("#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}")
 
           if response.status == 200 && (response_body = response.body).present?
-            $redis.setex(cache_key, 8.minutes.to_i, response_body)
+            Discourse.redis.setex(cache_key, 8.minutes.to_i, response_body)
             response_body
           elsif response.body.blank?
             raise TranslatorError.new(I18n.t("translator.microsoft.missing_token"))
