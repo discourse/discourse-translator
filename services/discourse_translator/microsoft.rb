@@ -55,7 +55,7 @@ module DiscourseTranslator
       existing_token = Discourse.redis.get(cache_key)
 
       if existing_token
-        return existing_token
+        existing_token
       else
         if !SiteSetting.translator_azure_subscription_key.blank?
           response = Excon.post("#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}")
