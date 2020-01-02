@@ -15,6 +15,8 @@ module DiscourseTranslator
         zh_CN: 'zh',
         zh_TW: 'zh',
         tr_TR: 'tr',
+        en_US: 'en',
+        en_GB: 'en',
         az: 'az',
         ml: 'ml',
         sq: 'sq',
@@ -111,7 +113,6 @@ module DiscourseTranslator
     }
 
     def self.access_token_key
-      print "Hello21"
       "yandex-translator"
     end
 
@@ -120,18 +121,17 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      print "Hello22"
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-          body = [
-              {:Text => post.raw}
-          ]
+          query = default_query.merge(
+              "text" => post.raw
+          )
 
           uri = URI(DETECT_URI)
-          uri.query = URI.encode_www_form(default_query)
+          uri.query = URI.encode_www_form(query)
 
-          response_body = result(uri.to_s, body, default_headers)
+          response_body = result(uri.to_s, "", default_headers)
 
-          response_body.first["lang"]
+          response_body["lang"]
         end
     end
 
@@ -148,20 +148,17 @@ module DiscourseTranslator
         raise TranslatorError.new(I18n.t('translator.failed'))
       end
 
-      body = [
-          {:text => post.cooked}
-      ]
-
       translated_text = from_custom_fields(post) do
         query = default_query.merge(
-            "lang" => "#{detected_lang}-#{locale}"
+            "lang" => "#{detected_lang}-#{locale}",
+            "text" => "#{post.cooked}"
         )
 
         uri = URI(TRANSLATE_URI)
         uri.query = URI.encode_www_form(query)
 
-        response_body = result(uri.to_s, body, default_headers)
-        response_body.first["text"][0]
+        response_body = result(uri.to_s, "", default_headers)
+        response_body["text"][0]
       end
 
       [detected_lang, translated_text]
@@ -196,7 +193,7 @@ module DiscourseTranslator
 
     def self.default_query
       {
-          :key => "#{SiteSetting.translator_azure_subscription_key}"
+          :key => "#{SiteSetting.translator_yandex_api_key}"
       }
     end
   end

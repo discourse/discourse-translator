@@ -6,7 +6,6 @@ RSpec.describe DiscourseTranslator::Yandex do
   let(:mock_response) { Struct.new(:status, :body) }
 
   describe '.access_token' do
-    print "Hello11"
     describe 'when set' do
       api_key = '12345'
       before { SiteSetting.translator_yandex_api_key = api_key }
@@ -17,7 +16,6 @@ RSpec.describe DiscourseTranslator::Yandex do
   end
 
   describe '.detect' do
-    print "Hello12"
     let(:post) { Fabricate(:post) }
 
     it 'should store the detected language in a custom field' do
