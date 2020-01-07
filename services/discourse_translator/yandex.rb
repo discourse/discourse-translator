@@ -147,7 +147,8 @@ module DiscourseTranslator
       translated_text = from_custom_fields(post) do
         query = default_query.merge(
           "lang" => "#{detected_lang}-#{locale}",
-          "text" => post.cooked
+          "text" => post.cooked,
+          "format" => "html"
         )
 
         uri = URI(TRANSLATE_URI)
