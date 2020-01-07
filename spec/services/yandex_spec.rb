@@ -9,7 +9,7 @@ RSpec.describe DiscourseTranslator::Yandex do
     describe 'when set' do
       api_key = '12345'
       before { SiteSetting.translator_yandex_api_key = api_key }
-      
+
       it 'should return back translator_yandex_api_key' do
         expect(described_class.access_token).to eq(api_key)
       end
