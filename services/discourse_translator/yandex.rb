@@ -151,7 +151,7 @@ module DiscourseTranslator
       translated_text = from_custom_fields(post) do
         query = default_query.merge(
             "lang" => "#{detected_lang}-#{locale}",
-            "text" => "#{post.cooked}"
+            "text" => post.cooked
         )
 
         uri = URI(TRANSLATE_URI)
@@ -193,7 +193,7 @@ module DiscourseTranslator
 
     def self.default_query
       {
-          key: "#{SiteSetting.translator_yandex_api_key}"
+          key: SiteSetting.translator_yandex_api_key
       }
     end
   end
