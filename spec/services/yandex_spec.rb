@@ -22,7 +22,7 @@ RSpec.describe DiscourseTranslator::Yandex do
     it 'should store the detected language in a custom field' do
       detected_lang = 'en'
       described_class.expects(:access_token).returns('12345')
-      Excon.expects(:get).returns(mock_response.new(200, %{ { "code": 200, "lang": "#{detected_lang}" } })).once
+      Excon.expects(:post).returns(mock_response.new(200, %{ { "code": 200, "lang": "#{detected_lang}" } })).once
       expect(described_class.detect(post)).to eq(detected_lang)
 
       2.times do
@@ -37,7 +37,7 @@ RSpec.describe DiscourseTranslator::Yandex do
     it 'should equate source language to target' do
       source = 'en'
       target = 'fr'
-      Excon.expects(:get).returns(mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{source}" }] } } }))
+      Excon.expects(:post).returns(mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{source}" }] } } }))
       expect(described_class.translate_supported?(source, target)).to be true
     end
   end
