@@ -189,7 +189,7 @@ module DiscourseTranslator
 
     def self.default_query
       {
-        key: access_token()
+        key: access_token
       }
     end
   end
