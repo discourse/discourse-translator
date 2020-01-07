@@ -8,108 +8,108 @@ module DiscourseTranslator
     DETECT_URI = "https://translate.yandex.net/api/v1.5/tr.json/detect"
 
     SUPPORTED_LANG = {
-        pt_BR: 'pt',
-        pl_PL: 'pl',
-        no_NO: 'no',
-        fa_IR: 'fa',
-        zh_CN: 'zh',
-        zh_TW: 'zh',
-        tr_TR: 'tr',
-        en_US: 'en',
-        en_GB: 'en',
-        az: 'az',
-        ml: 'ml',
-        sq: 'sq',
-        mt: 'mt',
-        am: 'am',
-        mk: 'mk',
-        en: 'en',
-        mi: 'mi',
-        ar: 'ar',
-        mr: 'mr',
-        hy: 'hy',
-        mhr: 'mhr',
-        af: 'af',
-        mn: 'mn',
-        eu: 'eu',
-        de: 'de',
-        ba: 'ba',
-        ne: 'ne',
-        be: 'be',
-        no: 'no',
-        bn: 'bn',
-        pa: 'pa',
-        my: 'my',
-        pap: 'pap',
-        bg: 'bg',
-        fa: 'fa',
-        bs: 'bs',
-        pl: 'pl',
-        cy: 'cy',
-        pt: 'pt',
-        hu: 'hu',
-        ro: 'ro',
-        vi: 'vi',
-        ru: 'ru',
-        ht: 'ht',
-        ceb: 'ceb',
-        gl: 'gl',
-        sr: 'sr',
-        nl: 'nl',
-        si: 'si',
-        mrj: 'mrj',
-        sk: 'sk',
-        el: 'el',
-        sl: 'sl',
-        ka: 'ka',
-        sw: 'sw',
-        gu: 'gu',
-        su: 'su',
-        da: 'da',
-        tg: 'tg',
-        he: 'he',
-        th: 'th',
-        yi: 'yi',
-        tl: 'tl',
-        id: 'id',
-        ta: 'ta',
-        ga: 'ga',
-        tt: 'tt',
-        it: 'it',
-        te: 'te',
-        is: 'is',
-        tr: 'tr',
-        es: 'es',
-        udm: 'udm',
-        kk: 'kk',
-        uz: 'uz',
-        kn: 'kn',
-        uk: 'uk',
-        ca: 'ca',
-        ur: 'ur',
-        ky: 'ky',
-        fi: 'fi',
-        zh: 'zh',
-        fr: 'fr',
-        ko: 'ko',
-        hi: 'hi',
-        xh: 'xh',
-        hr: 'hr',
-        km: 'km',
-        cs: 'cs',
-        lo: 'lo',
-        sv: 'sv',
-        la: 'la',
-        gd: 'gd',
-        lv: 'lv',
-        et: 'et',
-        lt: 'lt',
-        eo: 'eo',
-        lb: 'lb',
-        jv: 'jv',
-        mg: 'mg',
-        ja: 'ja',
-        ms: 'ms',
+      pt_BR: 'pt',
+      pl_PL: 'pl',
+      no_NO: 'no',
+      fa_IR: 'fa',
+      zh_CN: 'zh',
+      zh_TW: 'zh',
+      tr_TR: 'tr',
+      en_US: 'en',
+      en_GB: 'en',
+      az: 'az',
+      ml: 'ml',
+      sq: 'sq',
+      mt: 'mt',
+      am: 'am',
+      mk: 'mk',
+      en: 'en',
+      mi: 'mi',
+      ar: 'ar',
+      mr: 'mr',
+      hy: 'hy',
+      mhr: 'mhr',
+      af: 'af',
+      mn: 'mn',
+      eu: 'eu',
+      de: 'de',
+      ba: 'ba',
+      ne: 'ne',
+      be: 'be',
+      no: 'no',
+      bn: 'bn',
+      pa: 'pa',
+      my: 'my',
+      pap: 'pap',
+      bg: 'bg',
+      fa: 'fa',
+      bs: 'bs',
+      pl: 'pl',
+      cy: 'cy',
+      pt: 'pt',
+      hu: 'hu',
+      ro: 'ro',
+      vi: 'vi',
+      ru: 'ru',
+      ht: 'ht',
+      ceb: 'ceb',
+      gl: 'gl',
+      sr: 'sr',
+      nl: 'nl',
+      si: 'si',
+      mrj: 'mrj',
+      sk: 'sk',
+      el: 'el',
+      sl: 'sl',
+      ka: 'ka',
+      sw: 'sw',
+      gu: 'gu',
+      su: 'su',
+      da: 'da',
+      tg: 'tg',
+      he: 'he',
+      th: 'th',
+      yi: 'yi',
+      tl: 'tl',
+      id: 'id',
+      ta: 'ta',
+      ga: 'ga',
+      tt: 'tt',
+      it: 'it',
+      te: 'te',
+      is: 'is',
+      tr: 'tr',
+      es: 'es',
+      udm: 'udm',
+      kk: 'kk',
+      uz: 'uz',
+      kn: 'kn',
+      uk: 'uk',
+      ca: 'ca',
+      ur: 'ur',
+      ky: 'ky',
+      fi: 'fi',
+      zh: 'zh',
+      fr: 'fr',
+      ko: 'ko',
+      hi: 'hi',
+      xh: 'xh',
+      hr: 'hr',
+      km: 'km',
+      cs: 'cs',
+      lo: 'lo',
+      sv: 'sv',
+      la: 'la',
+      gd: 'gd',
+      lv: 'lv',
+      et: 'et',
+      lt: 'lt',
+      eo: 'eo',
+      lb: 'lb',
+      jv: 'jv',
+      mg: 'mg',
+      ja: 'ja',
+      ms: 'ms',
     }
 
     def self.access_token_key
@@ -122,17 +122,17 @@ module DiscourseTranslator
 
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-          query = default_query.merge(
-              "text" => post.raw
-          )
+        query = default_query.merge(
+          "text" => post.raw
+        )
 
-          uri = URI(DETECT_URI)
-          uri.query = URI.encode_www_form(query)
+        uri = URI(DETECT_URI)
+        uri.query = URI.encode_www_form(query)
 
-          response_body = result(uri.to_s, "", default_headers)
+        response_body = result(uri.to_s, "", default_headers)
 
-          response_body["lang"]
-        end
+        response_body["lang"]
+      end
     end
 
     def self.translate_supported?(source, target)
@@ -143,15 +143,15 @@ module DiscourseTranslator
       detected_lang = detect(post)
 
       if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym) &&
-          !SUPPORTED_LANG.values.include?(detected_lang.to_s)
+        !SUPPORTED_LANG.values.include?(detected_lang.to_s)
 
         raise TranslatorError.new(I18n.t('translator.failed'))
       end
 
       translated_text = from_custom_fields(post) do
         query = default_query.merge(
-            "lang" => "#{detected_lang}-#{locale}",
-            "text" => post.cooked
+          "lang" => "#{detected_lang}-#{locale}",
+          "text" => post.cooked
         )
 
         uri = URI(TRANSLATE_URI)
@@ -187,13 +187,13 @@ module DiscourseTranslator
 
     def self.default_headers
       {
-          'Content-Type' => 'application/x-www-form-urlencoded'
+        'Content-Type' => 'application/x-www-form-urlencoded'
       }
     end
 
     def self.default_query
       {
-          key: SiteSetting.translator_yandex_api_key
+        key: SiteSetting.translator_yandex_api_key
       }
     end
   end
