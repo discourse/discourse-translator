@@ -4,6 +4,7 @@ en:
     translator: "The provider of the translation service."
     translator_azure_subscription_key: "Azure Subscription Key"
     translator_google_api_key: "Google API Key"
+    translator_yandex_api_key: "Yandex API Key"
   translator:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."

@@ -9,7 +9,10 @@ plugins:
     choices:
       - Microsoft
       - Google
+      - Yandex
   translator_azure_subscription_key:
     default: ''
   translator_google_api_key:
+    default: ''
+  translator_yandex_api_key:
     default: ''
