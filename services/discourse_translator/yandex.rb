@@ -135,10 +135,6 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate_supported?(source, target)
-      SUPPORTED_LANG.keys.include?(source) && SUPPORTED_LANG.values.include?(target)
-    end
-
     def self.translate(post)
       detected_lang = detect(post)
 
@@ -193,7 +189,7 @@ module DiscourseTranslator
 
     def self.default_query
       {
-        key: SiteSetting.translator_yandex_api_key
+        key: access_token()
       }
     end
   end
