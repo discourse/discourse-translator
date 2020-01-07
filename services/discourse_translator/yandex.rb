@@ -193,7 +193,7 @@ module DiscourseTranslator
 
     def self.default_query
       {
-          :key => "#{SiteSetting.translator_yandex_api_key}"
+          key: "#{SiteSetting.translator_yandex_api_key}"
       }
     end
   end
