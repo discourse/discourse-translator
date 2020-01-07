@@ -33,15 +33,6 @@ RSpec.describe DiscourseTranslator::Yandex do
     end
   end
 
-  describe '.translate_supported?' do
-    it 'should equate source language to target' do
-      source = 'en'
-      target = 'fr'
-      Excon.expects(:post).returns(mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{source}" }] } } }))
-      expect(described_class.translate_supported?(source, target)).to be true
-    end
-  end
-
   describe '.translate' do
     let(:post) { Fabricate(:post) }
 
@@ -49,7 +40,7 @@ RSpec.describe DiscourseTranslator::Yandex do
       described_class.expects(:access_token).returns('12345')
       described_class.expects(:detect).returns('en')
 
-      Excon.expects(:get).returns(mock_response.new(
+      Excon.expects(:post).returns(mock_response.new(
         400,
         { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
       ))
