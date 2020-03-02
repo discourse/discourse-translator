@@ -69,30 +69,16 @@ after_initialize do
       def execute_onceoff(args)
         ["translator_client_id", "translator_client_secret"].each do |name|
 
-          sql = <<~SQL
+          DB.exec <<~SQL
           DELETE FROM site_settings WHERE name = '#{name}'
           SQL
-
-          # TODO: post Discourse 2.1 remove switch
-          if defined? DB
-            DB.exec sql
-          else
-            SiteSetting.exec_sql sql
-          end
         end
 
-        sql = <<~SQL
+        DB.exec <<~SQL
           UPDATE site_settings
           SET name = 'translator_azure_subscription_key'
           WHERE name = 'azure_subscription_key'
         SQL
-
-        # TODO: post Discourse 2.1 remove switch
-        if defined? DB
-          DB.exec sql
-        else
-          SiteSetting.exec_sql sql
-        end
       end
     end
 
