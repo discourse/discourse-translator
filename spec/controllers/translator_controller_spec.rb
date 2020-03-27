@@ -18,7 +18,7 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
     describe 'anon user' do
       it 'should not allow translation of posts' do
         post :translate, params: { post_id: 1 }, format: :json
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -31,7 +31,7 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
         it 'should deny request to translate' do
           response = post :translate, params: { post_id: 1 }, format: :json
 
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(:not_found)
         end
       end
 
@@ -40,12 +40,12 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
 
         it 'raises an error with a missing parameter' do
           post :translate, format: :json
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(:bad_request)
         end
 
         it 'raises the right error when post_id is invalid' do
           post :translate, params: { post_id: -1 }, format: :json
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(:bad_request)
         end
 
         it 'rescues translator errors' do
@@ -53,7 +53,7 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
 
           post :translate, params: { post_id: reply.id }, format: :json
 
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
         end
 
         it 'returns the translated text' do
@@ -61,7 +61,7 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
 
           post :translate, params: { post_id: reply.id }, format: :json
 
-          expect(response).to be_successful
+          expect(response).to have_http_status(:ok)
           expect(response.body).to eq({ translation: 'ニャン猫', detected_lang: 'ja' }.to_json)
         end
       end
