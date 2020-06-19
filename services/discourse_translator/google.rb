@@ -85,7 +85,11 @@ module DiscourseTranslator
       query[:key] = access_token
       response = Excon.get(url, query: query)
 
-      body = JSON.parse(response.body)
+      body = nil
+      begin
+        body = JSON.parse(response.body)
+      rescue JSON::ParserError
+      end
 
       if response.status != 200
         raise TranslatorError.new(body)

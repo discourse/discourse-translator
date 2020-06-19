@@ -55,5 +55,17 @@ RSpec.describe DiscourseTranslator::Google do
 
       expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
     end
+
+    it 'raises an error when the response is not JSON' do
+      described_class.expects(:access_token).returns('12345')
+      described_class.expects(:detect).returns('en')
+
+      Excon.expects(:get).returns(mock_response.new(
+        413,
+        "<html><body>some html</body></html>"
+      ))
+
+      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+    end
   end
 end
