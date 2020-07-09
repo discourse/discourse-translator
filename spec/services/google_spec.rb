@@ -37,7 +37,7 @@ RSpec.describe DiscourseTranslator::Google do
       detected_lang = 'en'
 
       request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
-      query = {q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH), key: ""}
+      query = { q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH), key: "" }
       Excon.expects(:get).with(request_url, query: query).returns(mock_response.new(200, %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } })).once
       expect(described_class.detect(post)).to eq(detected_lang)
     end
