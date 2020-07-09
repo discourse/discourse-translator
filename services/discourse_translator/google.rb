@@ -8,6 +8,7 @@ module DiscourseTranslator
     TRANSLATE_URI = "https://www.googleapis.com/language/translate/v2".freeze
     DETECT_URI = "https://www.googleapis.com/language/translate/v2/detect".freeze
     SUPPORT_URI = "https://www.googleapis.com/language/translate/v2/languages".freeze
+    MAXLENGTH = 5000
 
     SUPPORTED_LANG = {
       en: 'en',
@@ -56,7 +57,7 @@ module DiscourseTranslator
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||=
         result(DETECT_URI,
-          q: post.cooked
+          q: post.cooked.truncate(MAXLENGTH)
         )["detections"][0].max { |a, b| a.confidence <=> b.confidence }["language"]
     end
 
@@ -72,7 +73,7 @@ module DiscourseTranslator
 
       translated_text = from_custom_fields(post) do
         res = result(TRANSLATE_URI,
-          q: post.cooked,
+          q: post.cooked.truncate(MAXLENGTH),
           source: detected_lang,
           target: SUPPORTED_LANG[I18n.locale]
         )
@@ -93,7 +94,7 @@ module DiscourseTranslator
       end
 
       if response.status != 200
-        raise TranslatorError.new(body)
+        raise TranslatorError.new(body || response.inspect)
       else
         body["data"]
       end
