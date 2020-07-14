@@ -106,8 +106,15 @@ after_initialize do
   end
   listen_for :post_process
 
-  TopicView.add_post_custom_fields_whitelister do |user|
-    [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+  # TODO Drop after Discourse 2.6.0 release
+  if TopicView.respond_to?(:add_post_custom_fields_whitelister)
+    TopicView.add_post_custom_fields_whitelister do |user|
+      [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+    end
+  else
+    TopicView.add_post_custom_fields_allowlister do |user|
+      [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+    end
   end
 
   require_dependency "post_serializer"
