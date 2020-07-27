@@ -107,12 +107,12 @@ after_initialize do
   listen_for :post_process
 
   # TODO Drop after Discourse 2.6.0 release
-  if TopicView.respond_to?(:add_post_custom_fields_whitelister)
-    TopicView.add_post_custom_fields_whitelister do |user|
+  if TopicView.respond_to?(:add_post_custom_fields_allowlister)
+    TopicView.add_post_custom_fields_allowlister do |user|
       [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
     end
   else
-    TopicView.add_post_custom_fields_allowlister do |user|
+    TopicView.add_post_custom_fields_whitelister do |user|
       [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
     end
   end
