@@ -4,5 +4,5 @@
 }
 
 button.translated {
-  color: $tertiary !important;
+  color: var(--tertiary, $tertiary) !important;
 }
