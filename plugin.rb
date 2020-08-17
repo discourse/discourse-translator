@@ -36,6 +36,7 @@ after_initialize do
       params.require(:post_id)
       post = Post.find_by(id: params[:post_id])
       raise Discourse::InvalidParameters.new(:post_id) if post.blank?
+      guardian.ensure_can_see!(post)
 
       begin
         detected_lang, translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)

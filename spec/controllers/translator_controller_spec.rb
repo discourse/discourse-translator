@@ -48,6 +48,12 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
           expect(response).to have_http_status(:bad_request)
         end
 
+        it 'raises the right error when post is inaccessible' do
+          mypost = Fabricate(:private_message_post)
+          post :translate, params: { post_id: mypost.id }, format: :json
+          expect(response.status).to eq(403)
+        end
+
         it 'rescues translator errors' do
           DiscourseTranslator::Microsoft.expects(:translate).raises(::DiscourseTranslator::TranslatorError)
 
