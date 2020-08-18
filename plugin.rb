@@ -2,9 +2,9 @@
 
 # name: discourse-translator
 # about: Provides inline translation of posts.
-# version: 0.2.0
+# version: 0.3.0
 # authors: Alan Tan
-# url: https://github.com/tgxworld/discourse-translator
+# url: https://github.com/discourse/discourse-translator
 
 enabled_site_setting :translator_enabled
 register_asset "stylesheets/common/post.scss"
