@@ -1,3 +1,4 @@
+import I18n from "I18n";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { ajax } from "discourse/lib/ajax";
@@ -5,11 +6,11 @@ import { ajax } from "discourse/lib/ajax";
 function translatePost(post) {
   return ajax("/translator/translate", {
     type: "POST",
-    data: { post_id: post.get("id") }
-  }).then(function(res) {
+    data: { post_id: post.get("id") },
+  }).then(function (res) {
     post.setProperties({
       translated_text: res.translation,
-      detected_lang: res.detected_lang
+      detected_lang: res.detected_lang,
     });
   });
 }
@@ -31,7 +32,7 @@ function initializeTranslation(api) {
     "detected_lang"
   );
 
-  api.decorateWidget("post-menu:before", dec => {
+  api.decorateWidget("post-menu:before", (dec) => {
     if (!dec.state.isTranslated) {
       return;
     }
@@ -49,11 +50,11 @@ function initializeTranslation(api) {
         "div.post-attribution",
         I18n.t("translator.translated_from", { language, translator })
       ),
-      dec.cooked(dec.attrs.translated_text)
+      dec.cooked(dec.attrs.translated_text),
     ]);
   });
 
-  api.attachWidgetAction("post-menu", "translate", function() {
+  api.attachWidgetAction("post-menu", "translate", function () {
     const state = this.state;
     state.isTranslated = true;
     state.isTranslating = true;
@@ -63,7 +64,7 @@ function initializeTranslation(api) {
 
     if (post) {
       return translatePost(post)
-        .catch(error => {
+        .catch((error) => {
           popupAjaxError(error);
           state.isTranslating = false;
           state.isTranslated = false;
@@ -72,7 +73,7 @@ function initializeTranslation(api) {
     }
   });
 
-  api.attachWidgetAction("post-menu", "hideTranslation", function() {
+  api.attachWidgetAction("post-menu", "hideTranslation", function () {
     this.state.isTranslated = false;
     const post = this.findAncestorModel();
     if (post) {
@@ -94,7 +95,7 @@ function initializeTranslation(api) {
       title,
       icon: "globe",
       position: "first",
-      className: state.isTranslated ? "translated" : null
+      className: state.isTranslated ? "translated" : null,
     };
   });
 }
@@ -102,6 +103,6 @@ function initializeTranslation(api) {
 export default {
   name: "extend-for-translate-button",
   initialize() {
-    withPluginApi("0.1", api => initializeTranslation(api));
-  }
+    withPluginApi("0.1", (api) => initializeTranslation(api));
+  },
 };
