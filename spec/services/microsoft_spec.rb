@@ -36,10 +36,10 @@ RSpec.describe DiscourseTranslator::Microsoft do
       describe 'when access_token is not valid' do
         it 'should raise the right error' do
           stub_request(:post, "https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=some%20key").
-            to_return(status: 200, body: "")
+            to_return(status: 401, body: "{\"error\":{\"code\":\"401\",\"message\": \"Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource.\"}}")
 
           expect { described_class.access_token }
-            .to raise_error(DiscourseTranslator::TranslatorError)
+            .to raise_error(DiscourseTranslator::TranslatorError, /401/)
         end
       end
     end

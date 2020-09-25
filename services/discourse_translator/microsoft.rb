@@ -66,8 +66,10 @@ module DiscourseTranslator
           elsif response.body.blank?
             raise TranslatorError.new(I18n.t("translator.microsoft.missing_token"))
           else
-            body = JSON.parse(response.body)
-            raise TranslatorError.new("#{body['statusCode']}: #{body['message']}")
+            # The possible response isn't well documented in Microsoft's API so
+            # it might break from time to time.
+            error = JSON.parse(response.body)["error"]
+            raise TranslatorError.new("#{error['code']}: #{error['message']}")
           end
         end
       end
