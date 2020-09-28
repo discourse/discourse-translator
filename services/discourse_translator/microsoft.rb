@@ -56,21 +56,29 @@ module DiscourseTranslator
 
       if existing_token
         existing_token
-      else
-        if !SiteSetting.translator_azure_subscription_key.blank?
-          response = Excon.post("#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}")
+      elsif SiteSetting.translator_azure_subscription_key.present?
+        url = "#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}"
 
-          if response.status == 200 && (response_body = response.body).present?
-            Discourse.redis.setex(cache_key, 8.minutes.to_i, response_body)
-            response_body
-          elsif response.body.blank?
-            raise TranslatorError.new(I18n.t("translator.microsoft.missing_token"))
-          else
-            # The possible response isn't well documented in Microsoft's API so
-            # it might break from time to time.
-            error = JSON.parse(response.body)["error"]
-            raise TranslatorError.new("#{error['code']}: #{error['message']}")
-          end
+        # Congitive Service's multi-service resource requires a region to be specified
+        # https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-reference#authenticating-with-an-access-token
+        if SiteSetting.translator_azure_region != 'global'
+          uri = URI.parse(url)
+          uri.host = "#{SiteSetting.translator_azure_region}.#{uri.host}"
+          url = uri.to_s
+        end
+
+        response = Excon.post(url)
+
+        if response.status == 200 && (response_body = response.body).present?
+          Discourse.redis.setex(cache_key, 8.minutes.to_i, response_body)
+          response_body
+        elsif response.body.blank?
+          raise TranslatorError.new(I18n.t("translator.microsoft.missing_token"))
+        else
+          # The possible response isn't well documented in Microsoft's API so
+          # it might break from time to time.
+          error = JSON.parse(response.body)["error"]
+          raise TranslatorError.new("#{error['code']}: #{error['message']}")
         end
       end
     end

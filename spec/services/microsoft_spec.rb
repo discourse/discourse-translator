@@ -3,69 +3,46 @@
 require 'rails_helper'
 
 RSpec.describe DiscourseTranslator::Microsoft do
-  let(:mock_response) { Struct.new(:status, :body) }
-
   after do
     Discourse.redis.del(described_class.cache_key)
   end
 
   describe '.access_token' do
-    describe 'when access_token has been cached' do
-      let(:cache_key) { 'KEY' }
-
-      it 'should return from cache' do
-        Discourse.redis.set(described_class.cache_key, cache_key)
-        expect(described_class.access_token).to eq(cache_key)
-      end
-    end
-
-    describe 'azure portal' do
+    before do
       SiteSetting.translator_azure_subscription_key = 'some key'
-
-      it 'should return the access_token and cache it' do
-        access_token = 'some token'
-        mock_response = Struct.new(:status, :body)
-        response = mock_response.new(200, access_token)
-
-        Excon.expects(:post).returns(response)
-        Discourse.redis.expects(:setex).with(described_class.cache_key, 8.minutes, access_token)
-
-        described_class.access_token
-      end
-
-      describe 'when access_token is not valid' do
-        it 'should raise the right error' do
-          stub_request(:post, "https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=some%20key").
-            to_return(status: 401, body: "{\"error\":{\"code\":\"401\",\"message\": \"Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource.\"}}")
-
-          expect { described_class.access_token }
-            .to raise_error(DiscourseTranslator::TranslatorError, /401/)
-        end
-      end
+      SiteSetting.translator_azure_region = 'global'
     end
 
     it 'should return the access_token and cache it' do
-      access_token = 'some token'
-      mock_response = Struct.new(:status, :body)
+      stub_request(:post, "https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=some%20key")
+        .to_return(status: 200, body: 'some_token')
 
-      response = mock_response.new(
-        200,
-        access_token
-      )
-
-      Excon.expects(:post).returns(response)
-      Discourse.redis.expects(:setex).with(described_class.cache_key, 480, access_token)
-
-      described_class.access_token
+      expect(described_class.access_token).to eq('some_token')
+      expect($redis.get(described_class.cache_key)).to eq('some_token')
+      expect($redis.ttl(described_class.cache_key).present?).to eq(true)
     end
 
-    it 'raises an error on failure' do
-      Excon.expects(:post).returns(mock_response.new(
-        400,
-        { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
-      ))
+    describe 'when access_token is not valid' do
+      it 'should raise the right error' do
+        stub_request(:post, "https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=some%20key").
+          to_return(status: 401, body: "{\"error\":{\"code\":\"401\",\"message\": \"Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource.\"}}")
 
-      expect { described_class.access_token }.to raise_error DiscourseTranslator::TranslatorError
+        expect { described_class.access_token }
+          .to raise_error(DiscourseTranslator::TranslatorError, /401/)
+      end
+    end
+
+    describe 'when azure region is specified' do
+      before do
+        SiteSetting.translator_azure_region = 'eastus2'
+      end
+
+      it 'should get access token from the right endpoint' do
+        stub_request(:post, "https://eastus2.api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=some%20key")
+          .to_return(status: 200, body: 'some_token')
+
+        expect(described_class.access_token).to eq('some_token')
+      end
     end
   end
 
@@ -165,12 +142,23 @@ RSpec.describe DiscourseTranslator::Microsoft do
     end
 
     it 'raises an error on failure' do
-      Excon.expects(:post).returns(mock_response.new(
-        400,
-        { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
-      ))
+      stub_request(:post, "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&from=en&textType=html&to=en")
+        .with(
+          body: "[{\"Text\":\"\\u003cp\\u003eHello world\\u003c/p\\u003e\"}]",
+          headers: {
+           'Authorization' => 'Bearer 12345',
+           'Content-Type' => 'application/json',
+           'Host' => 'api.cognitive.microsofttranslator.com'
+          }
+        ).to_return(
+          status: 400,
+          body: {
+            error: 'something went wrong',
+            error_description: 'you passed in a wrong param'
+          }.to_json
+        )
 
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+      expect { described_class.translate(post) }.to raise_error(DiscourseTranslator::TranslatorError)
     end
   end
 end

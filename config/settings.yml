@@ -12,6 +12,35 @@ plugins:
       - Yandex
   translator_azure_subscription_key:
     default: ''
+  translator_azure_region:
+    default: 'global'
+    client: true
+    type: enum
+    choices: # Valid choices retrieved from https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-reference#authenticating-with-a-multi-service-resource
+      - global
+      - australiaeast
+      - brazilsouth
+      - canadacentral
+      - centralindia
+      - centralus
+      - centraluseuap
+      - eastasia
+      - eastus
+      - eastus2
+      - francecentral
+      - japaneast
+      - japanwest
+      - koreacentral
+      - northcentralus
+      - northeurope
+      - southafricanort
+      - southcentralus
+      - southeastasia
+      - uksouth
+      - westcentralus
+      - westeurope
+      - westus
+      - westus2
   translator_google_api_key:
     default: ''
   translator_yandex_api_key:
