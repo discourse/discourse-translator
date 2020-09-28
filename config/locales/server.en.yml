@@ -3,6 +3,7 @@ en:
     translator_enabled: "Allow inline translation of posts."
     translator: "The provider of the translation service."
     translator_azure_subscription_key: "Azure Subscription Key"
+    translator_azure_region: "Azure Region"
     translator_google_api_key: "Google API Key"
     translator_yandex_api_key: "Yandex API Key"
   translator:
