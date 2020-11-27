@@ -21,7 +21,8 @@ RSpec.describe DiscourseTranslator::Google do
     it 'should store the detected language in a custom field' do
       detected_lang = 'en'
       described_class.expects(:access_token).returns('12345')
-      Excon.expects(:get).returns(mock_response.new(200, %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } })).once
+      Excon.expects(:post).returns(mock_response.new(200, %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } })).once
+
       expect(described_class.detect(post)).to eq(detected_lang)
 
       2.times do
@@ -37,8 +38,16 @@ RSpec.describe DiscourseTranslator::Google do
       detected_lang = 'en'
 
       request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
-      query = { q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH), key: "" }
-      Excon.expects(:get).with(request_url, query: query).returns(mock_response.new(200, %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } })).once
+      body = { q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH, omission: nil), key: "" }
+
+      Excon.expects(:post)
+        .with(request_url,
+          body: URI.encode_www_form(body),
+          headers: { "Content-Type" => "application/x-www-form-urlencoded" }
+        )
+        .returns(mock_response.new(200, %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } }))
+        .once
+
       expect(described_class.detect(post)).to eq(detected_lang)
     end
   end
@@ -47,7 +56,7 @@ RSpec.describe DiscourseTranslator::Google do
     it 'should equate source language to target' do
       source = 'en'
       target = 'fr'
-      Excon.expects(:get).returns(mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{source}" }] } } }))
+      Excon.expects(:post).returns(mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{source}" }] } } }))
       expect(described_class.translate_supported?(source, target)).to be true
     end
   end
@@ -59,7 +68,7 @@ RSpec.describe DiscourseTranslator::Google do
       described_class.expects(:access_token).returns('12345')
       described_class.expects(:detect).returns('en')
 
-      Excon.expects(:get).returns(mock_response.new(
+      Excon.expects(:post).returns(mock_response.new(
         400,
         { error: 'something went wrong', error_description: 'you passed in a wrong param' }.to_json
       ))
@@ -71,7 +80,7 @@ RSpec.describe DiscourseTranslator::Google do
       described_class.expects(:access_token).returns('12345')
       described_class.expects(:detect).returns('en')
 
-      Excon.expects(:get).returns(mock_response.new(
+      Excon.expects(:post).returns(mock_response.new(
         413,
         "<html><body>some html</body></html>"
       ))

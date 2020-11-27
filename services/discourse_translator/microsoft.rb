@@ -85,7 +85,7 @@ module DiscourseTranslator
 
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = post.raw.truncate(LENGTH_LIMIT)
+        text = post.raw.truncate(LENGTH_LIMIT, omission: nil)
 
         body = [
           { "Text" => text }
