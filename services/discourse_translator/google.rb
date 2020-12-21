@@ -57,7 +57,7 @@ module DiscourseTranslator
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||=
         result(DETECT_URI,
-          q: post.cooked.truncate(MAXLENGTH)
+          q: post.cooked.truncate(MAXLENGTH, omission: nil)
         )["detections"][0].max { |a, b| a.confidence <=> b.confidence }["language"]
     end
 
@@ -73,7 +73,7 @@ module DiscourseTranslator
 
       translated_text = from_custom_fields(post) do
         res = result(TRANSLATE_URI,
-          q: post.cooked.truncate(MAXLENGTH),
+          q: post.cooked.truncate(MAXLENGTH, omission: nil),
           source: detected_lang,
           target: SUPPORTED_LANG[I18n.locale]
         )
@@ -83,9 +83,13 @@ module DiscourseTranslator
       [detected_lang, translated_text]
     end
 
-    def self.result(url, query)
-      query[:key] = access_token
-      response = Excon.get(url, query: query)
+    def self.result(url, body)
+      body[:key] = access_token
+
+      response = Excon.post(url,
+        body: URI.encode_www_form(body),
+        headers: { "Content-Type" => "application/x-www-form-urlencoded" }
+      )
 
       body = nil
       begin
