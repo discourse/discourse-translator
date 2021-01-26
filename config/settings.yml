@@ -45,3 +45,5 @@ plugins:
     default: ''
   translator_yandex_api_key:
     default: ''
+  max_translations_per_minute:
+    default: 3
