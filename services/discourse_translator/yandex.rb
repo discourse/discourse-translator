@@ -15,6 +15,7 @@ module DiscourseTranslator
       zh_CN: 'zh',
       zh_TW: 'zh',
       tr_TR: 'tr',
+      en: 'en',
       en_US: 'en',
       en_GB: 'en',
       az: 'az',
