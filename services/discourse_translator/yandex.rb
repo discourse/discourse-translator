@@ -24,7 +24,6 @@ module DiscourseTranslator
       mt: 'mt',
       am: 'am',
       mk: 'mk',
-      en: 'en',
       mi: 'mi',
       ar: 'ar',
       mr: 'mr',
