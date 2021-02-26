@@ -60,14 +60,13 @@ module DiscourseTranslator
       "libretranslate-translator"
     end
 
-    # def self.access_token
-    #   # In a future release...
-    #   SiteSetting.translator_libretranslate_api_key || (raise TranslatorError.new("NotFound: Google Api Key not set."))
-    # end
+    def self.access_token
+      SiteSetting.translator_libretranslate_api_key
+    end
 
     def self.detect(post)
       res = result(detect_uri,
-        q: post.cooked.truncate(MAXLENGTH, omission: nil)
+        q: ActionController::Base.helpers.strip_tags(post.cooked).truncate(MAXLENGTH, omission: nil)
       )
 
       if !res.empty?
@@ -90,7 +89,7 @@ module DiscourseTranslator
 
       translated_text = from_custom_fields(post) do
         res = result(translate_uri,
-          q: post.cooked.truncate(MAXLENGTH, omission: nil),
+          q: ActionController::Base.helpers.strip_tags(post.cooked).truncate(MAXLENGTH, omission: nil),
           source: detected_lang,
           target: SUPPORTED_LANG[I18n.locale]
         )
@@ -101,7 +100,7 @@ module DiscourseTranslator
     end
 
     def self.result(url, body)
-      #   body[:key] = access_token
+      body[:api_key] = access_token
 
       response = Excon.post(url,
         body: URI.encode_www_form(body),

@@ -48,5 +48,7 @@ plugins:
     default: ''
   translator_libretranslate_endpoint:
     default: ''
+  translator_libretranslate_api_key:
+    default: ''
   max_translations_per_minute:
     default: 3
