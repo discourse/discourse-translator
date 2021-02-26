@@ -45,15 +45,15 @@ module DiscourseTranslator
     }
 
     def self.translate_uri
-        SiteSetting.translator_libretranslate_endpoint + "/translate"
+      SiteSetting.translator_libretranslate_endpoint + "/translate"
     end
 
     def self.detect_uri
-        SiteSetting.translator_libretranslate_endpoint + "/detect"
+      SiteSetting.translator_libretranslate_endpoint + "/detect"
     end
 
     def self.support_uri
-        SiteSetting.translator_libretranslate_endpoint + "/languages"
+      SiteSetting.translator_libretranslate_endpoint + "/languages"
     end
 
     def self.access_token_key
@@ -79,7 +79,7 @@ module DiscourseTranslator
     def self.translate_supported?(source, target)
       lang = SUPPORTED_LANG[target]
       res = result(support_uri, {})
-      res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang } 
+      res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang }
     end
 
     def self.translate(post)
