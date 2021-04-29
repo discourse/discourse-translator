@@ -61,8 +61,8 @@ after_initialize do
     def clear_translator_custom_fields
       return if !SiteSetting.translator_enabled
 
-      self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
-      self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {}
+      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
+      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
     end
   end
 
