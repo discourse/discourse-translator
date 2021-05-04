@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RemoveEmptyTranslationCustomFields < ActiveRecord::Migration[6.1]
+class RemoveEmptyTranslationCustomFields < ActiveRecord::Migration[6.0]
   def up
     execute <<~SQL
       DELETE FROM post_custom_fields
