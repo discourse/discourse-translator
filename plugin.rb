@@ -2,7 +2,7 @@
 
 # name: discourse-translator
 # about: Provides inline translation of posts.
-# version: 0.3.0
+# version: 0.4.0
 # authors: Alan Tan
 # url: https://github.com/discourse/discourse-translator
 
@@ -18,6 +18,7 @@ after_initialize do
     autoload :Microsoft, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
     autoload :Google, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/google"
     autoload :Yandex, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
+    autoload :LibreTranslate, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/libretranslate"
 
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME
