@@ -1,0 +1,21 @@
+# WARNING: Never edit this file.
+# It will be overwritten when translations are pulled from Crowdin.
+#
+# To work with us on translations, join this project:
+# https://translate.discourse.org/
+
+sv:
+  site_settings:
+    translator_enabled: "Tillåt inbäddad översättning av inlägg."
+    translator: "Leverantören av översättningstjänsten."
+    translator_azure_subscription_key: "Azure -prenumerationsnyckel"
+    translator_azure_region: "Azure-region"
+    translator_google_api_key: "Google API-nyckel"
+    translator_yandex_api_key: "Yandex API-nyckel"
+    max_translations_per_minute: "Antalet översättningar per minut som en vanlig användare kan utföra."
+  translator:
+    failed: "Översättaren kan inte översätta detta språk."
+    not_supported: "Detta språk stöds inte av översättaren."
+    too_long: "Det här inlägget är för långt för att översättas av översättaren."
+    microsoft:
+      missing_token: "Översättaren kunde inte hämta en giltig token."
