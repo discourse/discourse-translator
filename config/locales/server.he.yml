@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 he:
+  site_settings:
+    translator_enabled: "לאפשר תרגום מוטבע של פוסטים."
+    translator: "ספק שירות התרגום."
+    translator_azure_subscription_key: "מפתח מינוי ל־Azure"
+    translator_azure_region: "אזור ב־Azure"
+    translator_google_api_key: "מפתח API של Google"
+    translator_yandex_api_key: "מפתח API של Yandex"
+    max_translations_per_minute: "מספר התרגומים לדקה שמשתמש רגיל יכול לבצע."
+  translator:
+    failed: "המתרגם אינו מסוגל לתרגם שפה זו."
+    not_supported: "שפה זו אינה נתמכת על ידי המתרגם."
+    too_long: "פוסט זה ארוך מכדי לתרגם אותו על ידי המתרגם."
+    microsoft:
+      missing_token: "המתרגם לא הצליח לקבל אסימון תקף."
