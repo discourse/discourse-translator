@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 ru:
+  site_settings:
+    translator_enabled: "Разрешить встроенный перевод сообщений."
+    translator: "Поставщик услуги перевода."
+    translator_azure_subscription_key: "Ключ подписки Azure"
+    translator_azure_region: "Регион Azure"
+    translator_google_api_key: "Ключ API Google"
+    translator_yandex_api_key: "Ключ Яндекс API"
+    max_translations_per_minute: "Количество переводов в минуту, которое может выполнять обычный пользователь."
+  translator:
+    failed: "Переводчик не может перевести этот язык."
+    not_supported: "Этот язык не поддерживается переводчиком."
+    too_long: "Эта запись слишком длинная для перевода переводчиком."
+    microsoft:
+      missing_token: "Переводчику не удалось получить действительный токен."

@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 fa_IR:
+  js:
+    translator:
+      view_translation: "مشاهده ترجمه"
+      hide_translation: "پنهان کردن ترجمه"
+      translated_from: "ترجمه شده از %{language} توسط %{translator}"
