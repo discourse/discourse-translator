@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 ru:
+  js:
+    translator:
+      view_translation: "Посмотреть перевод"
+      hide_translation: "Скрыть перевод"
+      translated_from: "Переведено с %{language} пользователем %{translator}"
