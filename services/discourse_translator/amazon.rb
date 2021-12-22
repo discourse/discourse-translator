@@ -91,11 +91,13 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= client.translate_text({
+      detected_lang = client.translate_text({
         text: post.cooked.truncate(MAXLENGTH, omission: nil),
         source_language_code: 'auto',
-        target_language_code: SUPPORTED_LANG[I18n.locale],
+        target_language_code: SUPPORTED_LANG[I18n.locale]
       })&.source_language_code
+
+      assign_lang_custom_field(post, detected_lang)
     end
 
     def self.translate(post)
@@ -106,7 +108,7 @@ module DiscourseTranslator
           target_language_code: SUPPORTED_LANG[I18n.locale],
         })
 
-        detected_lang = post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result.source_language_code
+        detected_lang = assign_lang_custom_field(post, result.source_language_code)
 
         [detected_lang, result.translated_text]
       end
@@ -123,6 +125,11 @@ module DiscourseTranslator
       end
 
       @client ||= Aws::Translate::Client.new(opts)
+    end
+
+    def self.assign_lang_custom_field(post, value)
+      return post.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD) if value.nil?
+      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= value
     end
 
   end
