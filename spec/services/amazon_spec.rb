@@ -4,22 +4,19 @@ require 'rails_helper'
 
 RSpec.describe DiscourseTranslator::Amazon do
   let(:mock_response) { Struct.new(:status, :body) }
-  let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
-  let(:stub_client_response) do
-    client.stub_responses(:translate_text, {
-      translated_text: "Probando traducciones", source_language_code: "en", target_language_code: "es"
-    })
-  end
-
-  before do
-    stub_client_response
-    Aws::Translate::Client.stubs(:new).returns(client)
-  end
 
   describe '.detect' do
     let(:post) { Fabricate(:post) }
+    let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
     let(:text) { post.cooked.truncate(described_class::MAXLENGTH, omission: nil) }
     let(:detected_lang) { 'en' }
+
+    before do
+      client.stub_responses(:translate_text, {
+        translated_text: "Probando traducciones", source_language_code: "en", target_language_code: "es"
+      })
+      Aws::Translate::Client.stubs(:new).returns(client)
+    end
 
     it 'should store the detected language in a custom field' do
 
@@ -41,12 +38,16 @@ RSpec.describe DiscourseTranslator::Amazon do
 
   describe '.translate' do
     let(:post) { Fabricate(:post) }
+    let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
 
-    it 'raises an error when trying to translate an unsupported language' do
+    before do
       client.stub_responses(:translate_text, "UnsupportedLanguagePairException", {
         translated_text: "Probando traducciones", source_language_code: "en", target_language_code: "es"
       })
+      described_class.stubs(:client).returns(client)
+    end
 
+    it 'raises an error when trying to translate an unsupported language' do
       expect { described_class.translate(post) }.to raise_error(I18n.t('translator.failed'))
     end
   end
