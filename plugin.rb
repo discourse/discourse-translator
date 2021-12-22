@@ -6,6 +6,8 @@
 # authors: Alan Tan
 # url: https://github.com/discourse/discourse-translator
 
+gem 'aws-sdk-translate', '1.35.0', require: false
+
 enabled_site_setting :translator_enabled
 register_asset "stylesheets/common/post.scss"
 
@@ -17,6 +19,7 @@ after_initialize do
 
     autoload :Microsoft, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
     autoload :Google, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/google"
+    autoload :Amazon, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/amazon"
     autoload :Yandex, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
 
     class Engine < ::Rails::Engine
