@@ -117,11 +117,20 @@ module DiscourseTranslator
     end
 
     def self.client
-      opts = {}
-      if SiteSetting.translator_aws_key_id && SiteSetting.translator_aws_secret_access
+      opts = { region: SiteSetting.translator_aws_region }
+
+      if SiteSetting.translator_aws_key_id.present? && SiteSetting.translator_aws_secret_access.present?
         opts[:access_key_id] = SiteSetting.translator_aws_key_id
         opts[:secret_access_key] = SiteSetting.translator_aws_secret_access
-        opts[:region] = SiteSetting.translator_aws_region
+
+      elsif SiteSetting.translator_aws_iam_role.present?
+        sts_client = Aws::STS::Client.new(region: SiteSetting.translator_aws_region)
+
+        opts[:credentials] = Aws::AssumeRoleCredentials.new(
+          client: sts_client,
+          role_arn: SiteSetting.translator_aws_iam_role,
+          role_session_name: "discourse-aws-translator"
+        )
       end
 
       @client ||= Aws::Translate::Client.new(opts)
