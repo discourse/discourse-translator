@@ -13,6 +13,10 @@ he:
     translator_google_api_key: "מפתח API של Google"
     translator_yandex_api_key: "מפתח API של Yandex"
     max_translations_per_minute: "מספר התרגומים לדקה שמשתמש רגיל יכול לבצע."
+    translator_aws_region: "אזור ב־AWS"
+    translator_aws_key_id: "מזהה מפתח AWS"
+    translator_aws_secret_access: "מפתח גישה סודי של AWS"
+    translator_aws_iam_role: "תפקיד IAM ב־AWS"
   translator:
     failed: "המתרגם אינו מסוגל לתרגם שפה זו."
     not_supported: "שפה זו אינה נתמכת על ידי המתרגם."
