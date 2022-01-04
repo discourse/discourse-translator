@@ -5,3 +5,13 @@
 # https://translate.discourse.org/
 
 fa_IR:
+  site_settings:
+    translator: "ارائه دهنده خدمات ترجمه"
+    translator_azure_subscription_key: "کلید اشتراک Azure"
+    translator_azure_region: "منطقه Azure"
+    translator_google_api_key: "کلید API گوگل"
+    translator_yandex_api_key: "کلید API یاندکس"
+    translator_aws_region: "منطقه AWS"
+    translator_aws_key_id: "شناسه کلید AWS"
+    translator_aws_secret_access: "کلید دسترسی امن AWS"
+    translator_aws_iam_role: "نقش AWS IAM"

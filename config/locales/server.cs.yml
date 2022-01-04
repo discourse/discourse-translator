@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 cs:
+  site_settings:
+    translator_enabled: "Povolit vložený překlad příspěvků."
+    translator: "Poskytovatel překladatelské služby."
+    translator_azure_subscription_key: "Klíč předplatného Azure"
+    translator_azure_region: "Azure Region"
+    translator_google_api_key: "Klíč Google API"
+    translator_yandex_api_key: "Yandex API klíč"
+    max_translations_per_minute: "Počet překladů za minutu, které může běžný uživatel provést."
+  translator:
+    failed: "Překladatel není schopen přeložit tento jazyk."
+    not_supported: "Tento jazyk není podporován překladačem."
+    too_long: "Tento příspěvek je příliš dlouhý na to, aby jej překladatel přeložil."
+    microsoft:
+      missing_token: "Překladač nebyl schopen získat platný token."

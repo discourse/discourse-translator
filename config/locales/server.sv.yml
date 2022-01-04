@@ -13,6 +13,10 @@ sv:
     translator_google_api_key: "Google API-nyckel"
     translator_yandex_api_key: "Yandex API-nyckel"
     max_translations_per_minute: "Antalet översättningar per minut som en vanlig användare kan utföra."
+    translator_aws_region: "AWS Region"
+    translator_aws_key_id: "AWS nyckel-ID"
+    translator_aws_secret_access: "AWS hemlig åtkomstnyckel"
+    translator_aws_iam_role: "AWS IAM-roll"
   translator:
     failed: "Översättaren kan inte översätta detta språk."
     not_supported: "Detta språk stöds inte av översättaren."
