@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 hu:
+  js:
+    translator:
+      view_translation: "Fordítás megtekintése"
+      hide_translation: "Fordítás elrejtése"
+      translated_from: "%{language} → %{translator} fordítás"

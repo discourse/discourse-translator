@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 ar:
+  js:
+    translator:
+      view_translation: "عرض الترجمة"
+      hide_translation: "إخفاء الترجمة"
+      translated_from: "تمت الترجمة من %{language} بواسطة %{translator}"

@@ -5,3 +5,21 @@
 # https://translate.discourse.org/
 
 hu:
+  site_settings:
+    translator_enabled: "Bejegyzések szövegközi fordításának engedélyezése."
+    translator: "A fordítási szolgáltatás szolgáltatója."
+    translator_azure_subscription_key: "Azure előfizetési kulcs"
+    translator_azure_region: "Azure régió"
+    translator_google_api_key: "Google API kulcs"
+    translator_yandex_api_key: "Yandex API kulcs"
+    max_translations_per_minute: "A percenkénti fordítások száma, amelyet egy átlagos felhasználó elvégezhet."
+    translator_aws_region: "AWS régió"
+    translator_aws_key_id: "AWS kulcsazonosító"
+    translator_aws_secret_access: "AWS titkos hozzáférési kulcs"
+    translator_aws_iam_role: "AWS IAM szerepkör"
+  translator:
+    failed: "A fordító nem tudja lefordítani ezt a nyelvet."
+    not_supported: "A fordító nem támogatja ezt a nyelvet."
+    too_long: "Ez a bejegyzés túl hosszú ahhoz, hogy a fordító lefordítsa."
+    microsoft:
+      missing_token: "A fordító nem tudott érvényes tokent lekérni."

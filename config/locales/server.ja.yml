@@ -6,9 +6,20 @@
 
 ja:
   site_settings:
-    translator_enabled: "ポストのインライン変換を許可します。"
-    translator: "翻訳サービスの提供。"
-    translator_google_api_key: "Google Api Key"
+    translator_enabled: "投稿のインライン翻訳を許可する。"
+    translator: "翻訳サービスのプロバイダー。"
+    translator_azure_subscription_key: "Azure サブスクリプションキー"
+    translator_azure_region: "Azure リージョン"
+    translator_google_api_key: "Google API キー"
+    translator_yandex_api_key: "Yandex API キー"
+    max_translations_per_minute: "レギュラーユーザーが実行できる 1 分当たりの翻訳数。"
+    translator_aws_region: "AWS リージョン"
+    translator_aws_key_id: "AWS キー ID"
+    translator_aws_secret_access: "AWS シークレットアクセスキー"
+    translator_aws_iam_role: "AWS IAM ロール"
   translator:
-    failed: "翻訳者は、この言語を翻訳することができません。"
-    not_supported: "この言語は翻訳者によってサポートされていません。"
+    failed: "翻訳ツールはこの言語を翻訳できません。"
+    not_supported: "翻訳ツールはこの言語をサポートしていません。"
+    too_long: "この投稿は翻訳ツールで翻訳するには長すぎます。"
+    microsoft:
+      missing_token: "翻訳ツールは有効なトークンを取得できませんでした。"

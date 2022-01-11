@@ -9,4 +9,4 @@ it:
     translator:
       view_translation: "Visualizza traduzione"
       hide_translation: "Nascondi traduzione"
-      translated_from: "Tradotto da %{language} con %{translator}"
+      translated_from: "Tradotto dalla lingua %{language} da %{translator}"

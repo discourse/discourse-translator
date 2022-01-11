@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 pt_BR:
+  js:
+    translator:
+      view_translation: "Exibir tradução"
+      hide_translation: "Ocultar tradução"
+      translated_from: "Tradução de %{language} feita por %{translator}"

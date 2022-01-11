@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 zh_CN:
+  js:
+    translator:
+      view_translation: "查看翻译"
+      hide_translation: "隐藏翻译"
+      translated_from: "由 %{translator} 译自%{language}"

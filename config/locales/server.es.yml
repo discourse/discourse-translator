@@ -6,12 +6,20 @@
 
 es:
   site_settings:
-    translator_enabled: "Permitir la traducción de posts."
+    translator_enabled: "Permitir la traducción en línea de las publicaciones."
     translator: "El proveedor del servicio de traducción."
-    translator_azure_subscription_key: "Azure Subscription Key"
-    translator_google_api_key: "Google Api Key"
-    translator_yandex_api_key: "Yandex API Key"
+    translator_azure_subscription_key: "Clave de suscripción de Azure"
+    translator_azure_region: "Región de Azure"
+    translator_google_api_key: "Clave API de Google"
+    translator_yandex_api_key: "Clave API de Yandex"
+    max_translations_per_minute: "El número de traducciones por minuto que puede realizar un usuario normal."
+    translator_aws_region: "Región de AWS"
+    translator_aws_key_id: "ID de clave de AWS"
+    translator_aws_secret_access: "Clave de acceso secreta de AWS"
+    translator_aws_iam_role: "Rol de IAM de AWS"
   translator:
     failed: "El traductor no fue capaz de traducir este idioma."
-    not_supported: "Este idioma no está disponible en el traductor."
-    too_long: "El post es demasiado largo para ser traducido por el traductor."
+    not_supported: "El traductor no admite este idioma."
+    too_long: "Esta publicación es demasiado larga para ser traducida por el traductor."
+    microsoft:
+      missing_token: "El traductor no pudo recuperar un token válido."
