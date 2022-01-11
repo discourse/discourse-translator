@@ -8,9 +8,18 @@ it:
   site_settings:
     translator_enabled: "Consenti la traduzione in linea dei messaggi."
     translator: "Il fornitore del servizio di traduzione."
-    translator_azure_subscription_key: "Azure Subscription Key"
-    translator_google_api_key: "Google API Key"
+    translator_azure_subscription_key: "Chiave di sottoscrizione Azure"
+    translator_azure_region: "Regione Azure"
+    translator_google_api_key: "Chiave API Google"
+    translator_yandex_api_key: "Chiave API Yandex"
+    max_translations_per_minute: "Il numero di traduzioni al minuto che un utente normale può eseguire."
+    translator_aws_region: "Regione AWS"
+    translator_aws_key_id: "ID chiave AWS"
+    translator_aws_secret_access: "Chiave segreta di accesso AWS"
+    translator_aws_iam_role: "Ruolo AWS IAM"
   translator:
-    failed: "Il traduttore non è in grado di tradurre questo linguaggio."
-    not_supported: "Questo linguaggio non è supportato dal traduttore."
+    failed: "Il traduttore non è in grado di tradurre questa lingua."
+    not_supported: "Questa lingua non è supportata dal traduttore."
     too_long: "Questo messaggio è troppo lungo per essere tradotto dal traduttore."
+    microsoft:
+      missing_token: "Il traduttore non è stato in grado di recuperare un token valido."

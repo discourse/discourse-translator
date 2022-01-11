@@ -5,3 +5,21 @@
 # https://translate.discourse.org/
 
 ar:
+  site_settings:
+    translator_enabled: "السماح بالترجمة المضمَّنة للمنشورات."
+    translator: "مقدِّم خدمة الترجمة."
+    translator_azure_subscription_key: "مفتاح اشتراك Azure"
+    translator_azure_region: "منطقة Azure"
+    translator_google_api_key: "مفتاح واجهة برمجة تطبيقات Google"
+    translator_yandex_api_key: "مفتاح واجهة برمجة تطبيقات Yandex"
+    max_translations_per_minute: "عدد الترجمات التي يمكن للمستخدم المنتظم إجراؤها في الدقيقة"
+    translator_aws_region: "منطقة AWS"
+    translator_aws_key_id: "معرِّف مفتاح AWS"
+    translator_aws_secret_access: "مفتاح الوصول السري لـ AWS"
+    translator_aws_iam_role: "دور واجهة الهوية والوصول لـ AWS"
+  translator:
+    failed: "يتعذَّر على المترجم ترجمة هذه الرسالة."
+    not_supported: "لا يدعم المترجم هذه اللغة."
+    too_long: "هذا المنشور طويل جدًا ولا يستطيع المترجم ترجمته."
+    microsoft:
+      missing_token: "لم يتمكَّن المترجم من استرداد رمز مميَّز صالح."

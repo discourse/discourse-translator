@@ -5,3 +5,21 @@
 # https://translate.discourse.org/
 
 fr:
+  site_settings:
+    translator_enabled: "Autoriser la traduction en ligne des messages."
+    translator: "Le fournisseur du service de traduction."
+    translator_azure_subscription_key: "Clé d'abonnement Azure"
+    translator_azure_region: "Région Azure"
+    translator_google_api_key: "Clé d'API Google"
+    translator_yandex_api_key: "Clé d'API Yandex"
+    max_translations_per_minute: "Le nombre de traductions par minute qu'un utilisateur normal peut effectuer."
+    translator_aws_region: "Région AWS"
+    translator_aws_key_id: "ID de clé AWS"
+    translator_aws_secret_access: "Clé d'accès secrète AWS"
+    translator_aws_iam_role: "Rôle AWS IAM"
+  translator:
+    failed: "Le traducteur n'est pas en mesure de traduire cette langue."
+    not_supported: "Cette langue n'est pas prise en charge par le traducteur."
+    too_long: "Ce message est trop long pour être traduit par le traducteur."
+    microsoft:
+      missing_token: "Le traducteur n'a pas pu récupérer un jeton valide."

@@ -7,6 +7,6 @@
 ja:
   js:
     translator:
-      view_translation: "ビュー翻訳"
-      hide_translation: "隠す翻訳"
-      translated_from: "からの翻訳 %{language} によって %{translator}"
+      view_translation: "翻訳を表示"
+      hide_translation: "翻訳を非表示"
+      translated_from: "%{translator} で%{language}から翻訳"
