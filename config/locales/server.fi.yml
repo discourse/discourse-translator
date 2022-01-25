@@ -7,10 +7,19 @@
 fi:
   site_settings:
     translator_enabled: "Salli viestien käännökset niiden yhteydessä."
-    translator: "Käännösten palveluntuottaja."
+    translator: "Käännöspalveluntarjoaja."
     translator_azure_subscription_key: "Azure Subscription Key -tilaustunniste"
-    translator_google_api_key: "Google API Key -rajapinta-avain"
+    translator_azure_region: "Azure-alue"
+    translator_google_api_key: "Googlen API-avain"
+    translator_yandex_api_key: "Yandexin API-avain"
+    max_translations_per_minute: "Käännösten määrä minuutissa, jonka tavallinen käyttäjä voi tehdä."
+    translator_aws_region: "AWS-alue"
+    translator_aws_key_id: "AWS-avaimen tunnus"
+    translator_aws_secret_access: "AWS-salainen pääsyavain"
+    translator_aws_iam_role: "AWS:n IAM-rooli"
   translator:
     failed: "Kääntäjä ei osaa kääntää tätä kieltä."
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
+    microsoft:
+      missing_token: "Kääntäjä ei voinut noutaa kelvollista tunnusta."
