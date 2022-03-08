@@ -5,3 +5,21 @@
 # https://translate.discourse.org/
 
 el:
+  site_settings:
+    translator_enabled: "Αποδοχή ενσωματωμένης μετάφρασης των αναρτήσεων."
+    translator: "Ο πάροχος της μεταφραστικής υπηρεσίας."
+    translator_azure_subscription_key: "Συνδρομή Azure"
+    translator_azure_region: "Περιοχή Azure"
+    translator_google_api_key: "Google API Key"
+    translator_yandex_api_key: "Yandex API Key"
+    max_translations_per_minute: "Το αριθμός των μεταφράσεων κάθε λεπτό που μπορούν να γραφτούν από χρήστες."
+    translator_aws_region: "AWS Region"
+    translator_aws_key_id: "AWS Key ID"
+    translator_aws_secret_access: "Κλειδί μυστικής πρόσβασης AWS"
+    translator_aws_iam_role: "AWS IAM Role"
+  translator:
+    failed: "Ο μεταφραστής δεν μπορεί να μεταφράσει αυτήν τη γλώσσα."
+    not_supported: "Αυτή η γλώσσα δεν υποστηρίζεται από τον μεταφραστή."
+    too_long: "Αυτή η ανάρτηση είναι μεγάλη για να μεταφραστεί από έναν μεταφραστή."
+    microsoft:
+      missing_token: "Ο μεταφραστής δεν μπόρεσε να ανακτήσει ένα έγκυρο token."

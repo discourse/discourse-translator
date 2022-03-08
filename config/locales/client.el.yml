@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 el:
+  js:
+    translator:
+      view_translation: "Προβολή Μετάφρασης"
+      hide_translation: "Απόκρυψη Μετάφρασης"
+      translated_from: "Μεταφρασμένο στα %{language} από τον/την %{translator}"
