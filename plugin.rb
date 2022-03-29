@@ -28,7 +28,6 @@ after_initialize do
     end
   end
 
-  require_dependency "application_controller"
   class DiscourseTranslator::TranslatorController < ::ApplicationController
     before_action :ensure_logged_in
 
@@ -55,7 +54,6 @@ after_initialize do
 
   Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
 
-  require_dependency "post"
   class ::Post < ActiveRecord::Base
     before_update :clear_translator_custom_fields, if: :raw_changed?
 
@@ -68,8 +66,6 @@ after_initialize do
       self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
     end
   end
-
-  require_dependency "jobs/base"
 
   module ::Jobs
     class TranslatorMigrateToAzurePortal < ::Jobs::Onceoff
@@ -115,7 +111,6 @@ after_initialize do
 
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
-  require_dependency "post_serializer"
   class ::PostSerializer
     attributes :can_translate
 
