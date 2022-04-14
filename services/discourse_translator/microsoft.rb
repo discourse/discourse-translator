@@ -11,7 +11,7 @@ module DiscourseTranslator
     DETECT_URI = "https://api.cognitive.microsofttranslator.com/detect"
     ISSUE_TOKEN_URI = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken"
 
-    LENGTH_LIMIT = 5_000
+    LENGTH_LIMIT = 10_000
 
     SUPPORTED_LANG = {
       en: 'en',
