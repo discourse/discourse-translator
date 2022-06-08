@@ -10,7 +10,9 @@ module DiscourseTranslator
     SUPPORT_URI = "https://www.googleapis.com/language/translate/v2/languages".freeze
     MAXLENGTH = 5000
 
-    SUPPORTED_LANG = {
+    # Hash which maps Discourse's locale code to Google Translate's locale code found in
+    # https://cloud.google.com/translate/docs/languages
+    SUPPORTED_LANG_MAPPING = {
       en: 'en',
       en_GB: 'en',
       en_US: 'en',
@@ -63,7 +65,7 @@ module DiscourseTranslator
     end
 
     def self.translate_supported?(source, target)
-      res = result(SUPPORT_URI, target: SUPPORTED_LANG[target])
+      res = result(SUPPORT_URI, target: SUPPORTED_LANG_MAPPING[target])
       res["languages"].any? { |obj| obj["language"] == source }
     end
 
@@ -76,7 +78,7 @@ module DiscourseTranslator
         res = result(TRANSLATE_URI,
           q: post.cooked.truncate(MAXLENGTH, omission: nil),
           source: detected_lang,
-          target: SUPPORTED_LANG[I18n.locale]
+          target: SUPPORTED_LANG_MAPPING[I18n.locale]
         )
         res["translations"][0]["translatedText"]
       end

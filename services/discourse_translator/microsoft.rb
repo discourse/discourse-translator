@@ -13,7 +13,9 @@ module DiscourseTranslator
 
     LENGTH_LIMIT = 10_000
 
-    SUPPORTED_LANG = {
+    # Hash which maps Discourse's locale code to Microsoft Translator's language code found in
+    # https://docs.microsoft.com/en-us/azure/cognitive-services/translator/language-support
+    SUPPORTED_LANG_MAPPING = {
       en: 'en',
       en_US: 'en',
       en_GB: 'en',
@@ -108,8 +110,8 @@ module DiscourseTranslator
     def self.translate(post)
       detected_lang = detect(post)
 
-      if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym) &&
-         !SUPPORTED_LANG.values.include?(detected_lang.to_s)
+      if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
+         !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
 
         raise TranslatorError.new(I18n.t('translator.failed'))
       end
@@ -140,7 +142,7 @@ module DiscourseTranslator
     private
 
     def self.locale
-      SUPPORTED_LANG[I18n.locale] || (raise I18n.t("translator.not_supported"))
+      SUPPORTED_LANG_MAPPING[I18n.locale] || (raise I18n.t("translator.not_supported"))
     end
 
     def self.post(uri, body, headers = {})

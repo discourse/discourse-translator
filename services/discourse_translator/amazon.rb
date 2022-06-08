@@ -8,7 +8,9 @@ module DiscourseTranslator
 
     MAXLENGTH = 5000
 
-    SUPPORTED_LANG = {
+    # Hash which maps Discourse's locale code to Amazon Translate's language code found in
+    # https://docs.aws.amazon.com/translate/latest/dg/what-is-languages.html
+    SUPPORTED_LANG_MAPPING = {
       af: 'af',
       sq: 'sq',
       am: 'am',
@@ -94,7 +96,7 @@ module DiscourseTranslator
       detected_lang = client.translate_text({
         text: post.cooked.truncate(MAXLENGTH, omission: nil),
         source_language_code: 'auto',
-        target_language_code: SUPPORTED_LANG[I18n.locale]
+        target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale]
       })&.source_language_code
 
       assign_lang_custom_field(post, detected_lang)
@@ -105,7 +107,7 @@ module DiscourseTranslator
         result = client.translate_text({
           text: post.cooked.truncate(MAXLENGTH, omission: nil),
           source_language_code: "auto",
-          target_language_code: SUPPORTED_LANG[I18n.locale],
+          target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
         })
 
         detected_lang = assign_lang_custom_field(post, result.source_language_code)
