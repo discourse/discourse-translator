@@ -123,7 +123,7 @@ after_initialize do
         Jobs.enqueue(:detect_translation, post_id: object.id)
         false
       else
-        detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG".constantize[I18n.locale]
+        detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[I18n.locale]
       end
     end
 
