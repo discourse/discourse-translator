@@ -37,6 +37,7 @@ module DiscourseTranslator
       pt: 'pt',
       ro: 'ro',
       ru: 'ru',
+      sk: 'sk',
       sl: 'sl',
       sq: 'sq',
       sr: 'sr',
