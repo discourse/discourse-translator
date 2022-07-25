@@ -123,7 +123,7 @@ module DiscourseTranslator
     end
 
     def self.detect(object)
-      object.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+      object.custom_fields[get_custom_field(object)] ||= begin
         query = default_query.merge(
           "text" => get_text(object)
         )
@@ -137,7 +137,7 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate(object)
+    def self.translate(object, target_language = I18n.locale)
       detected_lang = detect(object)
 
       if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
@@ -146,9 +146,9 @@ module DiscourseTranslator
         raise TranslatorError.new(I18n.t('translator.failed'))
       end
 
-      translated_text = from_custom_fields(object) do
+      translated_text = from_custom_fields(object, target_language) do
         query = default_query.merge(
-          "lang" => "#{detected_lang}-#{locale}",
+          "lang" => "#{detected_lang}-#{locale(target_language)}",
           "text" => get_text(object),
           "format" => "html"
         )
@@ -165,8 +165,8 @@ module DiscourseTranslator
 
     private
 
-    def self.locale
-      SUPPORTED_LANG_MAPPING[I18n.locale] || (raise I18n.t("translator.not_supported"))
+    def self.locale(language)
+      SUPPORTED_LANG_MAPPING[language.to_sym] || (raise I18n.t("translator.not_supported"))
     end
 
     def self.post(uri, body, headers = {})

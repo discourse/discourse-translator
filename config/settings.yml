@@ -82,3 +82,9 @@ plugins:
     default: ''
   max_translations_per_minute:
     default: 3
+  translator_default_title_languages:
+    type: list
+    default: ''
+    validator: DefaultTitleLanguagesValidator
+  translator_show_topic_titles_in_user_locale:
+    default: false

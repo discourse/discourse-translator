@@ -66,27 +66,27 @@ module DiscourseTranslator
     end
 
     def self.detect(object)
-      object.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||=
+      object.custom_fields[get_custom_field(object)] ||=
         result(DETECT_URI,
           q: get_text(object, MAXLENGTH)
         )["detections"][0].max { |a, b| a.confidence <=> b.confidence }["language"]
     end
 
     def self.translate_supported?(source, target)
-      res = result(SUPPORT_URI, target: SUPPORTED_LANG_MAPPING[target])
+      res = result(SUPPORT_URI, target: SUPPORTED_LANG_MAPPING[target.to_sym])
       res["languages"].any? { |obj| obj["language"] == source }
     end
 
-    def self.translate(object)
+    def self.translate(object, target_language = I18n.locale)
       detected_lang = detect(object)
 
-      raise I18n.t('translator.failed') unless translate_supported?(detected_lang, I18n.locale)
+      raise I18n.t('translator.failed') unless translate_supported?(detected_lang, target_language)
 
-      translated_text = from_custom_fields(object) do
+      translated_text = from_custom_fields(object, target_language) do
         res = result(TRANSLATE_URI,
           q: get_text(object, MAXLENGTH),
           source: detected_lang,
-          target: SUPPORTED_LANG_MAPPING[I18n.locale]
+          target: SUPPORTED_LANG_MAPPING[target_language.to_sym]
         )
         res["translations"][0]["translatedText"]
       end

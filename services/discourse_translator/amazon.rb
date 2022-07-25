@@ -93,25 +93,26 @@ module DiscourseTranslator
     end
 
     def self.detect(object)
-      detected_lang = perform(object)&.source_language_code
+      detected_lang = client.translate_text({
+        text: get_text(object, MAXLENGTH),
+        source_language_code: 'auto',
+        target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale]
+      })&.source_language_code
+
       assign_lang_custom_field(object, detected_lang)
     end
 
-    def self.translate(object)
-      result = perform(object)
+    def self.translate(object, target_language = I18n.locale)
+      result = client.translate_text({
+        text: get_text(object, MAXLENGTH),
+        source_language_code: "auto",
+        target_language_code: SUPPORTED_LANG_MAPPING[target_language.to_sym],
+      })
       detected_lang = assign_lang_custom_field(object, result.source_language_code)
-      translated_text = from_custom_fields(object) { result.translated_text }
+      translated_text = from_custom_fields(object, target_language) { result.translated_text }
       [detected_lang, translated_text]
     rescue Aws::Translate::Errors::UnsupportedLanguagePairException
       raise I18n.t('translator.failed')
-    end
-
-    def self.perform(object)
-      client.translate_text({
-        text: get_text(object, MAXLENGTH),
-        source_language_code: "auto",
-        target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
-      })
     end
 
     def self.client

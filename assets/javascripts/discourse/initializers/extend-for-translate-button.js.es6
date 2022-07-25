@@ -2,6 +2,7 @@ import I18n from "I18n";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { ajax } from "discourse/lib/ajax";
+import { observes } from "discourse-common/utils/decorators";
 
 function translatePost(post) {
   return ajax("/translator/translate", {
@@ -97,6 +98,15 @@ function initializeTranslation(api) {
       position: "first",
       className: state.isTranslated ? "translated" : null,
     };
+  });
+
+  api.modifyClass("controller:topic", {
+    @observes("editingTopic")
+    restoreOriginalTitleWhenEditing() {
+      if (this.editingTopic) {
+        this.set("buffered.title", this.model.original_title);
+      }
+    },
   });
 }
 

@@ -11,6 +11,10 @@ en:
     translator_aws_key_id: "AWS Key ID"
     translator_aws_secret_access: "AWS secret access key"
     translator_aws_iam_role: "AWS IAM Role"
+    translator_default_title_languages: "Automatically translate topic titles into these languages into upon topic creation."
+    translator_show_topic_titles_in_user_locale: "Show topic titles in user locale if translation exists."
+    errors:
+      translator_language_not_supported: "Language not supported"
   translator:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."

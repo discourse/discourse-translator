@@ -4,3 +4,4 @@ en:
       view_translation: "View translation"
       hide_translation: "Hide translation"
       translated_from: "Translated from %{language} by %{translator}"
+      translated_from_with_original: "Translated from %{language} by %{translator}: \"%{original}\""

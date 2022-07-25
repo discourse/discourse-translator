@@ -18,7 +18,7 @@ module DiscourseTranslator
       "#{key_prefix}#{access_token_key}"
     end
 
-    def self.translate(object)
+    def self.translate(object, target_language = I18n.locale)
       raise "Not Implemented"
     end
 
@@ -30,15 +30,15 @@ module DiscourseTranslator
       raise "Not Implemented"
     end
 
-    def self.from_custom_fields(object)
+    def self.from_custom_fields(object, language)
       translated_custom_field = object.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] || {}
-      translated_text = translated_custom_field[I18n.locale]
+      translated_text = translated_custom_field[language]
 
       if translated_text.nil?
         translated_text = yield
 
         object.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] =
-          translated_custom_field.merge(I18n.locale => translated_text)
+          translated_custom_field.merge("#{language}" => translated_text)
 
         object.save!
       end
