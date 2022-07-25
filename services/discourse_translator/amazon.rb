@@ -92,30 +92,26 @@ module DiscourseTranslator
       "aws-translator"
     end
 
-    def self.detect(post)
-      detected_lang = client.translate_text({
-        text: post.cooked.truncate(MAXLENGTH, omission: nil),
-        source_language_code: 'auto',
-        target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale]
-      })&.source_language_code
-
-      assign_lang_custom_field(post, detected_lang)
+    def self.detect(object)
+      detected_lang = perform(object)&.source_language_code
+      assign_lang_custom_field(object, detected_lang)
     end
 
-    def self.translate(post)
-      from_custom_fields(post) do
-        result = client.translate_text({
-          text: post.cooked.truncate(MAXLENGTH, omission: nil),
-          source_language_code: "auto",
-          target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
-        })
-
-        detected_lang = assign_lang_custom_field(post, result.source_language_code)
-
-        [detected_lang, result.translated_text]
-      end
+    def self.translate(object)
+      result = perform(object)
+      detected_lang = assign_lang_custom_field(object, result.source_language_code)
+      translated_text = from_custom_fields(object) { result.translated_text }
+      [detected_lang, translated_text]
     rescue Aws::Translate::Errors::UnsupportedLanguagePairException
       raise I18n.t('translator.failed')
+    end
+
+    def self.perform(object)
+      client.translate_text({
+        text: get_text(object, MAXLENGTH),
+        source_language_code: "auto",
+        target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
+      })
     end
 
     def self.client
@@ -138,10 +134,10 @@ module DiscourseTranslator
       @client ||= Aws::Translate::Client.new(opts)
     end
 
-    def self.assign_lang_custom_field(post, value)
-      return post.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD) if value.nil?
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= value
+    def self.assign_lang_custom_field(object, value)
+      field = get_custom_field(object)
+      return object.custom_fields.delete(field) if value.nil?
+      object.custom_fields[field] ||= value
     end
-
   end
 end

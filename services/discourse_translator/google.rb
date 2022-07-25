@@ -65,10 +65,10 @@ module DiscourseTranslator
       SiteSetting.translator_google_api_key || (raise TranslatorError.new("NotFound: Google Api Key not set."))
     end
 
-    def self.detect(post)
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||=
+    def self.detect(object)
+      object.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||=
         result(DETECT_URI,
-          q: post.cooked.truncate(MAXLENGTH, omission: nil)
+          q: get_text(object, MAXLENGTH)
         )["detections"][0].max { |a, b| a.confidence <=> b.confidence }["language"]
     end
 
@@ -77,14 +77,14 @@ module DiscourseTranslator
       res["languages"].any? { |obj| obj["language"] == source }
     end
 
-    def self.translate(post)
-      detected_lang = detect(post)
+    def self.translate(object)
+      detected_lang = detect(object)
 
       raise I18n.t('translator.failed') unless translate_supported?(detected_lang, I18n.locale)
 
-      translated_text = from_custom_fields(post) do
+      translated_text = from_custom_fields(object) do
         res = result(TRANSLATE_URI,
-          q: post.cooked.truncate(MAXLENGTH, omission: nil),
+          q: get_text(object, MAXLENGTH),
           source: detected_lang,
           target: SUPPORTED_LANG_MAPPING[I18n.locale]
         )

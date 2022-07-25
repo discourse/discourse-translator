@@ -77,6 +77,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
 
   describe '.translate' do
     let(:post) { Fabricate(:post) }
+    let(:topic) { Fabricate(:topic) }
 
     before do
       Discourse.redis.set(described_class.cache_key, '12345')
@@ -88,25 +89,46 @@ RSpec.describe DiscourseTranslator::Microsoft do
       Discourse.redis.del(described_class.cache_key)
     end
 
-    it 'should work' do
-      I18n.locale = 'de'
+    context 'should work' do
+      let(:translated_text) { "some de text" }
+      let(:detected_lang) { 'en' }
+      let(:target_lang) { "de" }
 
-      uri = URI(described_class::TRANSLATE_URI)
+      before do
+        I18n.locale = target_lang
 
-      uri.query = URI.encode_www_form(described_class.default_query.merge(
-        "from" => "en",
-        "to" => I18n.locale,
-        "textType" => "html"
-      ))
+        translate_uri = URI(described_class::TRANSLATE_URI)
+        translate_uri.query = URI.encode_www_form(described_class.default_query.merge(
+          "from" => detected_lang,
+          "to" => I18n.locale,
+          "textType" => "html"
+        ))
+        detect_uri = URI(described_class::DETECT_URI)
+        detect_uri.query = URI.encode_www_form(described_class.default_query)
 
-      stub_request(:post, uri.to_s).to_return(
-        status: 200,
-        body: [{ "translations" => [{ "text" => "some de text" }] }].to_json,
-      )
+        stub_request(:post, translate_uri.to_s).to_return(
+          status: 200,
+          body: [{ "translations" => [{ "text" => translated_text }] }].to_json,
+        )
+        stub_request(:post, detect_uri.to_s).to_return(
+          status: 200,
+          body: [{ "language" => detected_lang }].to_json
+        )
+      end
 
-      expect(described_class.translate(post)).to eq([
-        "en", "some de text"
-      ])
+      it 'with posts' do
+        expect(described_class.translate(post)).to eq([
+          detected_lang, translated_text
+        ])
+        expect(post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]).to eq({ "#{target_lang}" => translated_text })
+      end
+
+      it 'with topics' do
+        expect(described_class.translate(topic)).to eq([
+          detected_lang, translated_text
+        ])
+        expect(topic.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]).to eq({ "#{target_lang}" => translated_text })
+      end
     end
 
     it 'should return the right value when post has already been translated' do
@@ -130,14 +152,6 @@ RSpec.describe DiscourseTranslator::Microsoft do
 
       expect { described_class.translate(post) }.to raise_error(
         DiscourseTranslator::TranslatorError, I18n.t('translator.failed')
-      )
-    end
-
-    it 'raises an error if the post is too long to be translated' do
-      post.update_columns(cooked: "*" * (DiscourseTranslator::Microsoft::LENGTH_LIMIT + 1))
-
-      expect { described_class.translate(post) }.to raise_error(
-        DiscourseTranslator::TranslatorError, I18n.t('translator.too_long')
       )
     end
 

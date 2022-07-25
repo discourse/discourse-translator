@@ -15,6 +15,7 @@ after_initialize do
   module ::DiscourseTranslator
     PLUGIN_NAME = "discourse_translator".freeze
     DETECTED_LANG_CUSTOM_FIELD = 'post_detected_lang'.freeze
+    DETECTED_TITLE_LANG_CUSTOM_FIELD = 'topic_title_detected_lang'.freeze
     TRANSLATED_CUSTOM_FIELD = 'translated_text'.freeze
 
     autoload :Microsoft, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
@@ -53,6 +54,7 @@ after_initialize do
   end
 
   Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
+  Topic.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
 
   class ::Post < ActiveRecord::Base
     before_update :clear_translator_custom_fields, if: :raw_changed?
@@ -63,6 +65,19 @@ after_initialize do
       return if !SiteSetting.translator_enabled
 
       self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
+      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
+    end
+  end
+
+  class ::Topic < ActiveRecord::Base
+    before_update :clear_translator_custom_fields, if: :title_changed?
+
+    private
+
+    def clear_translator_custom_fields
+      return if !SiteSetting.translator_enabled
+
+      self.custom_fields.delete(DiscourseTranslator::DETECTED_TITLE_LANG_CUSTOM_FIELD)
       self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
     end
   end

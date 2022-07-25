@@ -100,9 +100,9 @@ module DiscourseTranslator
       end
     end
 
-    def self.detect(post)
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = post.raw.truncate(LENGTH_LIMIT, omission: nil)
+    def self.detect(object)
+      object.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+        text = get_text(object, LENGTH_LIMIT)
 
         body = [
           { "Text" => text }
@@ -121,8 +121,8 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate(post)
-      detected_lang = detect(post)
+    def self.translate(object)
+      detected_lang = detect(object)
 
       if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
          !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
@@ -130,9 +130,7 @@ module DiscourseTranslator
         raise TranslatorError.new(I18n.t('translator.failed'))
       end
 
-      raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
-
-      translated_text = from_custom_fields(post) do
+      translated_text = from_custom_fields(object) do
         query = default_query.merge(
           "from" => detected_lang,
           "to" => locale,
@@ -140,7 +138,7 @@ module DiscourseTranslator
         )
 
         body = [
-          { "Text" => post.cooked }
+          { "Text" => get_text(object, LENGTH_LIMIT) }
         ].to_json
 
         uri = URI(TRANSLATE_URI)

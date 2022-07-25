@@ -4,16 +4,18 @@ require 'rails_helper'
 
 RSpec.describe DiscourseTranslator::Amazon do
   let(:mock_response) { Struct.new(:status, :body) }
+  let(:detected_lang) { 'en' }
+  let(:target_lang) { "es" }
+  let(:translated_text) { "Probando traducciones" }
 
   describe '.detect' do
     let(:post) { Fabricate(:post) }
     let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
     let(:text) { post.cooked.truncate(described_class::MAXLENGTH, omission: nil) }
-    let(:detected_lang) { 'en' }
 
     before do
       client.stub_responses(:translate_text, {
-        translated_text: "Probando traducciones", source_language_code: "en", target_language_code: "es"
+        translated_text: translated_text, source_language_code: detected_lang, target_language_code: target_lang
       })
       Aws::Translate::Client.stubs(:new).returns(client)
     end
@@ -38,17 +40,39 @@ RSpec.describe DiscourseTranslator::Amazon do
 
   describe '.translate' do
     let(:post) { Fabricate(:post) }
+    let(:topic) { Fabricate(:topic) }
     let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
 
-    before do
-      client.stub_responses(:translate_text, "UnsupportedLanguagePairException", {
-        translated_text: "Probando traducciones", source_language_code: "en", target_language_code: "es"
-      })
-      described_class.stubs(:client).returns(client)
+    context "works" do
+      before do
+        client.stub_responses(:translate_text, {
+          translated_text: translated_text, source_language_code: detected_lang, target_language_code: target_lang
+        })
+        Aws::Translate::Client.stubs(:new).returns(client)
+      end
+
+      it 'with posts' do
+        expect(described_class.translate(post)).to eq([detected_lang, translated_text])
+        expect(post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]).to eq({ "en" => translated_text })
+      end
+
+      it 'with topic titles' do
+        expect(described_class.translate(topic)).to eq([detected_lang, translated_text])
+        expect(topic.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]).to eq({ "en" => translated_text })
+      end
     end
 
-    it 'raises an error when trying to translate an unsupported language' do
-      expect { described_class.translate(post) }.to raise_error(I18n.t('translator.failed'))
+    context 'handles unsupported languages' do
+      before do
+        client.stub_responses(:translate_text, "UnsupportedLanguagePairException", {
+          translated_text: translated_text, source_language_code: detected_lang, target_language_code: target_lang
+        })
+        described_class.stubs(:client).returns(client)
+      end
+
+      it 'raises an error when trying to translate an unsupported language' do
+        expect { described_class.translate(post) }.to raise_error(I18n.t('translator.failed'))
+      end
     end
   end
 end

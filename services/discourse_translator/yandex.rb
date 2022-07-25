@@ -122,10 +122,10 @@ module DiscourseTranslator
       SiteSetting.translator_yandex_api_key || (raise TranslatorError.new("NotFound: Yandex API Key not set."))
     end
 
-    def self.detect(post)
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+    def self.detect(object)
+      object.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
         query = default_query.merge(
-          "text" => post.raw
+          "text" => get_text(object)
         )
 
         uri = URI(DETECT_URI)
@@ -137,8 +137,8 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate(post)
-      detected_lang = detect(post)
+    def self.translate(object)
+      detected_lang = detect(object)
 
       if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
         !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
@@ -146,10 +146,10 @@ module DiscourseTranslator
         raise TranslatorError.new(I18n.t('translator.failed'))
       end
 
-      translated_text = from_custom_fields(post) do
+      translated_text = from_custom_fields(object) do
         query = default_query.merge(
           "lang" => "#{detected_lang}-#{locale}",
-          "text" => post.cooked,
+          "text" => get_text(object),
           "format" => "html"
         )
 

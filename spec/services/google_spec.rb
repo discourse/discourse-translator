@@ -63,6 +63,32 @@ RSpec.describe DiscourseTranslator::Google do
 
   describe '.translate' do
     let(:post) { Fabricate(:post) }
+    let(:topic) { Fabricate(:topic) }
+    let(:detected_lang) { 'en' }
+    let(:target_lang) { "es" }
+    let(:translated_text) { "Probando traducciones" }
+
+    context "works" do
+      before do
+        Excon.expects(:post)
+          .times(3)
+          .returns(
+            mock_response.new(200, %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } }),
+            mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{detected_lang}" }] } } }),
+            mock_response.new(200, %{ { "data": { "translations": [ { "translatedText": "#{translated_text}" }] } } })
+          )
+      end
+
+      it 'with posts' do
+        expect(described_class.translate(post)).to eq([detected_lang, translated_text])
+        expect(post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]).to eq({ "en" => translated_text })
+      end
+
+      it 'with topic titles' do
+        expect(described_class.translate(topic)).to eq([detected_lang, translated_text])
+        expect(topic.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]).to eq({ "en" => translated_text })
+      end
+    end
 
     it 'raises an error on failure' do
       described_class.expects(:access_token).returns('12345')
