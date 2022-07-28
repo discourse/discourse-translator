@@ -73,16 +73,10 @@ after_initialize do
   Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
   Topic.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
 
-  class ::Post < ActiveRecord::Base
-    before_update :clear_translator_custom_fields, if: :raw_changed?
-
-    private
-
-    def clear_translator_custom_fields
-      return if !SiteSetting.translator_enabled
-
-      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
-      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
+  add_model_callback(:post, :before_update) do
+    if raw_changed?
+      custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
+      custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
     end
   end
 
