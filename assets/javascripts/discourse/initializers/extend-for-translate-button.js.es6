@@ -102,8 +102,8 @@ function initializeTranslation(api) {
 
   api.modifyClass("controller:topic", {
     @observes("editingTopic")
-    restoreOriginalTitleWhenEditing() {
-      if (this.editingTopic) {
+    restoreOriginalTitle() {
+      if (this.editingTopic && this.model.title_translated) {
         this.set("buffered.title", this.model.original_title);
       }
     },
