@@ -43,17 +43,6 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
           expect(response).to have_http_status(:bad_request)
         end
 
-        it 'raises the right error when post_id is invalid' do
-          post :translate, params: { post_id: -1 }, format: :json
-          expect(response).to have_http_status(:bad_request)
-        end
-
-        it 'raises the right error when post is inaccessible' do
-          mypost = Fabricate(:private_message_post)
-          post :translate, params: { post_id: mypost.id }, format: :json
-          expect(response.status).to eq(403)
-        end
-
         it 'rescues translator errors' do
           DiscourseTranslator::Microsoft.expects(:translate).raises(::DiscourseTranslator::TranslatorError)
 
@@ -62,13 +51,50 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
           expect(response).to have_http_status(:unprocessable_entity)
         end
 
-        it 'returns the translated text' do
-          DiscourseTranslator::Microsoft.expects(:translate).with(reply).returns(['ja', 'ニャン猫'])
+        context "when translating posts" do
+          it 'raises the right error when post_id is invalid' do
+            post :translate, params: { post_id: -1 }, format: :json
+            expect(response).to have_http_status(:bad_request)
+          end
 
-          post :translate, params: { post_id: reply.id }, format: :json
+          it 'raises the right error when post is inaccessible' do
+            mypost = Fabricate(:private_message_post)
+            post :translate, params: { post_id: mypost.id }, format: :json
+            expect(response.status).to eq(403)
+          end
 
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to eq({ translation: 'ニャン猫', detected_lang: 'ja' }.to_json)
+          it 'returns the translated text' do
+            DiscourseTranslator::Microsoft.expects(:translate).with(reply).returns(['ja', 'ニャン猫'])
+
+            post :translate, params: { post_id: reply.id }, format: :json
+
+            expect(response).to have_http_status(:ok)
+            expect(response.body).to eq({ translation: 'ニャン猫', detected_lang: 'ja' }.to_json)
+          end
+        end
+
+        context "translating topic titles" do
+          let(:topic) { Fabricate(:topic) }
+
+          it 'raises the right error when topic_id is invalid' do
+            post :translate, params: { topic_id: -1 }, format: :json
+            expect(response).to have_http_status(:bad_request)
+          end
+
+          it 'raises the right error when topic is inaccessible' do
+            private_message = Fabricate(:private_message_post)
+            post :translate, params: { topic_id: private_message.topic.id }, format: :json
+            expect(response.status).to eq(403)
+          end
+
+          it 'returns the translated text' do
+            DiscourseTranslator::Microsoft.expects(:translate).with(topic).returns(['ja', 'ニャン猫'])
+
+            post :translate, params: { topic_id: topic.id }, format: :json
+
+            expect(response).to have_http_status(:ok)
+            expect(response.body).to eq({ translation: 'ニャン猫', detected_lang: 'ja' }.to_json)
+          end
         end
       end
     end

@@ -65,7 +65,7 @@ after_initialize do
     def find_object
       raise Discourse::InvalidParameters.new unless params[:post_id] || params[:topic_id]
       @object = params[:post_id] ? Post.find_by(id: params[:post_id]) : Topic.find_by(id: params[:topic_id])
-      raise Discourse::InvalidParameters.new(:post_id) if @object.blank?
+      raise Discourse::InvalidParameters.new if @object.blank?
       guardian.ensure_can_see!(@object)
     end
   end
