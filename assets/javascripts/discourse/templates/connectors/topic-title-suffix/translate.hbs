@@ -1,5 +1,5 @@
 {{#if model.title_translated}}
   {{translated-title-icon model}}
-{{else}}
+{{else if model.can_translate_title}}
   {{translate-topic-title topic=model}}
 {{/if}}

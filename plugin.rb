@@ -214,6 +214,7 @@ after_initialize do
   add_to_serializer(:topic_view, :original_title) { object.topic.title }
   add_to_serializer(:topic_view, :include_original_title?) { title_translated }
   add_to_serializer(:topic_view, :title_language) { object.topic.title_language }
+  add_to_serializer(:topic_view, :can_translate_title) { title_language.to_sym != I18n.locale }
 
   DiscourseTranslator::Engine.routes.draw do
     post "translate" => "translator#translate"
