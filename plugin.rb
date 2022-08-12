@@ -88,8 +88,8 @@ after_initialize do
   end
 
   add_to_class(:topic, :title_translations) do
-    translations = if !custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD].nil?
-      custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD].merge
+    if !custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD].nil?
+      custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]
     else
       {}
     end
@@ -100,7 +100,7 @@ after_initialize do
   add_to_class(:topic, :translated_title) do
     language = DiscourseTranslator.current_service::SUPPORTED_LANG_MAPPING[I18n.locale]
     translation = title_translations[language]
-    translation ? translation : title
+    translation.present? ? translation : title
   end
 
   add_to_class(:topic, :translated_fancy_title) do
