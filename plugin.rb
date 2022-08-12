@@ -103,10 +103,6 @@ after_initialize do
     translation.present? ? translation : title
   end
 
-  add_to_class(:topic, :translated_fancy_title) do
-    self.class.fancy_title(translated_title)
-  end
-
   on(:post_created) do |post, options, user|
     if SiteSetting.translator_default_title_languages.present? && post.is_first_post?
       Jobs.enqueue(:translate_topic_title, topic_id: post.topic.id)
@@ -197,7 +193,7 @@ after_initialize do
     SiteSetting.translator_show_topic_titles_in_user_locale ? object.translated_title : object.title
   end
   add_to_serializer(:topic_list_item, :fancy_title) do
-    SiteSetting.translator_show_topic_titles_in_user_locale ? object.translated_fancy_title : object.fancy_title
+    SiteSetting.translator_show_topic_titles_in_user_locale ? object.translated_title : object.fancy_title
   end
   add_to_serializer(:topic_list_item, :title_translated) { title != object.title }
   add_to_serializer(:topic_list_item, :original_title) { object.title }
@@ -208,7 +204,7 @@ after_initialize do
     SiteSetting.translator_show_topic_titles_in_user_locale ? object.topic.translated_title : object.topic.title
   end
   add_to_serializer(:topic_view, :fancy_title) do
-    SiteSetting.translator_show_topic_titles_in_user_locale ? object.topic.translated_fancy_title : object.topic.fancy_title
+    SiteSetting.translator_show_topic_titles_in_user_locale ? object.topic.translated_title : object.topic.fancy_title
   end
   add_to_serializer(:topic_view, :title_translated) { title != object.topic.title }
   add_to_serializer(:topic_view, :original_title) { object.topic.title }
