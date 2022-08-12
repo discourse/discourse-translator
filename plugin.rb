@@ -108,7 +108,7 @@ after_initialize do
   end
 
   on(:post_created) do |post, options, user|
-    if SiteSetting.translator_default_title_languages.present?
+    if SiteSetting.translator_default_title_languages.present? && post.is_first_post?
       Jobs.enqueue(:translate_topic_title, topic_id: post.topic.id)
     end
   end
