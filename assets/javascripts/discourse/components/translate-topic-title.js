@@ -7,7 +7,6 @@ export default Component.extend({
   actions: {
     translate() {
       const topic = this.topic;
-      const self = this;
       const originalTitle = topic.title;
 
       this.set("translating", true);
@@ -26,7 +25,7 @@ export default Component.extend({
           });
         })
         .finally(() => {
-          self.set("translating", false);
+          this.set("translating", false);
         });
     },
   },
