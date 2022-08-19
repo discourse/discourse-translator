@@ -189,28 +189,89 @@ after_initialize do
 
   end
 
-  add_to_serializer(:topic_list_item, :title) do
-    SiteSetting.translator_show_topic_titles_in_user_locale ? object.translated_title : object.title
-  end
-  add_to_serializer(:topic_list_item, :fancy_title) do
-    SiteSetting.translator_show_topic_titles_in_user_locale ? object.translated_title : object.fancy_title
-  end
-  add_to_serializer(:topic_list_item, :title_translated) { title != object.title }
-  add_to_serializer(:topic_list_item, :original_title) { object.title }
-  add_to_serializer(:topic_list_item, :include_original_title?) { title_translated }
-  add_to_serializer(:topic_list_item, :title_language) { object.title_language }
+  module TopicListItemSerializerTranslatorOverride
+    def title
+      return super unless serialize_translated_title?
+      object.translated_title
+    end
 
-  add_to_serializer(:topic_view, :title) do
-    SiteSetting.translator_show_topic_titles_in_user_locale ? object.topic.translated_title : object.topic.title
+    def fancy_title
+      return super unless serialize_translated_title?
+      object.translated_title
+    end
+
+    def original_title
+      object.title
+    end
+
+    def include_original_title?
+      serialize_translated_title?
+    end
+
+    def title_translated
+      original_title != title
+    end
+
+    def title_language
+      object.title_language
+    end
+
+    def serialize_translated_title?
+      SiteSetting.translator_enabled &&
+        SiteSetting.translator_show_topic_titles_in_user_locale &&
+        object.translated_title.present?
+    end
   end
-  add_to_serializer(:topic_view, :fancy_title) do
-    SiteSetting.translator_show_topic_titles_in_user_locale ? object.topic.translated_title : object.topic.fancy_title
+
+  class :: TopicListItemSerializer
+    prepend TopicListItemSerializerTranslatorOverride
+
+    attributes :original_title, :title_translated, :title_language
   end
-  add_to_serializer(:topic_view, :title_translated) { title != object.topic.title }
-  add_to_serializer(:topic_view, :original_title) { object.topic.title }
-  add_to_serializer(:topic_view, :include_original_title?) { title_translated }
-  add_to_serializer(:topic_view, :title_language) { object.topic.title_language }
-  add_to_serializer(:topic_view, :can_translate_title) { title_language.to_sym != I18n.locale }
+
+  module TopicViewSerializerTranslatorOverride
+    def title
+      return super unless serialize_translated_title?
+      object.topic.translated_title
+    end
+
+    def fancy_title
+      return super unless serialize_translated_title?
+      object.topic.translated_title
+    end
+
+    def original_title
+      object.topic.title
+    end
+
+    def include_original_title?
+      serialize_translated_title?
+    end
+
+    def title_translated
+      original_title != title
+    end
+
+    def title_language
+      object.topic.title_language
+    end
+
+    def can_translate_title
+      title_language.to_sym != I18n.locale
+    end
+
+    def serialize_translated_title?
+      SiteSetting.translator_enabled &&
+        SiteSetting.translator_show_topic_titles_in_user_locale &&
+        object.topic.translated_title.present?
+    end
+  end
+
+  class ::TopicViewSerializer
+    prepend TopicViewSerializerTranslatorOverride
+
+    attributes :original_title, :title_translated, :title_language, :can_translate_title
+  end
 
   DiscourseTranslator::Engine.routes.draw do
     post "translate" => "translator#translate"
