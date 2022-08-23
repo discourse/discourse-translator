@@ -260,6 +260,10 @@ after_initialize do
       title_language.to_sym != I18n.locale
     end
 
+    def include_can_translate_title?
+      title_language.present?
+    end
+
     def serialize_translated_title?
       SiteSetting.translator_enabled &&
         SiteSetting.translator_show_topic_titles_in_user_locale &&
