@@ -28,6 +28,8 @@ module DiscourseTranslator
       et: 'et',
       fi: 'fi',
       fr: 'fr',
+      hr: 'hr',
+      hy: 'hy',
       hu: 'hu',
       he: 'iw',
       id: 'id',
