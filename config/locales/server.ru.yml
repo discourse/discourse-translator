@@ -6,8 +6,8 @@
 
 ru:
   site_settings:
-    translator_enabled: "Разрешить встроенный перевод сообщений."
-    translator: "Поставщик услуги перевода."
+    translator_enabled: "Разреши инлайн-перевод постов."
+    translator: "Поставщик услуг перевода."
     translator_azure_subscription_key: "Ключ подписки Azure"
     translator_azure_region: "Регион Azure"
     translator_google_api_key: "Ключ API Google"
