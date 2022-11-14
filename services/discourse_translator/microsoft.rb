@@ -11,7 +11,7 @@ module DiscourseTranslator
     DETECT_URI = "https://api.cognitive.microsofttranslator.com/detect"
     ISSUE_TOKEN_URI = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken"
 
-    LENGTH_LIMIT = 10_000
+    LENGTH_LIMIT = 50_000
 
     # Hash which maps Discourse's locale code to Microsoft Translator's language code found in
     # https://docs.microsoft.com/en-us/azure/cognitive-services/translator/language-support
