@@ -7,36 +7,52 @@ module DiscourseTranslator
   class LibreTranslate < Base
     MAXLENGTH = 5000
 
-    SUPPORTED_LANG = {
+    SUPPORTED_LANG_MAPPING = {
       en: 'en',
-      en_US: 'en',
       en_GB: 'en',
+      en_US: 'en',
+      ar: 'ar',
+      bg: 'bg',
       bs_BA: 'bs',
+      ca: 'ca',
       cs: 'cs',
       da: 'da',
       de: 'de',
-      ar: 'ar',
+      el: 'el',
       es: 'es',
+      et: 'et',
       fi: 'fi',
       fr: 'fr',
       he: 'iw',
+      hr: 'hr',
+      hu: 'hu',
+      hy: 'hy',
       id: 'id',
       it: 'it',
       ja: 'ja',
+      ka: 'ka',
+      kk: 'kk',
       ko: 'ko',
+      ky: 'ky',
+      lv: 'lv',
+      mk: 'mk',
       nl: 'nl',
       pt: 'pt',
       ro: 'ro',
       ru: 'ru',
+      sk: 'sk',
+      sl: 'sl',
+      sq: 'sq',
+      sr: 'sr',
       sv: 'sv',
-      uk: 'uk',
-      lv: 'lv',
-      et: 'et',
-      zh_CN: 'zh-CN',
-      zh_TW: 'zh-TW',
-      tr_TR: 'tr',
+      tg: 'tg',
       te: 'te',
-      sq: nil,
+      th: 'th',
+      uk: 'uk',
+      uz: 'uz',
+      zh_CN: 'zh',
+      zh_TW: 'zh',
+      tr_TR: 'tr',
       pt_BR: 'pt',
       pl_PL: 'pl',
       no_NO: 'no',
@@ -77,8 +93,8 @@ module DiscourseTranslator
     end
 
     def self.translate_supported?(source, target)
-      lang = SUPPORTED_LANG[target]
-      res = result(support_uri, {})
+      lang = SUPPORTED_LANG_MAPPING[target]
+      res = get(support_uri)
       res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang }
     end
 
@@ -89,14 +105,31 @@ module DiscourseTranslator
 
       translated_text = from_custom_fields(post) do
         res = result(translate_uri,
-          q: ActionController::Base.helpers.strip_tags(post.cooked).truncate(MAXLENGTH, omission: nil),
+          q: post.cooked.truncate(MAXLENGTH, omission: nil),
           source: detected_lang,
-          target: SUPPORTED_LANG[I18n.locale]
+          target: SUPPORTED_LANG_MAPPING[I18n.locale],
+          format: "html"
         )
         res["translatedText"]
       end
 
       [detected_lang, translated_text]
+    end
+
+    def self.get(url)
+      response = Excon.get(url)
+
+      body = nil
+      begin
+        body = JSON.parse(response.body)
+      rescue JSON::ParserError
+      end
+
+      if response.status != 200
+        raise TranslatorError.new(body || response.inspect)
+      else
+        body
+      end
     end
 
     def self.result(url, body)

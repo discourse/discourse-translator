@@ -2,8 +2,8 @@
 
 # name: discourse-translator
 # about: Provides inline translation of posts.
-# version: 0.4.0
-# authors: Alan Tan
+# version: 1.0.0
+# authors: Alan Tan, Piero Toffanin
 # url: https://github.com/discourse/discourse-translator
 
 gem 'aws-sdk-translate', '1.35.0', require: false
