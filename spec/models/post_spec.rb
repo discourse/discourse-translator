@@ -27,11 +27,11 @@ RSpec.describe Post do
 
       expect(
         post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
-      ).to eq(nil)
+      ).to be_nil
 
       expect(
         post.custom_fields[::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]
-      ).to eq({})
+      ).to be_nil
     end
   end
 end

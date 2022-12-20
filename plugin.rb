@@ -6,6 +6,8 @@
 # authors: Alan Tan
 # url: https://github.com/discourse/discourse-translator
 
+gem 'aws-sdk-translate', '1.35.0', require: false
+
 enabled_site_setting :translator_enabled
 register_asset "stylesheets/common/post.scss"
 
@@ -17,6 +19,7 @@ after_initialize do
 
     autoload :Microsoft, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
     autoload :Google, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/google"
+    autoload :Amazon, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/amazon"
     autoload :Yandex, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
     autoload :LibreTranslate, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/libretranslate"
 
@@ -26,7 +29,6 @@ after_initialize do
     end
   end
 
-  require_dependency "application_controller"
   class DiscourseTranslator::TranslatorController < ::ApplicationController
     before_action :ensure_logged_in
 
@@ -53,7 +55,6 @@ after_initialize do
 
   Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
 
-  require_dependency "post"
   class ::Post < ActiveRecord::Base
     before_update :clear_translator_custom_fields, if: :raw_changed?
 
@@ -62,12 +63,10 @@ after_initialize do
     def clear_translator_custom_fields
       return if !SiteSetting.translator_enabled
 
-      self.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = nil
-      self.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {}
+      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
+      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
     end
   end
-
-  require_dependency "jobs/base"
 
   module ::Jobs
     class TranslatorMigrateToAzurePortal < ::Jobs::Onceoff
@@ -111,18 +110,8 @@ after_initialize do
   end
   listen_for :post_process
 
-  # TODO Drop after Discourse 2.6.0 release
-  if TopicView.respond_to?(:add_post_custom_fields_allowlister)
-    TopicView.add_post_custom_fields_allowlister do |user|
-      [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
-    end
-  else
-    TopicView.add_post_custom_fields_whitelister do |user|
-      [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
-    end
-  end
+  topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
-  require_dependency "post_serializer"
   class ::PostSerializer
     attributes :can_translate
 
@@ -135,7 +124,7 @@ after_initialize do
         Jobs.enqueue(:detect_translation, post_id: object.id)
         false
       else
-        detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG".constantize[I18n.locale]
+        detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[I18n.locale]
       end
     end
 

@@ -7,7 +7,9 @@ module DiscourseTranslator
     TRANSLATE_URI = "https://translate.yandex.net/api/v1.5/tr.json/translate"
     DETECT_URI = "https://translate.yandex.net/api/v1.5/tr.json/detect"
 
-    SUPPORTED_LANG = {
+    # Hash which maps Discourse's locale code to Yandex Translate's language code found in
+    # https://yandex.com/dev/translate/doc/dg/concepts/api-overview.html
+    SUPPORTED_LANG_MAPPING = {
       pt_BR: 'pt',
       pl_PL: 'pl',
       no_NO: 'no',
@@ -24,7 +26,6 @@ module DiscourseTranslator
       mt: 'mt',
       am: 'am',
       mk: 'mk',
-      en: 'en',
       mi: 'mi',
       ar: 'ar',
       mr: 'mr',
@@ -139,8 +140,8 @@ module DiscourseTranslator
     def self.translate(post)
       detected_lang = detect(post)
 
-      if !SUPPORTED_LANG.keys.include?(detected_lang.to_sym) &&
-        !SUPPORTED_LANG.values.include?(detected_lang.to_s)
+      if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
+        !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
 
         raise TranslatorError.new(I18n.t('translator.failed'))
       end
@@ -165,7 +166,7 @@ module DiscourseTranslator
     private
 
     def self.locale
-      SUPPORTED_LANG[I18n.locale] || (raise I18n.t("translator.not_supported"))
+      SUPPORTED_LANG_MAPPING[I18n.locale] || (raise I18n.t("translator.not_supported"))
     end
 
     def self.post(uri, body, headers = {})

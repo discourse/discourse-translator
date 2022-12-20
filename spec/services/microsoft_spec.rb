@@ -18,8 +18,8 @@ RSpec.describe DiscourseTranslator::Microsoft do
         .to_return(status: 200, body: 'some_token')
 
       expect(described_class.access_token).to eq('some_token')
-      expect($redis.get(described_class.cache_key)).to eq('some_token')
-      expect($redis.ttl(described_class.cache_key).present?).to eq(true)
+      expect(Discourse.redis.get(described_class.cache_key)).to eq('some_token')
+      expect(Discourse.redis.ttl(described_class.cache_key).present?).to eq(true)
     end
 
     describe 'when access_token is not valid' do

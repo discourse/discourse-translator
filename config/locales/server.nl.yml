@@ -1,0 +1,25 @@
+# WARNING: Never edit this file.
+# It will be overwritten when translations are pulled from Crowdin.
+#
+# To work with us on translations, join this project:
+# https://translate.discourse.org/
+
+nl:
+  site_settings:
+    translator_enabled: "Sta inline vertaling van berichten toe."
+    translator: "De aanbieder van de vertaaldienst."
+    translator_azure_subscription_key: "Azure-abonnementssleutel"
+    translator_azure_region: "Azure-regio"
+    translator_google_api_key: "Google API-sleutel"
+    translator_yandex_api_key: "Yandex API-sleutel"
+    max_translations_per_minute: "Het aantal vertalingen per minuut dat een gewone gebruiker kan uitvoeren."
+    translator_aws_region: "AWS-regio"
+    translator_aws_key_id: "AWS-sleutel-ID"
+    translator_aws_secret_access: "AWS geheime toegangssleutel"
+    translator_aws_iam_role: "AWS IAM-rol"
+  translator:
+    failed: "De vertaler kan deze taal niet vertalen."
+    not_supported: "Deze taal wordt niet ondersteund door de vertaler."
+    too_long: "Dit bericht is te lang om door de vertaler te worden vertaald."
+    microsoft:
+      missing_token: "De vertaler kon geen geldig token ophalen."

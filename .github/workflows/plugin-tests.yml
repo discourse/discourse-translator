@@ -3,23 +3,24 @@ name: Plugin Tests
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
 
+concurrency:
+  group: plugin-tests-${{ format('{0}-{1}', github.head_ref || github.run_number, github.job) }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    name: "${{ matrix.target }}-${{ matrix.build_types }}"
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    name: ${{ matrix.build_type }}
+    runs-on: ubuntu-latest
+    container: discourse/discourse_test:slim${{ startsWith(matrix.build_type, 'frontend') && '-browsers' || '' }}
+    timeout-minutes: 30
 
     env:
       DISCOURSE_HOSTNAME: www.example.com
       RUBY_GLOBAL_METHOD_CACHE_SIZE: 131072
-      BUILD_TYPE: ${{ matrix.build_types }}
-      TARGET: ${{ matrix.target }}
       RAILS_ENV: test
-      PGHOST: localhost
       PGUSER: discourse
       PGPASSWORD: discourse
 
@@ -27,89 +28,37 @@ jobs:
       fail-fast: false
 
       matrix:
-        build_types: ["BACKEND", "FRONTEND"]
-        target: ["PLUGINS"]
-        os: [ubuntu-latest]
-        ruby: ["2.6"]
-        postgres: ["12"]
-        redis: ["4.x"]
-
-    services:
-      postgres:
-        image: postgres:${{ matrix.postgres }}
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: discourse
-          POSTGRES_PASSWORD: discourse
-        options: >-
-          --mount type=tmpfs,destination=/var/lib/postgresql/data
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        build_type: ["backend", "frontend"]
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
         with:
           repository: discourse/discourse
           fetch-depth: 1
 
       - name: Install plugin
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           path: plugins/${{ github.event.repository.name }}
           fetch-depth: 1
-
-      - name: Check spec existence
-        id: check_spec
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "plugins/${{ github.event.repository.name }}/spec"
-
-      - name: Check qunit existence
-        id: check_qunit
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "plugins/${{ github.event.repository.name }}/test/javascripts"
 
       - name: Setup Git
         run: |
           git config --global user.email "ci@ci.invalid"
           git config --global user.name "Discourse CI"
 
-      - name: Setup packages
+      - name: Start redis
         run: |
-          sudo apt-get update
-          sudo apt-get -yqq install postgresql-client libpq-dev gifsicle jpegoptim optipng jhead
-          wget -qO- https://raw.githubusercontent.com/discourse/discourse_docker/master/image/base/install-pngquant | sudo sh
+          redis-server /etc/redis/redis.conf &
 
-      - name: Update imagemagick
-        if: env.BUILD_TYPE == 'BACKEND'
+      - name: Start Postgres
         run: |
-          wget https://raw.githubusercontent.com/discourse/discourse_docker/master/image/base/install-imagemagick
-          chmod +x install-imagemagick
-          sudo ./install-imagemagick
-
-      - name: Setup redis
-        uses: shogo82148/actions-setup-redis@v1
-        with:
-          redis-version: ${{ matrix.redis }}
-
-      - name: Setup ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-
-      - name: Setup bundler
-        run: |
-          gem install bundler -v 2.1.4 --no-doc
-          bundle config deployment 'true'
-          bundle config without 'development'
+          chown -R postgres /var/run/postgresql
+          sudo -E -u postgres script/start_test_db.rb
+          sudo -u postgres psql -c "CREATE ROLE $PGUSER LOGIN SUPERUSER PASSWORD '$PGPASSWORD';"
 
       - name: Bundler cache
-        uses: actions/cache@v2
-        id: bundler-cache
+        uses: actions/cache@v3
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
@@ -117,51 +66,86 @@ jobs:
             ${{ runner.os }}-gem-
 
       - name: Setup gems
-        run: bundle install --jobs 4
+        run: |
+          gem install bundler --conservative -v $(awk '/BUNDLED WITH/ { getline; gsub(/ /,""); print $0 }' Gemfile.lock)
+          bundle config --local path vendor/bundle
+          bundle config --local deployment true
+          bundle config --local without development
+          bundle install --jobs 4
+          bundle clean
+
+      - name: Lint English locale
+        if: matrix.build_type == 'backend'
+        run: bundle exec ruby script/i18n_lint.rb "plugins/${{ github.event.repository.name }}/locales/{client,server}.en.yml"
 
       - name: Get yarn cache directory
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - name: Yarn cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.os }}-yarn-
+            ${{ runner.os }}-yarn-
 
       - name: Yarn install
-        run: yarn install --dev
+        run: yarn install
 
-      - name: Migrate database
+      - name: Fetch app state cache
+        uses: actions/cache@v3
+        id: app-cache
+        with:
+          path: tmp/app-cache
+          key: >-
+            ${{ hashFiles('.github/workflows/tests.yml') }}-
+            ${{ hashFiles('db/**/*', 'plugins/**/db/**/*') }}-
+
+      - name: Restore database from cache
+        if: steps.app-cache.outputs.cache-hit == 'true'
+        run: psql -f tmp/app-cache/cache.sql postgres
+
+      - name: Restore uploads from cache
+        if: steps.app-cache.outputs.cache-hit == 'true'
+        run: rm -rf public/uploads && cp -r tmp/app-cache/uploads public/uploads
+
+      - name: Create and migrate database
+        if: steps.app-cache.outputs.cache-hit != 'true'
         run: |
           bin/rake db:create
           bin/rake db:migrate
 
-      - name: Create parallel databases
-        if: env.BUILD_TYPE == 'BACKEND' && env.TARGET == 'CORE'
-        run: |
-          bin/rake parallel:create
-          bin/rake parallel:migrate
+      - name: Dump database for cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: mkdir -p tmp/app-cache && pg_dumpall > tmp/app-cache/cache.sql
 
-      - name: Core RSpec
-        if: env.BUILD_TYPE == 'BACKEND' && env.TARGET == 'CORE'
+      - name: Dump uploads for cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: rm -rf tmp/app-cache/uploads && cp -r public/uploads tmp/app-cache/uploads
+
+      - name: Check spec existence
+        id: check_spec
+        shell: bash
         run: |
-          bin/turbo_rspec
-          bin/rake plugin:spec
+          if [ 0 -lt $(find plugins/${{ github.event.repository.name }}/spec -type f -name "*.rb" 2> /dev/null | wc -l) ]; then
+            echo "::set-output name=files_exist::true"
+          fi
 
       - name: Plugin RSpec
-        if: env.BUILD_TYPE == 'BACKEND' && env.TARGET == 'PLUGINS' && steps.check_spec.outputs.files_exists == 'true'
+        if: matrix.build_type == 'backend' && steps.check_spec.outputs.files_exist == 'true'
         run: bin/rake plugin:spec[${{ github.event.repository.name }}]
 
-      - name: Core QUnit
-        if: env.BUILD_TYPE == 'FRONTEND' && env.TARGET == 'CORE'
-        run: bundle exec rake qunit:test['1200000']
-        timeout-minutes: 30
+      - name: Check QUnit existence
+        id: check_qunit
+        shell: bash
+        run: |
+          if [ 0 -lt $(find plugins/${{ github.event.repository.name }}/test/javascripts -type f \( -name "*.js" -or -name "*.es6" \) 2> /dev/null | wc -l) ]; then
+            echo "::set-output name=files_exist::true"
+          fi
 
       - name: Plugin QUnit
-        if: env.BUILD_TYPE == 'FRONTEND' && env.TARGET == 'PLUGINS' && steps.check_qunit.outputs.files_exists == 'true'
-        run: bundle exec rake plugin:qunit['${{ github.event.repository.name }}','1200000']
-        timeout-minutes: 30
+        if: matrix.build_type == 'frontend' && steps.check_qunit.outputs.files_exist == 'true'
+        run: QUNIT_EMBER_CLI=1 bundle exec rake plugin:qunit['${{ github.event.repository.name }}','1200000']
+        timeout-minutes: 10

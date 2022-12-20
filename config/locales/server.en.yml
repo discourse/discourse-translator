@@ -9,6 +9,10 @@ en:
     max_translations_per_minute: "The number of translations per minute a regular user can perform."
     translator_libretranslate_endpoint: "LibreTranslate API Endpoint"
     translator_libretranslate_api_key: "LibreTranslate API Key"
+    translator_aws_region: "AWS Region"
+    translator_aws_key_id: "AWS Key ID"
+    translator_aws_secret_access: "AWS secret access key"
+    translator_aws_iam_role: "AWS IAM Role"
   translator:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."

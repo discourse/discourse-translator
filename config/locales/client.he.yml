@@ -1,0 +1,12 @@
+# WARNING: Never edit this file.
+# It will be overwritten when translations are pulled from Crowdin.
+#
+# To work with us on translations, join this project:
+# https://translate.discourse.org/
+
+he:
+  js:
+    translator:
+      view_translation: "הצגת התרגום"
+      hide_translation: "הסתרת התרגום"
+      translated_from: "תורגם מ%{language} ע״י %{translator}"

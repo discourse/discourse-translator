@@ -1,13 +1,13 @@
 {{#if post.translated_text}}
-{{#conditional-loading-spinner condition=loading size='small'}}
-  <div class='post-translation'>
-    <hr>
+  {{#conditional-loading-spinner condition=loading size="small"}}
+    <div class="post-translation">
+      <hr>
 
-    <div class='post-attribution'>
-      {{i18n 'translator.translated_from' language=post.detected_lang translator=siteSettings.translator}}
+      <div class="post-attribution">
+        {{i18n "translator.translated_from" language=post.detected_lang translator=siteSettings.translator}}
+      </div>
+
+      {{html-safe post.translated_text}}
     </div>
-
-    {{{post.translated_text}}}
-  </div>
-{{/conditional-loading-spinner}}
+  {{/conditional-loading-spinner}}
 {{/if}}
