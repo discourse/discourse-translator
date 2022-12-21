@@ -76,7 +76,6 @@ module DiscourseTranslator
       sk: "sk",
       sl: "sl",
       sq: "sq",
-      sl: "sl",
       sr: "sr-Cryl",
       sv: "sv",
       sw: "sw",
