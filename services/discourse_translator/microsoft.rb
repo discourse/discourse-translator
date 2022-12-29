@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'base'
+require_relative "base"
 
 module DiscourseTranslator
   class Microsoft < Base
@@ -89,7 +89,7 @@ module DiscourseTranslator
       uz: "uz",
       vi: "vi",
       zh_CN: "zh-Hans",
-      zh_TW: "zh-Hant"
+      zh_TW: "zh-Hant",
     }
 
     def self.access_token_key
@@ -102,11 +102,12 @@ module DiscourseTranslator
       if existing_token
         existing_token
       elsif SiteSetting.translator_azure_subscription_key.present?
-        url = "#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}"
+        url =
+          "#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}"
 
         # Congitive Service's multi-service resource requires a region to be specified
         # https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-reference#authenticating-with-an-access-token
-        if SiteSetting.translator_azure_region != 'global'
+        if SiteSetting.translator_azure_region != "global"
           uri = URI.parse(url)
           uri.host = "#{SiteSetting.translator_azure_region}.#{uri.host}"
           url = uri.to_s
@@ -123,7 +124,7 @@ module DiscourseTranslator
           # The possible response isn't well documented in Microsoft's API so
           # it might break from time to time.
           error = JSON.parse(response.body)["error"]
-          raise TranslatorError.new("#{error['code']}: #{error['message']}")
+          raise TranslatorError.new("#{error["code"]}: #{error["message"]}")
         end
       end
     end
@@ -132,18 +133,12 @@ module DiscourseTranslator
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
         text = post.raw.truncate(LENGTH_LIMIT, omission: nil)
 
-        body = [
-          { "Text" => text }
-        ].to_json
+        body = [{ "Text" => text }].to_json
 
         uri = URI(DETECT_URI)
         uri.query = URI.encode_www_form(self.default_query)
 
-        response_body = result(
-          uri.to_s,
-          body,
-          default_headers
-        )
+        response_body = result(uri.to_s, body, default_headers)
 
         response_body.first["language"]
       end
@@ -153,30 +148,24 @@ module DiscourseTranslator
       detected_lang = detect(post)
 
       if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
-         !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
-
-        raise TranslatorError.new(I18n.t('translator.failed'))
+           !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
+        raise TranslatorError.new(I18n.t("translator.failed"))
       end
 
-      raise TranslatorError.new(I18n.t('translator.too_long')) if post.cooked.length > LENGTH_LIMIT
+      raise TranslatorError.new(I18n.t("translator.too_long")) if post.cooked.length > LENGTH_LIMIT
 
-      translated_text = from_custom_fields(post) do
-        query = default_query.merge(
-          "from" => detected_lang,
-          "to" => locale,
-          "textType" => "html"
-        )
+      translated_text =
+        from_custom_fields(post) do
+          query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
 
-        body = [
-          { "Text" => post.cooked }
-        ].to_json
+          body = [{ "Text" => post.cooked }].to_json
 
-        uri = URI(TRANSLATE_URI)
-        uri.query = URI.encode_www_form(query)
+          uri = URI(TRANSLATE_URI)
+          uri.query = URI.encode_www_form(query)
 
-        response_body = result(uri.to_s, body, default_headers)
-        response_body.first["translations"].first["text"]
-      end
+          response_body = result(uri.to_s, body, default_headers)
+          response_body.first["translations"].first["text"]
+        end
 
       [detected_lang, translated_text]
     end
@@ -203,16 +192,11 @@ module DiscourseTranslator
     end
 
     def self.default_headers
-      {
-        'Authorization' => "Bearer #{access_token}",
-        'Content-Type' => 'application/json'
-      }
+      { "Authorization" => "Bearer #{access_token}", "Content-Type" => "application/json" }
     end
 
     def self.default_query
-      {
-        "api-version" => "3.0"
-      }
+      { "api-version" => "3.0" }
     end
   end
 end
