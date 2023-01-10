@@ -5,3 +5,8 @@
 # https://translate.discourse.org/
 
 tr_TR:
+  js:
+    translator:
+      view_translation: "Çeviriyi görüntüle"
+      hide_translation: "Çeviriyi gizle"
+      translated_from: "%{language} dilinden %{translator} tarafından çevrilmiştir."

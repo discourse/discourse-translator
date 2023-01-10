@@ -5,3 +5,21 @@
 # https://translate.discourse.org/
 
 tr_TR:
+  site_settings:
+    translator_enabled: "Gönderilerin satır içi çevirisine izin verin."
+    translator: "Çeviri hizmetinin sağlayıcısı."
+    translator_azure_subscription_key: "Azure Abonelik Anahtarı"
+    translator_azure_region: "Azure Region"
+    translator_google_api_key: "Google API Anahtarı"
+    translator_yandex_api_key: "Yandex API Anahtarı"
+    max_translations_per_minute: "Normal bir kullanıcının gerçekleştirebileceği dakika başına çeviri sayısı."
+    translator_aws_region: "AWS Bölgesi"
+    translator_aws_key_id: "AWS Anahtar Kimliği"
+    translator_aws_secret_access: "AWS gizli erişim anahtarı"
+    translator_aws_iam_role: "AWS IAM Rolü"
+  translator:
+    failed: "Çevirmen bu dilde çeviri yapamıyor."
+    not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
+    too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
+    microsoft:
+      missing_token: "Çevirmen geçerli bir belirteç alamadı."
