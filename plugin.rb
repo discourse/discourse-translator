@@ -52,6 +52,15 @@ after_initialize do
       raise Discourse::InvalidParameters.new(:post_id) if post.blank?
       guardian.ensure_can_see!(post)
 
+      if !user_group_allowed?
+        raise Discourse::InvalidAccess.new(
+                "not_in_group",
+                SiteSetting.restrict_translation_by_group,
+                custom_message: "not_in_group.title_translation",
+                group: current_user.groups.pluck(:id),
+              )
+      end
+
       begin
         detected_lang, translation =
           "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
@@ -59,6 +68,16 @@ after_initialize do
       rescue ::DiscourseTranslator::TranslatorError => e
         render_json_error e.message, status: 422
       end
+    end
+
+    private
+
+    def user_group_allowed?
+      authorized_groups = SiteSetting.restrict_translation_by_group.split("|").map(&:to_i)
+
+      user_groups = current_user.groups.pluck :id
+      authorized = authorized_groups.intersection user_groups
+      !authorized.empty?
     end
   end
 

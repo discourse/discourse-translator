@@ -26,6 +26,16 @@ function initializeTranslation(api) {
     return;
   }
 
+  let nonRestrictedGroups =
+    siteSettings.restrict_translation_by_group.split("|");
+  let authorized_group = currentUser.groups.any((group) =>
+    nonRestrictedGroups.includes(group.id.toString())
+  );
+
+  if (!authorized_group) {
+    return;
+  }
+
   api.includePostAttributes(
     "can_translate",
     "translated_text",
