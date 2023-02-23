@@ -52,6 +52,15 @@ after_initialize do
       raise Discourse::InvalidParameters.new(:post_id) if post.blank?
       guardian.ensure_can_see!(post)
 
+      if !guardian.user_group_allowed?
+        raise Discourse::InvalidAccess.new(
+                "not_in_group",
+                SiteSetting.restrict_translation_by_group,
+                custom_message: "not_in_group.title_translation",
+                group: current_user.groups.pluck(:id),
+              )
+      end
+
       begin
         detected_lang, translation =
           "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
@@ -118,11 +127,19 @@ after_initialize do
 
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
+  %w[../lib/discourse_translator/guardian_extension.rb].each do |path|
+    load File.expand_path(path, __FILE__)
+  end
+
+  reloadable_patch do |plugin|
+    Guardian.class_eval { prepend DiscourseTranslator::GuardianExtension }
+  end
+
   class ::PostSerializer
     attributes :can_translate
 
     def can_translate
-      return false if !SiteSetting.translator_enabled
+      return false if !(SiteSetting.translator_enabled && scope.user_group_allowed?)
 
       detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
