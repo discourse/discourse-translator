@@ -11,6 +11,7 @@ en:
     translator_aws_key_id: "AWS Key ID"
     translator_aws_secret_access: "AWS secret access key"
     translator_aws_iam_role: "AWS IAM Role"
+    translator_azure_custom_domain: "Required if using a Virtual Network or Firewall for Azure Cognitive Services"
   translator:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."
@@ -18,3 +19,4 @@ en:
 
     microsoft:
       missing_token: "The translator was unable to retrieve a valid token."
+      missing_key: "No Azure Subscription Key provided."

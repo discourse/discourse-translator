@@ -42,6 +42,8 @@ plugins:
       - westeurope
       - westus
       - westus2
+  translator_azure_custom_domain:
+    default: ""
   translator_aws_region:
     default: 'us-east-1'
     client: true
