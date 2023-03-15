@@ -4,13 +4,9 @@ require_relative "base"
 
 module DiscourseTranslator
   class Microsoft < Base
-    DATA_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13"
-    SCOPE_URI = "api.cognitive.microsofttranslator.com"
-    GRANT_TYPE = "client_credentials"
     TRANSLATE_URI = "https://api.cognitive.microsofttranslator.com/translate"
     DETECT_URI = "https://api.cognitive.microsofttranslator.com/detect"
-    ISSUE_TOKEN_URI = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken"
-
+    CUSTOM_URI_SUFFIX = "cognitiveservices.azure.com/translator/text/v3.0"
     LENGTH_LIMIT = 50_000
 
     # Hash which maps Discourse's locale code to Microsoft Translator's language code found in
@@ -96,46 +92,13 @@ module DiscourseTranslator
       "microsoft-translator"
     end
 
-    def self.access_token
-      existing_token = Discourse.redis.get(cache_key)
-
-      if existing_token
-        existing_token
-      elsif SiteSetting.translator_azure_subscription_key.present?
-        url =
-          "#{DiscourseTranslator::Microsoft::ISSUE_TOKEN_URI}?Subscription-Key=#{SiteSetting.translator_azure_subscription_key}"
-
-        # Congitive Service's multi-service resource requires a region to be specified
-        # https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-reference#authenticating-with-an-access-token
-        if SiteSetting.translator_azure_region != "global"
-          uri = URI.parse(url)
-          uri.host = "#{SiteSetting.translator_azure_region}.#{uri.host}"
-          url = uri.to_s
-        end
-
-        response = Excon.post(url)
-
-        if response.status == 200 && (response_body = response.body).present?
-          Discourse.redis.setex(cache_key, 8.minutes.to_i, response_body)
-          response_body
-        elsif response.body.blank?
-          raise TranslatorError.new(I18n.t("translator.microsoft.missing_token"))
-        else
-          # The possible response isn't well documented in Microsoft's API so
-          # it might break from time to time.
-          error = JSON.parse(response.body)["error"]
-          raise TranslatorError.new("#{error["code"]}: #{error["message"]}")
-        end
-      end
-    end
-
     def self.detect(post)
       post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
         text = post.raw.truncate(LENGTH_LIMIT, omission: nil)
 
         body = [{ "Text" => text }].to_json
 
-        uri = URI(DETECT_URI)
+        uri = URI(detect_endpoint)
         uri.query = URI.encode_www_form(self.default_query)
 
         response_body = result(uri.to_s, body, default_headers)
@@ -160,7 +123,7 @@ module DiscourseTranslator
 
           body = [{ "Text" => post.cooked }].to_json
 
-          uri = URI(TRANSLATE_URI)
+          uri = URI(translate_endpoint)
           uri.query = URI.encode_www_form(query)
 
           response_body = result(uri.to_s, body, default_headers)
@@ -172,12 +135,37 @@ module DiscourseTranslator
 
     private
 
+    def self.detect_endpoint
+      custom_endpoint? ? custom_detect_endpoint : DETECT_URI
+    end
+
+    def self.translate_endpoint
+      custom_endpoint? ? custom_translate_endpoint : TRANSLATE_URI
+    end
+
+    def self.custom_base_endpoint
+      "https://#{SiteSetting.translator_azure_custom_domain}.#{CUSTOM_URI_SUFFIX}"
+    end
+
+    def self.custom_detect_endpoint
+      "#{custom_base_endpoint}/detect"
+    end
+
+    def self.custom_translate_endpoint
+      "#{custom_base_endpoint}/translate"
+    end
+
+    def self.custom_endpoint?
+      SiteSetting.translator_azure_custom_domain.present?
+    end
+
     def self.locale
       SUPPORTED_LANG_MAPPING[I18n.locale] || (raise I18n.t("translator.not_supported"))
     end
 
     def self.post(uri, body, headers = {})
-      Excon.post(uri, body: body, headers: headers)
+      connection = Faraday.new { |f| f.adapter FinalDestination::FaradayAdapter }
+      connection.post(uri, body, headers)
     end
 
     def self.result(uri, body, headers)
@@ -192,7 +180,20 @@ module DiscourseTranslator
     end
 
     def self.default_headers
-      { "Authorization" => "Bearer #{access_token}", "Content-Type" => "application/json" }
+      if SiteSetting.translator_azure_subscription_key.blank?
+        raise TranslatorError.new(I18n.t("translator.microsoft.missing_key"))
+      end
+
+      headers = {
+        "Content-Type" => "application/json",
+        "Ocp-Apim-Subscription-Key" => SiteSetting.translator_azure_subscription_key,
+      }
+
+      if SiteSetting.translator_azure_region != "global"
+        headers["Ocp-Apim-Subscription-Region"] = SiteSetting.translator_azure_region
+      end
+
+      headers
     end
 
     def self.default_query
