@@ -144,7 +144,7 @@ module DiscourseTranslator
     end
 
     def self.custom_base_endpoint
-      "https://#{SiteSetting.translator_azure_custom_domain}.#{CUSTOM_URI_SUFFIX}"
+      "https://#{SiteSetting.translator_azure_custom_subdomain}.#{CUSTOM_URI_SUFFIX}"
     end
 
     def self.custom_detect_endpoint
@@ -156,7 +156,7 @@ module DiscourseTranslator
     end
 
     def self.custom_endpoint?
-      SiteSetting.translator_azure_custom_domain.present?
+      SiteSetting.translator_azure_custom_subdomain.present?
     end
 
     def self.locale

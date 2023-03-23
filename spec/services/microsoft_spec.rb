@@ -29,7 +29,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
 
     context "with a custom endpoint" do
       before do
-        SiteSetting.translator_azure_custom_domain = "translator19191"
+        SiteSetting.translator_azure_custom_subdomain = "translator19191"
 
         stub_request(:post, detect_endpoint).to_return(
           status: 200,
@@ -89,7 +89,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
     end
 
     context "with a custom endpoint" do
-      before { SiteSetting.translator_azure_custom_domain = "translator19191" }
+      before { SiteSetting.translator_azure_custom_subdomain = "translator19191" }
 
       include_examples "post translated"
     end
