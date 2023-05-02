@@ -23,3 +23,4 @@ zh_CN:
     too_long: "帖子过长，翻译器无法翻译。"
     microsoft:
       missing_token: "翻译器无法检索有效令牌。"
+      missing_key: "未提供 Azure 订阅密钥。"
