@@ -84,3 +84,7 @@ plugins:
     default: ''
   max_translations_per_minute:
     default: 3
+  restrict_translation_by_group:
+    default: "11" # default group trust_level_1
+    client: true
+    type: group_list

@@ -12,6 +12,7 @@ en:
     translator_aws_secret_access: "AWS secret access key"
     translator_aws_iam_role: "AWS IAM Role"
     translator_azure_custom_subdomain: "Required if using a Virtual Network or Firewall for Azure Cognitive Services. Note: Only enter the custom subdomain not the full custom endpoint."
+    restrict_translation_by_group: "Only allowlisted groups can translate"
   translator:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."
@@ -20,3 +21,5 @@ en:
     microsoft:
       missing_token: "The translator was unable to retrieve a valid token."
       missing_key: "No Azure Subscription Key provided."
+  not_in_group: 
+    title_translation: "You don't belong to a group allowed to translate"
