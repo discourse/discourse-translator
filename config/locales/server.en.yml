@@ -22,4 +22,3 @@ en:
       missing_key: "No Azure Subscription Key provided."
   not_in_group: 
     title_translation: "You don't belong to a group allowed to translate"
-      
