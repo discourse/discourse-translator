@@ -23,5 +23,11 @@ describe DiscourseTranslator::GuardianExtension do
 
       expect(guardian.user_group_allowed?).to eq(false)
     end
+
+    it "returns false when the user is not logged in" do
+      SiteSetting.restrict_translation_by_group = "not_in_the_list"
+      non_logged_guardian = Guardian.new
+      expect(non_logged_guardian.user_group_allowed?).to eq(false)
+    end
   end
 end
