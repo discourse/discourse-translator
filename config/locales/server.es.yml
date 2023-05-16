@@ -17,7 +17,6 @@ es:
     translator_aws_key_id: "ID de clave de AWS"
     translator_aws_secret_access: "Clave de acceso secreta de AWS"
     translator_aws_iam_role: "Rol de IAM de AWS"
-    restrict_translation_by_group: "Solamente los grupos seleccionados pueden traducir"
   translator:
     failed: "El traductor no fue capaz de traducir este idioma."
     not_supported: "El traductor no admite este idioma."
