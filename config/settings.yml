@@ -88,3 +88,7 @@ plugins:
     default: "11" # default group trust_level_1
     client: true
     type: group_list
+  restrict_translation_by_poster_group:
+    default: "" 
+    client: true
+    type: group_list
