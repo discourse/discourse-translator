@@ -41,9 +41,9 @@ describe DiscourseTranslator::GuardianExtension do
     end
 
     describe "#authorized?" do
-        it "returns false with authorized groups" do 
-          expect(guardian.authorized?(nil, ['authorized_group'])).to eq(false)
-        end
+      it "returns false with authorized groups" do
+        expect(guardian.authorized?(nil, ["authorized_group"])).to eq(false)
+      end
     end
   end
 
