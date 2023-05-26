@@ -1,5 +1,5 @@
 {{#if post.translated_text}}
-  {{#conditional-loading-spinner condition=loading size="small"}}
+  <ConditionalLoadingSpinner @condition={{loading}} @size="small">
     <div class="post-translation">
       <hr />
 
@@ -13,5 +13,5 @@
 
       {{html-safe post.translated_text}}
     </div>
-  {{/conditional-loading-spinner}}
+  </ConditionalLoadingSpinner>
 {{/if}}
