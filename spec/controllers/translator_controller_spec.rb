@@ -24,6 +24,13 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
     end
   end
 
+  shared_examples "deny_request_to_translate" do
+    it "should deny request to translate" do
+      response = post :translate, params: { post_id: reply.id }, format: :json
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
   describe "#translate" do
     describe "anon user" do
       it "should not allow translation of posts" do
@@ -38,6 +45,11 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
         user.group_users << Fabricate(:group_user, user: user, group: Group[:trust_level_1])
         user
       end
+      let!(:poster) do
+        poster = Fabricate(:user)
+        poster.group_users << Fabricate(:group_user, user: user, group: Group[:trust_level_2])
+        poster
+      end
 
       describe "when config translator_enabled disabled" do
         before { SiteSetting.translator_enabled = false }
@@ -50,7 +62,7 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
       end
 
       describe "when enabled" do
-        let(:reply) { Fabricate(:post) }
+        let(:reply) { Fabricate(:post, user: poster) }
 
         it "raises an error with a missing parameter" do
           post :translate, format: :json
@@ -94,9 +106,27 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
 
         describe "user is not in a allowlisted group" do
           before { SiteSetting.restrict_translation_by_group = "not_in_the_list" }
-          it "should deny request to translate" do
-            response = post :translate, params: { post_id: reply.id }, format: :json
-            expect(response).to have_http_status(:forbidden)
+
+          include_examples "deny_request_to_translate"
+        end
+
+        describe "restrict_translation_by_poster_group" do
+          before do
+            SiteSetting.restrict_translation_by_group =
+              "#{Group.find_by(name: "admins").id}|not_in_the_list"
+          end
+          describe "post made by an user in a allowlisted group" do
+            before do
+              SiteSetting.restrict_translation_by_poster_group = "#{poster.groups.first.id}"
+            end
+            let!(:user) { log_in :admin }
+            include_examples "translation_successful"
+          end
+
+          describe "post made by an user not in a allowlisted group" do
+            before { SiteSetting.restrict_translation_by_poster_group = "not_in_the_list" }
+            let!(:user) { log_in :admin }
+            include_examples "deny_request_to_translate"
           end
         end
       end

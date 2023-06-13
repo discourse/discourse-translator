@@ -56,8 +56,16 @@ after_initialize do
         raise Discourse::InvalidAccess.new(
                 "not_in_group",
                 SiteSetting.restrict_translation_by_group,
-                custom_message: "not_in_group.title_translation",
+                custom_message: "not_in_group.user_not_in_group",
                 group: current_user.groups.pluck(:id),
+              )
+      end
+
+      if !guardian.post_group_allowed?(post)
+        raise Discourse::InvalidAccess.new(
+                "not_in_group",
+                SiteSetting.restrict_translation_by_poster_group,
+                custom_message: "not_in_group.poster_not_in_group",
               )
       end
 
@@ -139,7 +147,12 @@ after_initialize do
     attributes :can_translate
 
     def can_translate
-      return false if !(SiteSetting.translator_enabled && scope.user_group_allowed?)
+      if !(
+           SiteSetting.translator_enabled && scope.user_group_allowed? &&
+             scope.post_group_allowed?(object)
+         )
+        return false
+      end
 
       detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
