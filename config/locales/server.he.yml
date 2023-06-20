@@ -19,6 +19,7 @@ he:
     translator_aws_iam_role: "תפקיד IAM ב־AWS"
     translator_azure_custom_subdomain: "נחוץ אם נעשה שימוש ברשת וירטואלית או בחומת אש לשירותי Azure Cognitive. לתשומת לבך: יש למלא רק את תת־שם התחום, לא את נקודת הגישה המותאמת אישית במלואה."
     restrict_translation_by_group: "רק קבוצות ברשימת המורשות יכולות לתרגם"
+    restrict_translation_by_poster_group: "לאפשר תרגום של פוסטים שנכתבו על ידי משתמשים מרשימת המורשים"
   translator:
     failed: "המתרגם אינו מסוגל לתרגם שפה זו."
     not_supported: "שפה זו אינה נתמכת על ידי המתרגם."
@@ -27,4 +28,5 @@ he:
       missing_token: "המתרגם לא הצליח לקבל אסימון תקף."
       missing_key: "לא סופק מפתח מינוי של Azure."
   not_in_group:
-    title_translation: "לא חברת לקבוצה שמורשית לתרגם"
+    user_not_in_group: "לא חברת לקבוצה שמורשית לתרגם."
+    poster_not_in_group: "הפוסט לא נכתב על ידי משתמש בקבוצה מרשימת המורשות. אם ריקה זה מושבת."

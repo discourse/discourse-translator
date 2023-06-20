@@ -18,4 +18,4 @@ fa_IR:
     translator_aws_iam_role: "نقش AWS IAM"
     restrict_translation_by_group: "فقط گروه‌های مجاز می‌توانند ترجمه کنند"
   not_in_group:
-    title_translation: "شما به گروه‌ی تعلق ندارید که مجاز به ترجمه هستند"
+    user_not_in_group: "شما به گروه‌ی تعلق ندارید که مجاز به ترجمه هستند."
