@@ -17,9 +17,16 @@ pt_BR:
     translator_aws_key_id: "ID da Chave do AWS"
     translator_aws_secret_access: "Chave de acesso secreta do AWS"
     translator_aws_iam_role: "Função do AWS IAM"
+    translator_azure_custom_subdomain: "É necessário se estiver usando uma rede virtual ou firewall para o Azure Cognitive Services. Observação: insira apenas o subdomínio personalizado, não o endpoint completo."
+    restrict_translation_by_group: "Apenas grupos na lista de permissões podem traduzir"
+    restrict_translation_by_poster_group: "Permitir apenas tradução de postagens feitas por usuários(as) na lista de permissões"
   translator:
     failed: "O(a) tradutor(a) não pode traduzir este idioma."
     not_supported: "Este idioma não é compatível com o(a) tradutor(a)."
     too_long: "Esta postagem é muito longa para ser traduzida pelo(a) tradutor(a)."
     microsoft:
       missing_token: "O(a) tradutor(a) não pôde recuperar um token válido."
+      missing_key: "Nenhuma Chave de Assinatura do Azure fornecida."
+  not_in_group:
+    user_not_in_group: "Você não pertence a um grupo com permissão para traduzir."
+    poster_not_in_group: "Esta postagem não foi feita por um(a) usuário(a) da lista de permissões. Desativado se estiver vazio."
