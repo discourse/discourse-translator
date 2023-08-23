@@ -17,9 +17,16 @@ ar:
     translator_aws_key_id: "معرِّف مفتاح AWS"
     translator_aws_secret_access: "مفتاح الوصول السري لـ AWS"
     translator_aws_iam_role: "دور واجهة الهوية والوصول لـ AWS"
+    translator_azure_custom_subdomain: "مطلوب في حال استخدام شبكة افتراضية أو جدار حماية لـ Azure Cognitive Services. ملاحظة: أدخل النطاق الفرعي المخصَّص فقط وليس نقطة النهاية المخصَّصة بالكامل."
+    restrict_translation_by_group: "لا يمكن الترجمة إلا للمجموعات المُدرَجة في قائمة السماح"
+    restrict_translation_by_poster_group: "عدم السماح بالترجمة إلا للمنشورات التي أنشأها مستخدمون مُدرَجون في قائمة السماح"
   translator:
     failed: "يتعذَّر على المترجم ترجمة هذه الرسالة."
     not_supported: "لا يدعم المترجم هذه اللغة."
     too_long: "هذا المنشور طويل جدًا ولا يستطيع المترجم ترجمته."
     microsoft:
       missing_token: "لم يتمكَّن المترجم من استرداد رمز مميَّز صالح."
+      missing_key: "لم يتم توفير مفتاح اشتراك Azure."
+  not_in_group:
+    user_not_in_group: "أنت لا تنتمي إلى مجموعة مسموح لها بالترجمة."
+    poster_not_in_group: "لم يُنشئ المنشور مستخدمٌ مُدرَج في قائمة سماح. يتم إيقاف القائمة إذا كانت فارغة."

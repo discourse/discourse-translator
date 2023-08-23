@@ -17,9 +17,16 @@ tr_TR:
     translator_aws_key_id: "AWS Anahtar Kimliği"
     translator_aws_secret_access: "AWS gizli erişim anahtarı"
     translator_aws_iam_role: "AWS IAM Rolü"
+    translator_azure_custom_subdomain: "Azure Bilişsel Hizmetler için bir Sanal Ağ veya Güvenlik Duvarı kullanılıyorsa gereklidir. Not: Tam özel uç noktayı değil, yalnızca özel alt etki alanını girin."
+    restrict_translation_by_group: "Yalnızca izin verilen gruplar çeviri yapabilir"
+    restrict_translation_by_poster_group: "Yalnızca izin verilen kullanıcılar tarafından yapılan gönderilerin çevirisine izin ver"
   translator:
     failed: "Çevirmen bu dilde çeviri yapamıyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
     too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
     microsoft:
       missing_token: "Çevirmen geçerli bir belirteç alamadı."
+      missing_key: "Azure Abonelik Anahtarı sağlanmadı."
+  not_in_group:
+    user_not_in_group: "Çeviri yapmanıza izin verilen bir grupta değilsiniz."
+    poster_not_in_group: "Gönderi, izin verilenler listesindeki bir gruptaki bir kullanıcı tarafından yapılmadı. Boşsa devre dışı bırakılır."
