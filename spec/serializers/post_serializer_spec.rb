@@ -7,7 +7,7 @@ RSpec.describe PostSerializer do
 
   before do
     SiteSetting.translator_enabled = true
-    SiteSetting.queue_jobs = true
+    Jobs.run_later!
   end
 
   shared_examples "detected_lang_does_not_match_user_locale" do
