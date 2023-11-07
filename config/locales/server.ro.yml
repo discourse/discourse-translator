@@ -5,3 +5,28 @@
 # https://translate.discourse.org/
 
 ro:
+  site_settings:
+    translator_enabled: "Permite traducerea în linie a articolelor."
+    translator: "Furnizorul serviciului de traducere."
+    translator_azure_subscription_key: "Cheie de abonament Azure"
+    translator_azure_region: "Regiune Azure"
+    translator_google_api_key: "Cheie API Google"
+    translator_yandex_api_key: "Cheie API Yandex"
+    max_translations_per_minute: "Numărul de traduceri pe minut pe care un utilizator obișnuit le poate efectua."
+    translator_aws_region: "Regiune AWS"
+    translator_aws_key_id: "ID cheie AWS"
+    translator_aws_secret_access: "Cheie de acces secretă AWS"
+    translator_aws_iam_role: "Rol AWS IAM"
+    translator_azure_custom_subdomain: "Necesar dacă utilizezi o rețea virtuală sau un firewall pentru Azure Cognitive Services. Notă: introdu numai subdomeniul personalizat, nu punctul-final personalizat complet."
+    restrict_translation_by_group: "Doar grupurile permise pot traduce"
+    restrict_translation_by_poster_group: "Permite traducerea doar a articolelor făcute de utilizatorii autorizați"
+  translator:
+    failed: "Traducătorul nu poate traduce această limbă."
+    not_supported: "Această limbă nu este acceptată de traducător."
+    too_long: "Acest articol este prea lung pentru a fi tradusă de către traducător."
+    microsoft:
+      missing_token: "Traducătorul nu a putut să recupereze un jeton valid."
+      missing_key: "Nicio cheie de abonament Azure nu a fost furnizată."
+  not_in_group:
+    user_not_in_group: "Nu faci parte dintr-un grup autorizat să traducă."
+    poster_not_in_group: "Articolul nu a fost făcut de un utilizator autorizat. Dacă este gol, este dezactivat."
