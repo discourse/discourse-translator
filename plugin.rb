@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # name: discourse-translator
-# about: Provides inline translation of posts.
+# about: Translates posts on Discourse using Microsoft, Google, or Yandex translation APIs.
+# meta_topic_id: 32630
 # version: 0.3.0
 # authors: Alan Tan
 # url: https://github.com/discourse/discourse-translator
