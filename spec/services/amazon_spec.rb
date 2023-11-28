@@ -38,6 +38,11 @@ RSpec.describe DiscourseTranslator::Amazon do
       post.cooked = rand(36**length).to_s(36)
       expect(described_class.detect(post)).to eq(detected_lang)
     end
+
+    it "should fail graciously when the cooked translated text is blank" do
+      post.cooked = ""
+      expect(described_class.detect(post)).to be_nil
+    end
   end
 
   describe ".translate" do

@@ -93,10 +93,14 @@ module DiscourseTranslator
     end
 
     def self.detect(post)
+      text = post.cooked.truncate(MAXLENGTH, omission: nil)
+
+      return if text.blank?
+
       detected_lang =
         client.translate_text(
           {
-            text: post.cooked.truncate(MAXLENGTH, omission: nil),
+            text: text,
             source_language_code: "auto",
             target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
           },
