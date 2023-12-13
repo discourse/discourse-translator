@@ -34,7 +34,6 @@ RSpec.describe DiscourseTranslator::LibreTranslate do
     before { SiteSetting.translator_libretranslate_endpoint = "http://localhost:5000" }
 
     it "raises an error on failure" do
-      described_class.expects(:access_token).returns("12345")
       described_class.expects(:detect).returns("en")
 
       Excon.expects(:post).returns(
@@ -51,7 +50,6 @@ RSpec.describe DiscourseTranslator::LibreTranslate do
     end
 
     it "raises an error when the response is not JSON" do
-      described_class.expects(:access_token).returns("12345")
       described_class.expects(:detect).returns("en")
 
       Excon.expects(:post).returns(mock_response.new(413, "<html><body>some html</body></html>"))
