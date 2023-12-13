@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # name: discourse-translator
-# about: Translates posts on Discourse using Microsoft, Google, or Yandex translation APIs.
+# about: Translates posts on Discourse using Microsoft, Google, Yandex or LibreTranslate translation APIs.
 # meta_topic_id: 32630
 # version: 0.3.0
 # authors: Alan Tan
@@ -26,6 +26,8 @@ after_initialize do
              "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/amazon"
     autoload :Yandex,
              "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
+    autoload :LibreTranslate,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/libretranslate"
 
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME

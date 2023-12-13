@@ -7,6 +7,8 @@ en:
     translator_google_api_key: "Google API Key"
     translator_yandex_api_key: "Yandex API Key"
     max_translations_per_minute: "The number of translations per minute a regular user can perform."
+    translator_libretranslate_endpoint: "LibreTranslate API Endpoint"
+    translator_libretranslate_api_key: "LibreTranslate API Key"
     translator_aws_region: "AWS Region"
     translator_aws_key_id: "AWS Key ID"
     translator_aws_secret_access: "AWS secret access key"
