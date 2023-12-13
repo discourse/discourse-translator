@@ -125,7 +125,6 @@ module DiscourseTranslator
             },
           )
 
-        body = nil
         body = JSON.parse(response.body)
         status = response.status
       rescue JSON::ParserError, Excon::Error::Socket, Excon::Error::Timeout
