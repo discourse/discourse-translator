@@ -115,22 +115,25 @@ module DiscourseTranslator
     def self.result(url, body)
       body[:key] = access_token
 
-      response =
-        Excon.post(
-          url,
-          body: URI.encode_www_form(body),
-          headers: {
-            "Content-Type" => "application/x-www-form-urlencoded",
-          },
-        )
-
-      body = nil
       begin
+        response =
+          Excon.post(
+            url,
+            body: URI.encode_www_form(body),
+            headers: {
+              "Content-Type" => "application/x-www-form-urlencoded",
+            },
+          )
+
+        body = nil
         body = JSON.parse(response.body)
-      rescue JSON::ParserError
+        status = response.status
+      rescue JSON::ParserError, Excon::Error::Socket, Excon::Error::Timeout
+        body = I18n.t("translator.not_available")
+        status = 500
       end
 
-      if response.status != 200
+      if status != 200
         raise TranslatorError.new(body || response.inspect)
       else
         body["data"]

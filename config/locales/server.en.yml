@@ -20,10 +20,11 @@ en:
     failed: "The translator is unable to translate this language."
     not_supported: "This language is not supported by the translator."
     too_long: "This post is too long to be translated by the translator."
+    not_available: "The translator service is currently not available."
 
     microsoft:
       missing_token: "The translator was unable to retrieve a valid token."
       missing_key: "No Azure Subscription Key provided."
-  not_in_group: 
+  not_in_group:
     user_not_in_group: "You don't belong to a group allowed to translate."
     poster_not_in_group: "Post wasn't made by an user in a allowlisted group. If empty it is disabled."

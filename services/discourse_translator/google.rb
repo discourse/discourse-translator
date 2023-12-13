@@ -131,7 +131,7 @@ module DiscourseTranslator
       end
 
       if response.status != 200
-        raise TranslatorError.new(body || response.inspect)
+        raise TranslatorError.new(body["error"]["message"] || response.inspect)
       else
         body["data"]
       end
