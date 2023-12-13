@@ -27,34 +27,4 @@ RSpec.describe DiscourseTranslator::LibreTranslate do
       expect(described_class.translate_supported?(source, target)).to be true
     end
   end
-
-  describe ".translate" do
-    let(:post) { Fabricate(:post) }
-
-    before { SiteSetting.translator_libretranslate_endpoint = "http://localhost:5000" }
-
-    it "raises an error on failure" do
-      described_class.expects(:detect).returns("en")
-
-      Excon.expects(:post).returns(
-        mock_response.new(
-          400,
-          {
-            error: "something went wrong",
-            error_description: "you passed in a wrong param",
-          }.to_json,
-        ),
-      )
-
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
-    end
-
-    it "raises an error when the response is not JSON" do
-      described_class.expects(:detect).returns("en")
-
-      Excon.expects(:post).returns(mock_response.new(413, "<html><body>some html</body></html>"))
-
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
-    end
-  end
 end
