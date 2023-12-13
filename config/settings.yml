@@ -1,4 +1,4 @@
-plugins:
+discourse_translator:
   translator_enabled:
     default: false
     client: true
@@ -43,6 +43,8 @@ plugins:
       - westeurope
       - westus
       - westus2
+  translator_azure_custom_subdomain:
+    default: ""
   translator_aws_region:
     default: 'us-east-1'
     client: true
@@ -87,3 +89,11 @@ plugins:
     default: ''
   max_translations_per_minute:
     default: 3
+  restrict_translation_by_group:
+    default: "11" # default group trust_level_1
+    client: true
+    type: group_list
+  restrict_translation_by_poster_group:
+    default: "" 
+    client: true
+    type: group_list

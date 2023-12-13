@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 # name: discourse-translator
-# about: Provides inline translation of posts.
-# version: 1.0.0
-# authors: Alan Tan, Piero Toffanin
+# about: Translates posts on Discourse using Microsoft, Google, Yandex or LibreTranslate translation APIs.
+# meta_topic_id: 32630
+# version: 0.3.0
+# authors: Alan Tan
 # url: https://github.com/discourse/discourse-translator
 
-gem 'aws-sdk-translate', '1.35.0', require: false
+gem "aws-sdk-translate", "1.35.0", require: false
 
 enabled_site_setting :translator_enabled
 register_asset "stylesheets/common/post.scss"
@@ -14,14 +15,16 @@ register_asset "stylesheets/common/post.scss"
 after_initialize do
   module ::DiscourseTranslator
     PLUGIN_NAME = "discourse_translator".freeze
-    DETECTED_LANG_CUSTOM_FIELD = 'post_detected_lang'.freeze
-    TRANSLATED_CUSTOM_FIELD = 'translated_text'.freeze
-
-    autoload :Microsoft, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
-    autoload :Google, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/google"
-    autoload :Amazon, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/amazon"
-    autoload :Yandex, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
-    autoload :LibreTranslate, "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/libretranslate"
+    autoload :Microsoft,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
+    autoload :Google,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/google"
+    autoload :Amazon,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/amazon"
+    autoload :Yandex,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
+    autoload :LibreTranslate,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/libretranslate"
 
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME
@@ -36,7 +39,12 @@ after_initialize do
       raise PluginDisabled if !SiteSetting.translator_enabled
 
       if !current_user.staff?
-        RateLimiter.new(current_user, "translate_post", SiteSetting.max_translations_per_minute, 1.minute).performed!
+        RateLimiter.new(
+          current_user,
+          "translate_post",
+          SiteSetting.max_translations_per_minute,
+          1.minute,
+        ).performed!
       end
 
       params.require(:post_id)
@@ -44,8 +52,26 @@ after_initialize do
       raise Discourse::InvalidParameters.new(:post_id) if post.blank?
       guardian.ensure_can_see!(post)
 
+      if !guardian.user_group_allowed?
+        raise Discourse::InvalidAccess.new(
+                "not_in_group",
+                SiteSetting.restrict_translation_by_group,
+                custom_message: "not_in_group.user_not_in_group",
+                group: current_user.groups.pluck(:id),
+              )
+      end
+
+      if !guardian.post_group_allowed?(post)
+        raise Discourse::InvalidAccess.new(
+                "not_in_group",
+                SiteSetting.restrict_translation_by_poster_group,
+                custom_message: "not_in_group.poster_not_in_group",
+              )
+      end
+
       begin
-        detected_lang, translation = "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
+        detected_lang, translation =
+          "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
         render json: { translation: translation, detected_lang: detected_lang }, status: 200
       rescue ::DiscourseTranslator::TranslatorError => e
         render_json_error e.message, status: 422
@@ -71,12 +97,9 @@ after_initialize do
   module ::Jobs
     class TranslatorMigrateToAzurePortal < ::Jobs::Onceoff
       def execute_onceoff(args)
-        ["translator_client_id", "translator_client_secret"].each do |name|
-
-          DB.exec <<~SQL
+        %w[translator_client_id translator_client_secret].each { |name| DB.exec <<~SQL }
           DELETE FROM site_settings WHERE name = '#{name}'
           SQL
-        end
 
         DB.exec <<~SQL
           UPDATE site_settings
@@ -112,11 +135,24 @@ after_initialize do
 
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
+  %w[../lib/discourse_translator/guardian_extension.rb].each do |path|
+    load File.expand_path(path, __FILE__)
+  end
+
+  reloadable_patch do |plugin|
+    Guardian.class_eval { prepend DiscourseTranslator::GuardianExtension }
+  end
+
   class ::PostSerializer
     attributes :can_translate
 
     def can_translate
-      return false if !SiteSetting.translator_enabled
+      if !(
+           SiteSetting.translator_enabled && scope.user_group_allowed? &&
+             scope.post_group_allowed?(object)
+         )
+        return false
+      end
 
       detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
@@ -124,17 +160,15 @@ after_initialize do
         Jobs.enqueue(:detect_translation, post_id: object.id)
         false
       else
-        detected_lang != "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[I18n.locale]
+        detected_lang !=
+          "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[
+            I18n.locale
+          ]
       end
     end
-
   end
 
-  DiscourseTranslator::Engine.routes.draw do
-    post "translate" => "translator#translate"
-  end
+  DiscourseTranslator::Engine.routes.draw { post "translate" => "translator#translate" }
 
-  Discourse::Application.routes.append do
-    mount ::DiscourseTranslator::Engine, at: "translator"
-  end
+  Discourse::Application.routes.append { mount ::DiscourseTranslator::Engine, at: "translator" }
 end

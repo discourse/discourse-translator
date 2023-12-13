@@ -7,6 +7,6 @@
 ru:
   js:
     translator:
-      view_translation: "Посмотреть перевод"
+      view_translation: "Показать перевод"
       hide_translation: "Скрыть перевод"
-      translated_from: "Переведено с %{language} пользователем %{translator}"
+      translated_from: "Перевод; переводчик — %{translator}, исходный язык — %{language}"

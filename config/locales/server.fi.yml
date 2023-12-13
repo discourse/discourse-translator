@@ -17,9 +17,16 @@ fi:
     translator_aws_key_id: "AWS-avaimen tunnus"
     translator_aws_secret_access: "AWS-salainen pääsyavain"
     translator_aws_iam_role: "AWS:n IAM-rooli"
+    translator_azure_custom_subdomain: "Vaaditaan, jos käytät Azure Cognitive Services -palveluiden virtuaaliverkkoa tai palomuuria. Huomioi: syötä vain oma aliverkkotunnuksesi päätelaitteesi koko osoitteen sijaan."
+    restrict_translation_by_group: "Vain erikseen sallitut tyhmät voivat kääntää"
+    restrict_translation_by_poster_group: "Salli vain erikseen sallittujen käyttäjien kirjoittamien viestien kääntäminen"
   translator:
     failed: "Kääntäjä ei osaa kääntää tätä kieltä."
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
     microsoft:
       missing_token: "Kääntäjä ei voinut noutaa kelvollista tunnusta."
+      missing_key: "Azure Subscription Key -tilaustunnistetta ei ole ilmoitettu."
+  not_in_group:
+    user_not_in_group: "Et kuulu ryhmään, jolla on oikeus kääntää."
+    poster_not_in_group: "Viesti ei ole sallittujen ryhmään lisätyn käyttäjän julkaisema. Jos ryhmä on tyhjä, se ei ole käytössä."

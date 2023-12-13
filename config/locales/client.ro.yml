@@ -5,3 +5,13 @@
 # https://translate.discourse.org/
 
 ro:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Discourse Translator"
+  js:
+    translator:
+      view_translation: "Vezi traducere"
+      hide_translation: "Ascunde traducere"
+      translated_from: "Tradus din %{language} cu %{translator}"

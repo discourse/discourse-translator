@@ -1,4 +1,9 @@
 en:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Discourse Translator"
   js:
     translator:
       view_translation: "View translation"
