@@ -129,7 +129,6 @@ module DiscourseTranslator
       begin
         response = Excon.get(url)
         body = JSON.parse(response.body)
-        pp body
         status = response.status
       rescue JSON::ParserError, Excon::Error::Socket, Excon::Error::Timeout
         body = I18n.t("translator.not_available")
