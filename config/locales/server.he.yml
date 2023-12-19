@@ -13,6 +13,8 @@ he:
     translator_google_api_key: "מפתח API של Google"
     translator_yandex_api_key: "מפתח API של Yandex"
     max_translations_per_minute: "מספר התרגומים לדקה שמשתמש רגיל יכול לבצע."
+    translator_libretranslate_endpoint: "נק׳ קצה ל־API של LibreTranslate"
+    translator_libretranslate_api_key: "מפתח API ל־LibreTranslate"
     translator_aws_region: "אזור ב־AWS"
     translator_aws_key_id: "מזהה מפתח AWS"
     translator_aws_secret_access: "מפתח גישה סודי של AWS"
@@ -24,6 +26,7 @@ he:
     failed: "המתרגם אינו מסוגל לתרגם שפה זו."
     not_supported: "שפה זו אינה נתמכת על ידי המתרגם."
     too_long: "פוסט זה ארוך מכדי לתרגם אותו על ידי המתרגם."
+    not_available: "שירות התרגום אינו זמין כרגע."
     microsoft:
       missing_token: "המתרגם לא הצליח לקבל אסימון תקף."
       missing_key: "לא סופק מפתח מינוי של Azure."

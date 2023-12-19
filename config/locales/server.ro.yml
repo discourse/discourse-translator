@@ -13,6 +13,8 @@ ro:
     translator_google_api_key: "Cheie API Google"
     translator_yandex_api_key: "Cheie API Yandex"
     max_translations_per_minute: "Numărul de traduceri pe minut pe care un utilizator obișnuit le poate efectua."
+    translator_libretranslate_endpoint: "Punct-final API LibreTranslate"
+    translator_libretranslate_api_key: "Cheie API LibreTranslate"
     translator_aws_region: "Regiune AWS"
     translator_aws_key_id: "ID cheie AWS"
     translator_aws_secret_access: "Cheie de acces secretă AWS"
@@ -24,6 +26,7 @@ ro:
     failed: "Traducătorul nu poate traduce această limbă."
     not_supported: "Această limbă nu este acceptată de traducător."
     too_long: "Acest articol este prea lung pentru a fi tradusă de către traducător."
+    not_available: "Momentan serviciul de traducere nu este disponibil."
     microsoft:
       missing_token: "Traducătorul nu a putut să recupereze un jeton valid."
       missing_key: "Nicio cheie de abonament Azure nu a fost furnizată."
