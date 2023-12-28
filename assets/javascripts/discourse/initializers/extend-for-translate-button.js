@@ -11,6 +11,7 @@ function translatePost(post) {
     post.setProperties({
       translated_text: res.translation,
       detected_lang: res.detected_lang,
+      translated_title: res.title_translation,
     });
   });
 }
@@ -29,7 +30,8 @@ function initializeTranslation(api) {
   api.includePostAttributes(
     "can_translate",
     "translated_text",
-    "detected_lang"
+    "detected_lang",
+    "translated_title"
   );
 
   api.decorateWidget("post-menu:before", (dec) => {
@@ -44,8 +46,17 @@ function initializeTranslation(api) {
     const language = dec.attrs.detected_lang;
     const translator = siteSettings.translator;
 
+    let titleElements = [];
+
+    if (dec.attrs.translated_title) {
+      titleElements = [
+        dec.h("div.topic-attribution", dec.attrs.translated_title),
+      ];
+    }
+
     return dec.h("div.post-translation", [
       dec.h("hr"),
+      ...titleElements,
       dec.h(
         "div.post-attribution",
         I18n.t("translator.translated_from", { language, translator })

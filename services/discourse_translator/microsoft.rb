@@ -93,9 +93,9 @@ module DiscourseTranslator
       "microsoft-translator"
     end
 
-    def self.detect(post)
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = post.raw.truncate(LENGTH_LIMIT, omission: nil)
+    def self.detect(topic_or_post)
+      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+        text = get_text(topic_or_post).truncate(LENGTH_LIMIT, omission: nil)
 
         body = [{ "Text" => text }].to_json
 
@@ -108,21 +108,23 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate(post)
-      detected_lang = detect(post)
+    def self.translate(topic_or_post)
+      detected_lang = detect(topic_or_post)
 
       if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
            !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
         raise TranslatorError.new(I18n.t("translator.failed"))
       end
 
-      raise TranslatorError.new(I18n.t("translator.too_long")) if post.cooked.length > LENGTH_LIMIT
+      if get_text(topic_or_post).length > LENGTH_LIMIT
+        raise TranslatorError.new(I18n.t("translator.too_long"))
+      end
 
       translated_text =
-        from_custom_fields(post) do
+        from_custom_fields(topic_or_post) do
           query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
 
-          body = [{ "Text" => post.cooked }].to_json
+          body = [{ "Text" => get_text(topic_or_post) }].to_json
 
           uri = URI(translate_endpoint)
           uri.query = URI.encode_www_form(query)

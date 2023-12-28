@@ -94,6 +94,6 @@ discourse_translator:
     client: true
     type: group_list
   restrict_translation_by_poster_group:
-    default: "" 
+    default: ""
     client: true
     type: group_list
