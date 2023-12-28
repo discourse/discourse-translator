@@ -16,11 +16,16 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
   shared_examples "translation_successful" do
     it "returns the translated text" do
       DiscourseTranslator::Microsoft.expects(:translate).with(reply).returns(%w[ja ニャン猫])
+      if reply.is_first_post?
+        DiscourseTranslator::Microsoft.expects(:translate).with(reply.topic).returns(%w[ja タイトル])
+      end
 
       post :translate, params: { post_id: reply.id }, format: :json
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to eq({ translation: "ニャン猫", detected_lang: "ja" }.to_json)
+      expect(response.body).to eq(
+        { translation: "ニャン猫", detected_lang: "ja", title_translation: "タイトル" }.to_json,
+      )
     end
   end
 

@@ -80,21 +80,23 @@ module DiscourseTranslator
       SiteSetting.translator_libretranslate_api_key
     end
 
-    def self.detect(post)
+    def self.detect(topic_or_post)
       res =
         result(
           detect_uri,
           q:
             ActionController::Base
               .helpers
-              .strip_tags(post.cooked)
+              .strip_tags(get_text(topic_or_post))
               .truncate(MAXLENGTH, omission: nil),
         )
 
       if !res.empty?
-        post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= res[0]["language"]
+        topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= res[0][
+          "language"
+        ]
       else
-        post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= "en"
+        topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= "en"
       end
     end
 
@@ -104,17 +106,17 @@ module DiscourseTranslator
       res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang }
     end
 
-    def self.translate(post)
-      detected_lang = detect(post)
+    def self.translate(topic_or_post)
+      detected_lang = detect(topic_or_post)
 
       raise I18n.t("translator.failed") unless translate_supported?(detected_lang, I18n.locale)
 
       translated_text =
-        from_custom_fields(post) do
+        from_custom_fields(topic_or_post) do
           res =
             result(
               translate_uri,
-              q: post.cooked.truncate(MAXLENGTH, omission: nil),
+              q: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
               source: detected_lang,
               target: SUPPORTED_LANG_MAPPING[I18n.locale],
               format: "html",

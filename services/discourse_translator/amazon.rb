@@ -92,8 +92,8 @@ module DiscourseTranslator
       "aws-translator"
     end
 
-    def self.detect(post)
-      text = post.cooked.truncate(MAXLENGTH, omission: nil)
+    def self.detect(topic_or_post)
+      text = get_text(topic_or_post).truncate(MAXLENGTH, omission: nil)
 
       return if text.blank?
 
@@ -106,21 +106,21 @@ module DiscourseTranslator
           },
         )&.source_language_code
 
-      assign_lang_custom_field(post, detected_lang)
+      assign_lang_custom_field(topic_or_post, detected_lang)
     end
 
-    def self.translate(post)
-      from_custom_fields(post) do
+    def self.translate(topic_or_post)
+      from_custom_fields(topic_or_post) do
         result =
           client.translate_text(
             {
-              text: post.cooked.truncate(MAXLENGTH, omission: nil),
+              text: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
               source_language_code: "auto",
               target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
             },
           )
 
-        detected_lang = assign_lang_custom_field(post, result.source_language_code)
+        detected_lang = assign_lang_custom_field(topic_or_post, result.source_language_code)
 
         [detected_lang, result.translated_text]
       end

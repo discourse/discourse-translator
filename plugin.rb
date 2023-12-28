@@ -73,9 +73,16 @@ after_initialize do
       end
 
       begin
+        title_json = {}
         detected_lang, translation =
           "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post)
-        render json: { translation: translation, detected_lang: detected_lang }, status: 200
+        if post.is_first_post?
+          _, title_translation =
+            "DiscourseTranslator::#{SiteSetting.translator}".constantize.translate(post.topic)
+          title_json = { title_translation: title_translation }
+        end
+        render json: { translation: translation, detected_lang: detected_lang }.merge(title_json),
+               status: 200
       rescue ::DiscourseTranslator::TranslatorError => e
         render_json_error e.message, status: 422
       end
@@ -83,9 +90,23 @@ after_initialize do
   end
 
   Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
+  Topic.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
 
   class ::Post < ActiveRecord::Base
     before_update :clear_translator_custom_fields, if: :raw_changed?
+
+    private
+
+    def clear_translator_custom_fields
+      return if !SiteSetting.translator_enabled
+
+      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
+      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
+    end
+  end
+
+  class ::Topic < ActiveRecord::Base
+    before_update :clear_translator_custom_fields, if: :title_changed?
 
     private
 
