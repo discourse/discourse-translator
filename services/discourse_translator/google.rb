@@ -55,8 +55,8 @@ module DiscourseTranslator
       th: "th",
       uk: "uk",
       uz: "uz",
-      zh_CN: "zh_CN",
-      zh_TW: "zh_TW",
+      zh_CN: "zh-CN",
+      zh_TW: "zh-TW",
       tr_TR: "tr",
       pt_BR: "pt",
       pl_PL: "pl",
@@ -84,7 +84,7 @@ module DiscourseTranslator
         0
       ].max { |a, b| a.confidence <=> b.confidence }[
         "language"
-      ]
+      ].gsub('-', '_')
     end
 
     def self.translate_supported?(source, target)
