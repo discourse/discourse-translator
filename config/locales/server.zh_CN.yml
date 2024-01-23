@@ -13,6 +13,8 @@ zh_CN:
     translator_google_api_key: "Google API 密钥"
     translator_yandex_api_key: "Yandex API 密钥"
     max_translations_per_minute: "普通用户每分钟可以执行的翻译次数。"
+    translator_libretranslate_endpoint: "LibreTranslate API 端点"
+    translator_libretranslate_api_key: "LibreTranslate API 密钥"
     translator_aws_region: "AWS 区域"
     translator_aws_key_id: "AWS 密钥 ID"
     translator_aws_secret_access: "AWS 密码访问密钥"
@@ -24,6 +26,7 @@ zh_CN:
     failed: "翻译器无法翻译此语言。"
     not_supported: "翻译器不支持此语言。"
     too_long: "帖子过长，翻译器无法翻译。"
+    not_available: "该翻译服务目前不可用。"
     microsoft:
       missing_token: "翻译器无法检索有效令牌。"
       missing_key: "未提供 Azure 订阅密钥。"

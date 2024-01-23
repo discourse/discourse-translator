@@ -13,6 +13,8 @@ fr:
     translator_google_api_key: "Clé d'API Google"
     translator_yandex_api_key: "Clé d'API Yandex"
     max_translations_per_minute: "Le nombre de traductions par minute qu'un utilisateur normal peut effectuer."
+    translator_libretranslate_endpoint: "Point de terminaison de l'API LibreTranslate"
+    translator_libretranslate_api_key: "Clé API de LibreTranslate"
     translator_aws_region: "Région AWS"
     translator_aws_key_id: "ID de clé AWS"
     translator_aws_secret_access: "Clé d'accès secrète AWS"
@@ -24,6 +26,7 @@ fr:
     failed: "Le traducteur n'est pas en mesure de traduire cette langue."
     not_supported: "Cette langue n'est pas prise en charge par le traducteur."
     too_long: "Ce message est trop long pour être traduit par le traducteur."
+    not_available: "Le service de traduction est actuellement indisponible."
     microsoft:
       missing_token: "Le traducteur n'a pas pu récupérer un jeton valide."
       missing_key: "Aucune clé d'abonnement Azure n'a été fournie."
