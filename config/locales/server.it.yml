@@ -13,6 +13,8 @@ it:
     translator_google_api_key: "Chiave API Google"
     translator_yandex_api_key: "Chiave API Yandex"
     max_translations_per_minute: "Il numero di traduzioni al minuto che un utente normale può eseguire."
+    translator_libretranslate_endpoint: "Endpoint API di LibreTranslate"
+    translator_libretranslate_api_key: "Chiave API di LibreTranslate"
     translator_aws_region: "Regione AWS"
     translator_aws_key_id: "ID chiave AWS"
     translator_aws_secret_access: "Chiave segreta di accesso AWS"
@@ -24,6 +26,7 @@ it:
     failed: "Il traduttore non è in grado di tradurre questa lingua."
     not_supported: "Questa lingua non è supportata dal traduttore."
     too_long: "Questo messaggio è troppo lungo per essere tradotto dal traduttore."
+    not_available: "Il servizio di traduzione non è attualmente disponibile."
     microsoft:
       missing_token: "Il traduttore non è stato in grado di recuperare un token valido."
       missing_key: "Nessuna chiave di sottoscrizione di Azure fornita."

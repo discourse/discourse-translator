@@ -13,6 +13,8 @@ fi:
     translator_google_api_key: "Googlen API-avain"
     translator_yandex_api_key: "Yandexin API-avain"
     max_translations_per_minute: "Käännösten määrä minuutissa, jonka tavallinen käyttäjä voi tehdä."
+    translator_libretranslate_endpoint: "LibreTranslaten API-päätepiste"
+    translator_libretranslate_api_key: "LibreTranslaten API-avain"
     translator_aws_region: "AWS-alue"
     translator_aws_key_id: "AWS-avaimen tunnus"
     translator_aws_secret_access: "AWS-salainen pääsyavain"
@@ -24,6 +26,7 @@ fi:
     failed: "Kääntäjä ei osaa kääntää tätä kieltä."
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
+    not_available: "Kääntäjäpalvelu ei ole tällä hetkellä käytettävissä."
     microsoft:
       missing_token: "Kääntäjä ei voinut noutaa kelvollista tunnusta."
       missing_key: "Azure Subscription Key -tilaustunnistetta ei ole ilmoitettu."
