@@ -9,7 +9,7 @@ ru:
     admin:
       site_settings:
         categories:
-          discourse_translator: "Discourse для Translator"
+          discourse_translator: "Плагин Discourse «Переводчик»"
   js:
     translator:
       view_translation: "Показать перевод"
