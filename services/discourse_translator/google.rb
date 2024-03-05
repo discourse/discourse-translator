@@ -93,7 +93,7 @@ module DiscourseTranslator
     end
 
     def self.translate(topic_or_post)
-      detected_lang = detect(topic_or_post)
+      detected_lang = detect(topic_or_post).gsub('_', '-')
 
       raise I18n.t("translator.failed") unless translate_supported?(detected_lang, I18n.locale)
 
