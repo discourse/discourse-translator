@@ -5,6 +5,11 @@
 # https://translate.discourse.org/
 
 es:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Traductor de Discourse"
   js:
     translator:
       view_translation: "Ver traducción"

@@ -5,6 +5,11 @@
 # https://translate.discourse.org/
 
 ja:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Discourse 翻訳ツール"
   js:
     translator:
       view_translation: "翻訳を表示"

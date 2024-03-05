@@ -17,7 +17,7 @@ function translatePost(post) {
 }
 
 function initializeTranslation(api) {
-  const siteSettings = api.container.lookup("site-settings:main");
+  const siteSettings = api.container.lookup("service:site-settings");
   const currentUser = api.getCurrentUser();
 
   if (!currentUser) {

@@ -13,6 +13,8 @@ tr_TR:
     translator_google_api_key: "Google API Anahtarı"
     translator_yandex_api_key: "Yandex API Anahtarı"
     max_translations_per_minute: "Normal bir kullanıcının gerçekleştirebileceği dakika başına çeviri sayısı."
+    translator_libretranslate_endpoint: "LibreTranslate API Uç Noktası"
+    translator_libretranslate_api_key: "LibreTranslate API Anahtarı"
     translator_aws_region: "AWS Bölgesi"
     translator_aws_key_id: "AWS Anahtar Kimliği"
     translator_aws_secret_access: "AWS gizli erişim anahtarı"
@@ -24,6 +26,7 @@ tr_TR:
     failed: "Çevirmen bu dilde çeviri yapamıyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
     too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
+    not_available: "Çevirmen hizmeti şu anda kullanılamıyor."
     microsoft:
       missing_token: "Çevirmen geçerli bir belirteç alamadı."
       missing_key: "Azure Abonelik Anahtarı sağlanmadı."

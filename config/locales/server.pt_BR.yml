@@ -13,6 +13,8 @@ pt_BR:
     translator_google_api_key: "Chave de API do Google"
     translator_yandex_api_key: "Chave de API do Yandex"
     max_translations_per_minute: "A quantidade de traduções por minuto que um(a) usuário(a) comum pode realizar."
+    translator_libretranslate_endpoint: "Ponto de extremidade da API LibreTranslate"
+    translator_libretranslate_api_key: "Chave da API LibreTranslate"
     translator_aws_region: "Região do AWS"
     translator_aws_key_id: "ID da Chave do AWS"
     translator_aws_secret_access: "Chave de acesso secreta do AWS"
@@ -24,6 +26,7 @@ pt_BR:
     failed: "O(a) tradutor(a) não pode traduzir este idioma."
     not_supported: "Este idioma não é compatível com o(a) tradutor(a)."
     too_long: "Esta postagem é muito longa para ser traduzida pelo(a) tradutor(a)."
+    not_available: "O serviço de tradução não está disponível por enquanto."
     microsoft:
       missing_token: "O(a) tradutor(a) não pôde recuperar um token válido."
       missing_key: "Nenhuma Chave de Assinatura do Azure fornecida."

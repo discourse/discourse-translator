@@ -13,6 +13,8 @@ ar:
     translator_google_api_key: "مفتاح واجهة برمجة تطبيقات Google"
     translator_yandex_api_key: "مفتاح واجهة برمجة تطبيقات Yandex"
     max_translations_per_minute: "عدد الترجمات التي يمكن للمستخدم المنتظم إجراؤها في الدقيقة"
+    translator_libretranslate_endpoint: "نقطة نهاية واجهة برمجة التطبيقات لـ LibreTranslate"
+    translator_libretranslate_api_key: "مفتاح واجهة برمجة التطبيقات لـ LibreTranslate"
     translator_aws_region: "منطقة AWS"
     translator_aws_key_id: "معرِّف مفتاح AWS"
     translator_aws_secret_access: "مفتاح الوصول السري لـ AWS"
@@ -24,6 +26,7 @@ ar:
     failed: "يتعذَّر على المترجم ترجمة هذه الرسالة."
     not_supported: "لا يدعم المترجم هذه اللغة."
     too_long: "هذا المنشور طويل جدًا ولا يستطيع المترجم ترجمته."
+    not_available: "خدمة المترجم غير متوفرة حاليًا."
     microsoft:
       missing_token: "لم يتمكَّن المترجم من استرداد رمز مميَّز صالح."
       missing_key: "لم يتم توفير مفتاح اشتراك Azure."
