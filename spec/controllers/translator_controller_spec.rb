@@ -101,11 +101,15 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
         end
 
         describe "user is in a allowlisted group" do
+          fab!(:admin)
+
           before do
             SiteSetting.restrict_translation_by_group =
               "#{Group.find_by(name: "admins").id}|not_in_the_list"
+
+            log_in_user(admin)
           end
-          let!(:user) { log_in :admin }
+
           include_examples "translation_successful"
         end
 
@@ -116,21 +120,23 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
         end
 
         describe "restrict_translation_by_poster_group" do
+          fab!(:admin)
+
           before do
             SiteSetting.restrict_translation_by_group =
               "#{Group.find_by(name: "admins").id}|not_in_the_list"
+
+            log_in_user(admin)
           end
           describe "post made by an user in a allowlisted group" do
             before do
               SiteSetting.restrict_translation_by_poster_group = "#{poster.groups.first.id}"
             end
-            let!(:user) { log_in :admin }
             include_examples "translation_successful"
           end
 
           describe "post made by an user not in a allowlisted group" do
             before { SiteSetting.restrict_translation_by_poster_group = "not_in_the_list" }
-            let!(:user) { log_in :admin }
             include_examples "deny_request_to_translate"
           end
         end
