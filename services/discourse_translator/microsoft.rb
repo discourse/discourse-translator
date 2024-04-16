@@ -95,7 +95,7 @@ module DiscourseTranslator
 
     def self.detect(topic_or_post)
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = get_text(topic_or_post).truncate(LENGTH_LIMIT, omission: nil)
+        text = get_detection_text(topic_or_post).truncate(LENGTH_LIMIT, omission: nil)
 
         body = [{ "Text" => text }].to_json
 
