@@ -77,7 +77,7 @@ module DiscourseTranslator
     def self.detect(topic_or_post)
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(
         DETECT_URI,
-        q: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
+        q: get_detection_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
       )[
         "detections"
       ][

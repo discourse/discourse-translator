@@ -49,6 +49,15 @@ module DiscourseTranslator
       translated_text
     end
 
+    def self.get_detection_text(topic_or_post)
+      case topic_or_post.class.name
+      when "Post"
+        text = topic_or_post.topic.title + topic_or_post.cooked
+      when "Topic"
+        topic_or_post.title
+      end
+    end
+
     def self.get_text(topic_or_post)
       case topic_or_post.class.name
       when "Post"

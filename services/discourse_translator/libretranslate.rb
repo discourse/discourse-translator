@@ -87,7 +87,7 @@ module DiscourseTranslator
           q:
             ActionController::Base
               .helpers
-              .strip_tags(get_text(topic_or_post))
+              .strip_tags(get_detection_text(topic_or_post))
               .truncate(MAXLENGTH, omission: nil),
         )
 

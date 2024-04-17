@@ -93,7 +93,7 @@ module DiscourseTranslator
     end
 
     def self.detect(topic_or_post)
-      text = get_text(topic_or_post).truncate(MAXLENGTH, omission: nil)
+      text = get_detection_text(topic_or_post).truncate(MAXLENGTH, omission: nil)
 
       return if text.blank?
 
