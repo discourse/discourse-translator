@@ -6,7 +6,7 @@ module DiscourseTranslator
   class Amazon < Base
     require "aws-sdk-translate"
 
-    MAXLENGTH = 5000
+    MAX_BYTES = 10_000
 
     # Hash which maps Discourse's locale code to Amazon Translate's language code found in
     # https://docs.aws.amazon.com/translate/latest/dg/what-is-languages.html
@@ -88,12 +88,20 @@ module DiscourseTranslator
       cy: "cy",
     }
 
+    # The API expects a maximum of 10k __bytes__ of text
+    def self.truncate(text)
+      return text if text.bytesize <= MAX_BYTES
+      text = text.byteslice(...MAX_BYTES)
+      text = text.byteslice(...text.bytesize - 1) until text.valid_encoding?
+      text
+    end
+
     def self.access_token_key
       "aws-translator"
     end
 
     def self.detect(topic_or_post)
-      text = get_text(topic_or_post).truncate(MAXLENGTH, omission: nil)
+      text = truncate get_text(topic_or_post)
 
       return if text.blank?
 
@@ -114,7 +122,7 @@ module DiscourseTranslator
         result =
           client.translate_text(
             {
-              text: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
+              text: truncate(get_text(topic_or_post)),
               source_language_code: "auto",
               target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
             },
