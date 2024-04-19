@@ -5,10 +5,21 @@ require "rails_helper"
 RSpec.describe DiscourseTranslator::Amazon do
   let(:mock_response) { Struct.new(:status, :body) }
 
+  describe ".truncate" do
+    it "truncates text to 10000 bytes" do
+      text = "こんにちは" * (described_class::MAX_BYTES / 5)
+      truncated = described_class.truncate(text)
+
+      expect(truncated.bytesize).to be <= described_class::MAX_BYTES
+      expect(truncated.valid_encoding?).to eq(true)
+      expect(truncated[-1]).to eq "に"
+    end
+  end
+
   describe ".detect" do
     let(:post) { Fabricate(:post) }
     let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
-    let(:text) { post.cooked.truncate(described_class::MAXLENGTH, omission: nil) }
+    let(:text) { described_class.truncate(post.cooked) }
     let(:detected_lang) { "en" }
 
     before do
@@ -31,12 +42,6 @@ RSpec.describe DiscourseTranslator::Amazon do
           detected_lang,
         )
       end
-    end
-
-    it "should truncate string to 5000 characters and still process the request" do
-      length = 6000
-      post.cooked = rand(36**length).to_s(36)
-      expect(described_class.detect(post)).to eq(detected_lang)
     end
 
     it "should fail graciously when the cooked translated text is blank" do
