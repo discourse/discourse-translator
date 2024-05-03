@@ -167,28 +167,24 @@ after_initialize do
     Guardian.class_eval { prepend DiscourseTranslator::GuardianExtension }
   end
 
-  class ::PostSerializer
-    attributes :can_translate
+  add_to_serializer :post, :can_translate do
+    if !(
+         SiteSetting.translator_enabled && scope.user_group_allow_translate? &&
+           scope.poster_group_allow_translate?(object)
+       )
+      return false
+    end
 
-    def can_translate
-      if !(
-           SiteSetting.translator_enabled && scope.user_group_allow_translate? &&
-             scope.poster_group_allow_translate?(object)
-         )
-        return false
-      end
+    detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
-      detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
-
-      if !detected_lang
-        Jobs.enqueue(:detect_translation, post_id: object.id)
-        false
-      else
-        detected_lang !=
-          "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[
-            I18n.locale
-          ]
-      end
+    if !detected_lang
+      Jobs.enqueue(:detect_translation, post_id: object.id)
+      false
+    else
+      detected_lang !=
+        "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[
+          I18n.locale
+        ]
     end
   end
 
