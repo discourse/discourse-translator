@@ -114,19 +114,21 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
         end
 
         describe "user is not in a allowlisted group" do
-          before { SiteSetting.restrict_translation_by_group = "not_in_the_list" }
+          before do
+            SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:moderators]}"
+          end
 
           include_examples "deny_request_to_translate"
         end
 
         describe "restrict_translation_by_poster_group" do
-          fab!(:admin)
+          fab!(:group)
+          fab!(:user) { Fabricate(:user, groups: [group]) }
 
           before do
-            SiteSetting.restrict_translation_by_group =
-              "#{Group.find_by(name: "admins").id}|not_in_the_list"
+            SiteSetting.restrict_translation_by_group = "#{group.id}|"
 
-            log_in_user(admin)
+            log_in_user(user)
           end
           describe "post made by an user in a allowlisted group" do
             before do
@@ -136,7 +138,10 @@ RSpec.describe ::DiscourseTranslator::TranslatorController do
           end
 
           describe "post made by an user not in a allowlisted group" do
-            before { SiteSetting.restrict_translation_by_poster_group = "not_in_the_list" }
+            before do
+              SiteSetting.restrict_translation_by_poster_group =
+                "#{Group::AUTO_GROUPS[:moderators]}"
+            end
             include_examples "deny_request_to_translate"
           end
         end
