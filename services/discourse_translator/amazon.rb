@@ -105,16 +105,20 @@ module DiscourseTranslator
 
       return if text.blank?
 
-      detected_lang =
-        client.translate_text(
-          {
-            text: text,
-            source_language_code: "auto",
-            target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
-          },
-        )&.source_language_code
+      begin
+        detected_lang =
+          client.translate_text(
+            {
+              text: text,
+              source_language_code: "auto",
+              target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
+            },
+          )&.source_language_code
 
-      assign_lang_custom_field(topic_or_post, detected_lang)
+        assign_lang_custom_field(topic_or_post, detected_lang)
+      rescue Aws::Errors::MissingCredentialsError
+        raise I18n.t("translator.amazon.invalid_credentials")
+      end
     end
 
     def self.translate(topic_or_post)

@@ -37,9 +37,19 @@ describe Jobs::DetectTranslation do
     it "detects translation" do
       post = Fabricate(:post, raw: "this is a sample post")
 
-      Jobs::DetectTranslation.new.execute(post_id: post.id)
+      messages = MessageBus.track_publish { Jobs::DetectTranslation.new.execute(post_id: post.id) }
 
       expect(post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq("en")
+      expect(messages.size).to eq(1)
+    end
+
+    it "does not publish change if no change in translation" do
+      post = Fabricate(:post, raw: "this is a sample post")
+      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "en"
+      post.save_custom_fields
+
+      messages = MessageBus.track_publish { Jobs::DetectTranslation.new.execute(post_id: post.id) }
+      expect(messages.size).to eq(0)
     end
   end
 end
