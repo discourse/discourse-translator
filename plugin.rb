@@ -168,12 +168,11 @@ after_initialize do
   end
 
   add_to_serializer :post, :can_translate do
-    if !(
-         SiteSetting.translator_enabled && scope.user_group_allow_translate? &&
-           scope.poster_group_allow_translate?(object)
-       )
+    return false if !SiteSetting.translator_enabled
+    if !scope.user_group_allow_translate? || !scope.poster_group_allow_translate?(object)
       return false
     end
+    return false if raw.blank? || post_type == Post.types[:small_action]
 
     detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
