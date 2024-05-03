@@ -55,7 +55,7 @@ after_initialize do
       raise Discourse::InvalidParameters.new(:post_id) if post.blank?
       guardian.ensure_can_see!(post)
 
-      if !guardian.user_group_allowed?
+      if !guardian.user_group_allow_translate?
         raise Discourse::InvalidAccess.new(
                 "not_in_group",
                 SiteSetting.restrict_translation_by_group,
@@ -64,7 +64,7 @@ after_initialize do
               )
       end
 
-      if !guardian.post_group_allowed?(post)
+      if !guardian.poster_group_allow_translate?(post)
         raise Discourse::InvalidAccess.new(
                 "not_in_group",
                 SiteSetting.restrict_translation_by_poster_group,
@@ -172,8 +172,8 @@ after_initialize do
 
     def can_translate
       if !(
-           SiteSetting.translator_enabled && scope.user_group_allowed? &&
-             scope.post_group_allowed?(object)
+           SiteSetting.translator_enabled && scope.user_group_allow_translate? &&
+             scope.poster_group_allow_translate?(object)
          )
         return false
       end
