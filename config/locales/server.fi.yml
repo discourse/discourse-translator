@@ -27,6 +27,8 @@ fi:
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
     not_available: "Kääntäjäpalvelu ei ole tällä hetkellä käytettävissä."
+    amazon:
+      invalid_credentials: "Ilmoitetut AWS Translate -tunnukset ovat virheelliset."
     microsoft:
       missing_token: "Kääntäjä ei voinut noutaa kelvollista tunnusta."
       missing_key: "Azure Subscription Key -tilaustunnistetta ei ole ilmoitettu."

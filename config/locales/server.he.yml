@@ -27,6 +27,8 @@ he:
     not_supported: "שפה זו אינה נתמכת על ידי המתרגם."
     too_long: "פוסט זה ארוך מכדי לתרגם אותו על ידי המתרגם."
     not_available: "שירות התרגום אינו זמין כרגע."
+    amazon:
+      invalid_credentials: "פרטי הגישה שצוינו למנגנון התרגום של AWS שגויים."
     microsoft:
       missing_token: "המתרגם לא הצליח לקבל אסימון תקף."
       missing_key: "לא סופק מפתח מינוי של Azure."
