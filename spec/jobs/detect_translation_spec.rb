@@ -22,6 +22,15 @@ describe Jobs::DetectTranslation do
     expect(post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to be_nil
   end
 
+  it "does not detect translation for small posts" do
+    SiteSetting.translator_enabled = false
+
+    post = Fabricate(:small_action)
+    Jobs::DetectTranslation.new.execute(post_id: post.id)
+
+    expect(post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to be_nil
+  end
+
   describe "translator enabled" do
     before { SiteSetting.translator_enabled = true }
 

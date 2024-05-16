@@ -140,7 +140,7 @@ after_initialize do
         return if !SiteSetting.translator_enabled
 
         post = Post.find_by(id: args[:post_id])
-        return unless post
+        return if post.nil? || post.raw.blank? || post.post_type == Post.types[:small_action]
 
         DistributedMutex.synchronize("detect_translation_#{post.id}") do
           "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(post)
@@ -155,6 +155,8 @@ after_initialize do
 
   def post_process(post)
     return if !SiteSetting.translator_enabled
+    return if post.raw.blank? || post.post_type == Post.types[:small_action]
+
     Jobs.enqueue(:detect_translation, post_id: post.id)
   end
   listen_for :post_process
