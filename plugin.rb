@@ -92,32 +92,6 @@ after_initialize do
   Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
   Topic.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
 
-  class ::Post < ActiveRecord::Base
-    before_update :clear_translator_custom_fields, if: :raw_changed?
-
-    private
-
-    def clear_translator_custom_fields
-      return if !SiteSetting.translator_enabled
-
-      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
-      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
-    end
-  end
-
-  class ::Topic < ActiveRecord::Base
-    before_update :clear_translator_custom_fields, if: :title_changed?
-
-    private
-
-    def clear_translator_custom_fields
-      return if !SiteSetting.translator_enabled
-
-      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
-      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
-    end
-  end
-
   module ::Jobs
     class TranslatorMigrateToAzurePortal < ::Jobs::Onceoff
       def execute_onceoff(args)
@@ -153,20 +127,18 @@ after_initialize do
     end
   end
 
-  def post_process(post)
-    return if !SiteSetting.translator_enabled
-    Jobs.enqueue(:detect_translation, post_id: post.id)
-  end
-  listen_for :post_process
+  on(:post_process) { |post| Jobs.enqueue(:detect_translation, post_id: post.id) }
 
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
-  %w[../lib/discourse_translator/guardian_extension.rb].each do |path|
-    load File.expand_path(path, __FILE__)
-  end
+  require_relative "lib/discourse_translator/guardian_extension"
+  require_relative "lib/discourse_translator/post_extension"
+  require_relative "lib/discourse_translator/topic_extension"
 
   reloadable_patch do |plugin|
-    Guardian.class_eval { prepend DiscourseTranslator::GuardianExtension }
+    Guardian.prepend(DiscourseTranslator::GuardianExtension)
+    Post.prepend(DiscourseTranslator::PostExtension)
+    Topic.prepend(DiscourseTranslator::TopicExtension)
   end
 
   add_to_serializer :post, :can_translate do
