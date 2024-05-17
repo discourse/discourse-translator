@@ -5,7 +5,7 @@ require "rails_helper"
 describe DiscourseTranslator::GuardianExtension do
   describe "anon user" do
     let!(:guardian) { Guardian.new }
-    fab!(:post) { Fabricate(:post) }
+    fab!(:post)
 
     before do
       SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}"
@@ -26,7 +26,7 @@ describe DiscourseTranslator::GuardianExtension do
   end
 
   describe "logged in user" do
-    fab!(:group) { Fabricate(:group) }
+    fab!(:group)
     fab!(:user) { Fabricate(:user, groups: [group]) }
     fab!(:post) { Fabricate(:post, user: user) }
     let(:guardian) { Guardian.new(user) }
