@@ -54,8 +54,9 @@ module DiscourseTranslator
       when "Post"
         text = topic_or_post.topic.title + topic_or_post.cooked
       when "Topic"
-        topic_or_post.title
+        text = topic_or_post.title
       end
+      ActionView::Base.full_sanitizer.sanitize(text)
     end
 
     def self.get_text(topic_or_post)
