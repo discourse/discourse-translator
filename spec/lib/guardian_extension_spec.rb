@@ -25,6 +25,24 @@ describe DiscourseTranslator::GuardianExtension do
     end
   end
 
+  describe "deleted poster" do
+    fab!(:group)
+    fab!(:user)
+    fab!(:poster) { Fabricate(:user, groups: [group]) }
+    fab!(:post) { Fabricate(:post, user: poster) }
+    let!(:guardian) { Guardian.new(user) }
+
+    describe "#poster_group_allow_translate?" do
+      it "returns false when the post user has been deleted" do
+        SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
+
+        post.update(user: nil)
+
+        expect(guardian.poster_group_allow_translate?(post)).to eq(false)
+      end
+    end
+  end
+
   describe "logged in user" do
     fab!(:group)
     fab!(:user) { Fabricate(:user, groups: [group]) }
@@ -45,7 +63,7 @@ describe DiscourseTranslator::GuardianExtension do
       end
     end
 
-    describe "#poster_group_allow_translate??" do
+    describe "#poster_group_allow_translate?" do
       it "returns true when the post user is in restrict_translation_by_poster_group" do
         SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
 
