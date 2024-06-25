@@ -56,6 +56,12 @@ module DiscourseTranslator
       when "Topic"
         text = topic_or_post.title
       end
+
+      # Remove preformatted text (usually code)
+      @html_doc = Nokogiri::HTML::DocumentFragment.parse(text)
+      @html_doc.css("pre").unlink
+      text = @html_doc.to_s()
+
       ActionView::Base.full_sanitizer.sanitize(text)
     end
 
