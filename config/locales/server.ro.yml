@@ -27,6 +27,8 @@ ro:
     not_supported: "Această limbă nu este acceptată de traducător."
     too_long: "Acest articol este prea lung pentru a fi tradusă de către traducător."
     not_available: "Momentan serviciul de traducere nu este disponibil."
+    amazon:
+      invalid_credentials: "Datele de identificare furnizate pentru traducerea AWS nu sunt valide."
     microsoft:
       missing_token: "Traducătorul nu a putut să recupereze un jeton valid."
       missing_key: "Nicio cheie de abonament Azure nu a fost furnizată."

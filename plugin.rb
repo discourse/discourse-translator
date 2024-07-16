@@ -55,7 +55,7 @@ after_initialize do
       raise Discourse::InvalidParameters.new(:post_id) if post.blank?
       guardian.ensure_can_see!(post)
 
-      if !guardian.user_group_allowed?
+      if !guardian.user_group_allow_translate?
         raise Discourse::InvalidAccess.new(
                 "not_in_group",
                 SiteSetting.restrict_translation_by_group,
@@ -64,7 +64,7 @@ after_initialize do
               )
       end
 
-      if !guardian.post_group_allowed?(post)
+      if !guardian.poster_group_allow_translate?(post)
         raise Discourse::InvalidAccess.new(
                 "not_in_group",
                 SiteSetting.restrict_translation_by_poster_group,
@@ -92,32 +92,6 @@ after_initialize do
   Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
   Topic.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
 
-  class ::Post < ActiveRecord::Base
-    before_update :clear_translator_custom_fields, if: :raw_changed?
-
-    private
-
-    def clear_translator_custom_fields
-      return if !SiteSetting.translator_enabled
-
-      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
-      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
-    end
-  end
-
-  class ::Topic < ActiveRecord::Base
-    before_update :clear_translator_custom_fields, if: :title_changed?
-
-    private
-
-    def clear_translator_custom_fields
-      return if !SiteSetting.translator_enabled
-
-      self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
-      self.custom_fields.delete(DiscourseTranslator::TRANSLATED_CUSTOM_FIELD)
-    end
-  end
-
   module ::Jobs
     class TranslatorMigrateToAzurePortal < ::Jobs::Onceoff
       def execute_onceoff(args)
@@ -144,51 +118,46 @@ after_initialize do
 
         DistributedMutex.synchronize("detect_translation_#{post.id}") do
           "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(post)
-          post.save_custom_fields unless post.custom_fields_clean?
-          post.publish_change_to_clients! :revised
+          if !post.custom_fields_clean?
+            post.save_custom_fields
+            post.publish_change_to_clients! :revised
+          end
         end
       end
     end
   end
 
-  def post_process(post)
-    return if !SiteSetting.translator_enabled
-    Jobs.enqueue(:detect_translation, post_id: post.id)
-  end
-  listen_for :post_process
+  on(:post_process) { |post| Jobs.enqueue(:detect_translation, post_id: post.id) }
 
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
-  %w[../lib/discourse_translator/guardian_extension.rb].each do |path|
-    load File.expand_path(path, __FILE__)
-  end
+  require_relative "lib/discourse_translator/guardian_extension"
+  require_relative "lib/discourse_translator/post_extension"
+  require_relative "lib/discourse_translator/topic_extension"
 
   reloadable_patch do |plugin|
-    Guardian.class_eval { prepend DiscourseTranslator::GuardianExtension }
+    Guardian.prepend(DiscourseTranslator::GuardianExtension)
+    Post.prepend(DiscourseTranslator::PostExtension)
+    Topic.prepend(DiscourseTranslator::TopicExtension)
   end
 
-  class ::PostSerializer
-    attributes :can_translate
+  add_to_serializer :post, :can_translate do
+    return false if !SiteSetting.translator_enabled
+    if !scope.user_group_allow_translate? || !scope.poster_group_allow_translate?(object)
+      return false
+    end
+    return false if raw.blank? || post_type == Post.types[:small_action]
 
-    def can_translate
-      if !(
-           SiteSetting.translator_enabled && scope.user_group_allowed? &&
-             scope.post_group_allowed?(object)
-         )
-        return false
-      end
+    detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
-      detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
-
-      if !detected_lang
-        Jobs.enqueue(:detect_translation, post_id: object.id)
-        false
-      else
-        detected_lang !=
-          "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[
-            I18n.locale
-          ]
-      end
+    if !detected_lang
+      Jobs.enqueue(:detect_translation, post_id: object.id)
+      false
+    else
+      detected_lang !=
+        "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[
+          I18n.locale
+        ]
     end
   end
 

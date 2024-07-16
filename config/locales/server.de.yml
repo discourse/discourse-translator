@@ -27,6 +27,8 @@ de:
     not_supported: "Diese Sprache wird vom Übersetzer nicht unterstützt."
     too_long: "Dieser Beitrag ist zu lang, um vom Übersetzer übersetzt zu werden."
     not_available: "Der Übersetzerdienst ist derzeit nicht verfügbar."
+    amazon:
+      invalid_credentials: "Die angegebenen Anmeldeinformationen für AWS translate sind ungültig."
     microsoft:
       missing_token: "Der Übersetzer konnte kein gültiges Token abrufen."
       missing_key: "Kein Azure-Abonnementschlüssel bereitgestellt."

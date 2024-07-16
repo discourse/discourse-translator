@@ -6,87 +6,102 @@ module DiscourseTranslator
   class Amazon < Base
     require "aws-sdk-translate"
 
-    MAXLENGTH = 5000
+    MAX_BYTES = 10_000
 
     # Hash which maps Discourse's locale code to Amazon Translate's language code found in
     # https://docs.aws.amazon.com/translate/latest/dg/what-is-languages.html
     SUPPORTED_LANG_MAPPING = {
       af: "af",
-      sq: "sq",
       am: "am",
       ar: "ar",
-      hy: "hy",
       az: "az",
+      bg: "bg",
       bn: "bn",
       bs: "bs",
-      bg: "bg",
+      bs_BA: "bs",
       ca: "ca",
-      zh: "zh",
-      zh_TW: "zh-TW",
-      hr: "hr",
       cs: "cs",
+      cy: "cy",
       da: "da",
-      fa_AF: "fa-AF",
-      nl: "nl",
+      de: "de",
+      el: "el",
       en: "en",
+      en_GB: "en",
+      es: "es",
+      es_MX: "es-MX",
       et: "et",
       fa: "fa",
-      tl: "tl",
+      fa_AF: "fa-AF",
+      fa_IR: "fa-AF",
       fi: "fi",
       fr: "fr",
       fr_CA: "fr-CA",
-      ka: "ka",
-      de: "de",
-      el: "el",
+      ga: "ga",
       gu: "gu",
-      ht: "ht",
       ha: "ha",
       he: "he",
       hi: "hi",
+      hr: "hr",
+      ht: "ht",
       hu: "hu",
-      is: "is",
+      hy: "hy",
       id: "id",
-      ga: "ga",
+      is: "is",
       it: "it",
       ja: "ja",
-      kn: "kn",
+      ka: "ka",
       kk: "kk",
+      kn: "kn",
       ko: "ko",
-      lv: "lv",
       lt: "lt",
+      lv: "lv",
       mk: "mk",
-      ms: "ms",
       ml: "ml",
-      mt: "mt",
-      mr: "mr",
       mn: "mn",
+      mr: "mr",
+      ms: "ms",
+      mt: "mt",
+      nl: "nl",
       no: "no",
-      ps: "ps",
+      pa: "pa",
       pl: "pl",
+      pl_PL: "pl",
+      ps: "ps",
       pt: "pt",
       pt_PT: "pt-PT",
-      pa: "pa",
+      pt_BR: "pt",
       ro: "ro",
       ru: "ru",
-      sr: "sr",
       si: "si",
       sk: "sk",
       sl: "sl",
       so: "so",
-      es: "es",
-      es_MX: "es-MX",
-      sw: "sw",
+      sq: "sq",
+      sr: "sr",
       sv: "sv",
+      sw: "sw",
       ta: "ta",
       te: "te",
       th: "th",
+      tl: "tl",
       tr: "tr",
+      tr_TR: "tr_TR",
       uk: "uk",
       ur: "ur",
       uz: "uz",
       vi: "vi",
-      cy: "cy",
+      zh: "zh",
+      zh_CN: "zh",
+      zh_TW: "zh-TW",
     }
+
+    # The API expects a maximum of 10k __bytes__ of text
+    def self.truncate(text)
+      return text if text.bytesize <= MAX_BYTES
+      text = text.byteslice(...MAX_BYTES)
+      text = text.byteslice(...text.bytesize - 1) until text.valid_encoding?
+      text
+    end
 
     def self.access_token_key
       "aws-translator"
@@ -97,16 +112,20 @@ module DiscourseTranslator
 
       return if text.blank?
 
-      detected_lang =
-        client.translate_text(
-          {
-            text: text,
-            source_language_code: "auto",
-            target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
-          },
-        )&.source_language_code
+      begin
+        detected_lang =
+          client.translate_text(
+            {
+              text: text,
+              source_language_code: "auto",
+              target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
+            },
+          )&.source_language_code
 
-      assign_lang_custom_field(topic_or_post, detected_lang)
+        assign_lang_custom_field(topic_or_post, detected_lang)
+      rescue Aws::Errors::MissingCredentialsError
+        raise I18n.t("translator.amazon.invalid_credentials")
+      end
     end
 
     def self.translate(topic_or_post)
@@ -114,7 +133,7 @@ module DiscourseTranslator
         result =
           client.translate_text(
             {
-              text: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
+              text: truncate(get_text(topic_or_post)),
               source_language_code: "auto",
               target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
             },

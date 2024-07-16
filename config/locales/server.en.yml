@@ -21,6 +21,8 @@ en:
     not_supported: "This language is not supported by the translator."
     too_long: "This post is too long to be translated by the translator."
     not_available: "The translator service is currently not available."
+    amazon:
+      invalid_credentials: "The provided credentials for AWS translate are invalid."
 
     microsoft:
       missing_token: "The translator was unable to retrieve a valid token."
