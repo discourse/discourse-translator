@@ -58,6 +58,7 @@ RSpec.describe DiscourseTranslator::Google do
           body: URI.encode_www_form(body),
           headers: {
             "Content-Type" => "application/x-www-form-urlencoded",
+            "Referer" => "http://test.localhost",
           },
         )
         .returns(
