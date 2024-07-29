@@ -30,3 +30,6 @@ en:
   not_in_group:
     user_not_in_group: "You don't belong to a group allowed to translate."
     poster_not_in_group: "Post wasn't made by an user in an allowed group."
+  dashboard:
+    problem:
+      microsoft_azure_key: "Microsoft was used as the translator, but no Azure Subscription Key was provided."

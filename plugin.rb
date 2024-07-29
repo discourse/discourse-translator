@@ -35,6 +35,9 @@ after_initialize do
     end
   end
 
+  require_relative "app/services/problem_check/microsoft_azure_key"
+  register_problem_check ProblemCheck::MicrosoftAzureKey
+
   class DiscourseTranslator::TranslatorController < ::ApplicationController
     before_action :ensure_logged_in
 
