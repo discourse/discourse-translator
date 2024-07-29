@@ -15,7 +15,7 @@ RSpec.describe ProblemCheck::MicrosoftAzureKey do
     context "when plugin is enabled" do
       let(:enabled) { true }
 
-      it "when translator is not Micorsoft" do
+      it "when translator is not Microsoft" do
         SiteSetting.translator = "Google"
 
         expect(check).to be_chill_about_it
