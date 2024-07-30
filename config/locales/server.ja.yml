@@ -20,8 +20,6 @@ ja:
     translator_aws_secret_access: "AWS シークレットアクセスキー"
     translator_aws_iam_role: "AWS IAM ロール"
     translator_azure_custom_subdomain: "Azure Cognitive Services に仮想ネットワークまたはファイアウォールを使用している場合は必須です。注意: 完全なカスタムエンドポイントではなく、カスタムサブドメインのみを入力します。"
-    restrict_translation_by_group: "ホワイトリストに含まれるグループのみが翻訳できます"
-    restrict_translation_by_poster_group: "ホワイトリストに含まれるユーザーによる投稿の翻訳のみを許可する"
   translator:
     failed: "翻訳ツールはこの言語を翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
@@ -32,4 +30,3 @@ ja:
       missing_key: "Azure サブスクリプションキーが指定されていません。"
   not_in_group:
     user_not_in_group: "翻訳が許可されたグループに属していません。"
-    poster_not_in_group: "投稿はホワイトリストに含まれるグループのユーザーによって行われたものではありません。空の場合は無効になります。"

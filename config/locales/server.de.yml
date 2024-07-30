@@ -20,8 +20,8 @@ de:
     translator_aws_secret_access: "AWS-Geheimnis-Zugriffsschlüssel"
     translator_aws_iam_role: "AWS-IAM-Rolle"
     translator_azure_custom_subdomain: "Erforderlich, wenn du ein virtuelles Netzwerk oder eine Firewall für Azure Cognitive Services verwendest. Hinweis: Gib nur die benutzerdefinierte Subdomain ein, nicht den vollständigen benutzerdefinierten Endpunkt."
-    restrict_translation_by_group: "Nur Gruppen auf der Positivliste können übersetzen"
-    restrict_translation_by_poster_group: "Nur die Übersetzung von Beiträgen, die von Benutzern auf der Positivliste erstellt wurden, erlauben"
+    restrict_translation_by_group: "Nur berechtigte Gruppen können übersetzen"
+    restrict_translation_by_poster_group: "Erlaube nur die Übersetzung von Beiträgen von Benutzern aus zulässigen Gruppen. Wenn das Feld leer ist, wird die Übersetzung von Beiträgen aller Benutzer erlaubt."
   translator:
     failed: "Der Übersetzer ist nicht in der Lage, diese Sprache zu übersetzen."
     not_supported: "Diese Sprache wird vom Übersetzer nicht unterstützt."
@@ -34,4 +34,4 @@ de:
       missing_key: "Kein Azure-Abonnementschlüssel bereitgestellt."
   not_in_group:
     user_not_in_group: "Du gehörst nicht zu einer Gruppe, die übersetzen darf."
-    poster_not_in_group: "Der Beitrag wurde nicht von einem Benutzer in einer Gruppe auf der Positivliste erstellt. Deaktiviert, wenn leer."
+    poster_not_in_group: "Der Beitrag wurde nicht von einem Benutzer einer zulässigen Gruppe erstellt."

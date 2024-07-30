@@ -20,16 +20,21 @@ nl:
     translator_aws_secret_access: "AWS geheime toegangssleutel"
     translator_aws_iam_role: "AWS IAM-rol"
     translator_azure_custom_subdomain: "Vereist bij gebruik van een virtueel netwerk of firewall voor Azure Cognitive Services. Opmerking: voer alleen het aangepaste subdomein in, niet het volledige aangepaste eindpunt."
-    restrict_translation_by_group: "Alleen groepen op de toelatingslijst kunnen vertalen"
-    restrict_translation_by_poster_group: "Sta alleen vertalingen toe van berichten die zijn gemaakt door gebruikers op de toelatingslijst"
+    restrict_translation_by_group: "Alleen toegestane groepen kunnen vertalen"
+    restrict_translation_by_poster_group: "Sta alleen vertalingen toe van berichten gemaakt door gebruikers in toegestane groepen. Als dit leeg is, worden vertalingen van berichten van alle gebruikers toegestaan."
   translator:
     failed: "De vertaler kan deze taal niet vertalen."
     not_supported: "Deze taal wordt niet ondersteund door de vertaler."
     too_long: "Dit bericht is te lang om door de vertaler te worden vertaald."
     not_available: "De vertaalservice is momenteel niet beschikbaar."
+    amazon:
+      invalid_credentials: "De opgegeven aanmeldgegevens voor AWS Translate zijn ongeldig."
     microsoft:
       missing_token: "De vertaler kon geen geldig token ophalen."
       missing_key: "Geen Azure-abonnementscode opgegeven."
   not_in_group:
     user_not_in_group: "U behoort niet tot een groep die mag vertalen."
-    poster_not_in_group: "Bericht is niet gemaakt door een gebruiker in een groep op de toelatingslijst. Als dit leeg is, is het uitgeschakeld."
+    poster_not_in_group: "Bericht is niet gemaakt door een gebruiker in een toegestane groep."
+  dashboard:
+    problem:
+      microsoft_azure_key: "Microsoft is gebruikt als vertaler, maar er is geen Azure-abonnementssleutel opgegeven."

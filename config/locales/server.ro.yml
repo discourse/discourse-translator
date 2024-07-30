@@ -21,7 +21,7 @@ ro:
     translator_aws_iam_role: "Rol AWS IAM"
     translator_azure_custom_subdomain: "Necesar dacă utilizezi o rețea virtuală sau un firewall pentru Azure Cognitive Services. Notă: introdu numai subdomeniul personalizat, nu punctul-final personalizat complet."
     restrict_translation_by_group: "Doar grupurile permise pot traduce"
-    restrict_translation_by_poster_group: "Permite traducerea doar a articolelor făcute de utilizatorii autorizați"
+    restrict_translation_by_poster_group: "Permite traducerea numai a articolelor făcute de utilizatorii din grupurile permise. Dacă este gol, permite traducerea articolelor de la toți utilizatorii."
   translator:
     failed: "Traducătorul nu poate traduce această limbă."
     not_supported: "Această limbă nu este acceptată de traducător."
@@ -34,4 +34,7 @@ ro:
       missing_key: "Nicio cheie de abonament Azure nu a fost furnizată."
   not_in_group:
     user_not_in_group: "Nu faci parte dintr-un grup autorizat să traducă."
-    poster_not_in_group: "Articolul nu a fost făcut de un utilizator autorizat. Dacă este gol, este dezactivat."
+    poster_not_in_group: "Articolul nu a fost făcut de un utilizator dintr-un grup permis."
+  dashboard:
+    problem:
+      microsoft_azure_key: "Microsoft a fost folosit ca traducător, dar nu a fost furnizată nicio cheie de abonament Azure."
