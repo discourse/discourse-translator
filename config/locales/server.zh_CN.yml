@@ -20,16 +20,21 @@ zh_CN:
     translator_aws_secret_access: "AWS 密码访问密钥"
     translator_aws_iam_role: "AWS IAM 角色"
     translator_azure_custom_subdomain: "如果将虚拟网络或防火墙用于 Azure 认知服务，则为必需。注意：仅输入自定义子域，而不是完整的自定义端点。"
-    restrict_translation_by_group: "只有列入许可名单的群组才能翻译"
-    restrict_translation_by_poster_group: "仅允许翻译列入许可名单的用户发布的帖子"
+    restrict_translation_by_group: "只有允许的群组才能翻译"
+    restrict_translation_by_poster_group: "仅允许翻译允许的群组中用户发布的帖子。如果为空，则允许翻译所有用户的帖子。"
   translator:
     failed: "翻译器无法翻译此语言。"
     not_supported: "翻译器不支持此语言。"
     too_long: "帖子过长，翻译器无法翻译。"
     not_available: "该翻译服务目前不可用。"
+    amazon:
+      invalid_credentials: "提供的 AWS 翻译凭据无效。"
     microsoft:
       missing_token: "翻译器无法检索有效令牌。"
       missing_key: "未提供 Azure 订阅密钥。"
   not_in_group:
     user_not_in_group: "您不属于允许翻译的群组。"
-    poster_not_in_group: "帖子不是由列入许可名单的群组中的用户发布的。如果为空，则禁用。"
+    poster_not_in_group: "帖子不是由允许的群组中的用户发布的。"
+  dashboard:
+    problem:
+      microsoft_azure_key: "Microsoft 被用作翻译器，但没有提供 Azure 订阅密钥。"

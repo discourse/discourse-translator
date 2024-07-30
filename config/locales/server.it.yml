@@ -21,15 +21,20 @@ it:
     translator_aws_iam_role: "Ruolo AWS IAM"
     translator_azure_custom_subdomain: "Obbligatorio se si usa una rete virtuale o un firewall per i servizi cognitivi di Azure. Nota: inserisci solo il sottodominio personalizzato, non l'endpoint personalizzato completo."
     restrict_translation_by_group: "Solo i gruppi autorizzati possono tradurre"
-    restrict_translation_by_poster_group: "Consenti solo la traduzione di post creati da utenti autorizzati"
+    restrict_translation_by_poster_group: "Consenti solo la traduzione dei messaggi scritti dagli utenti nei gruppi consentiti. Se vuoto, consente le traduzioni dei messaggi di tutti gli utenti."
   translator:
     failed: "Il traduttore non è in grado di tradurre questa lingua."
     not_supported: "Questa lingua non è supportata dal traduttore."
     too_long: "Questo messaggio è troppo lungo per essere tradotto dal traduttore."
     not_available: "Il servizio di traduzione non è attualmente disponibile."
+    amazon:
+      invalid_credentials: "Le credenziali fornite per AWS Translate non sono valide."
     microsoft:
       missing_token: "Il traduttore non è stato in grado di recuperare un token valido."
       missing_key: "Nessuna chiave di sottoscrizione di Azure fornita."
   not_in_group:
     user_not_in_group: "Non appartieni a nessun gruppo autorizzato a tradurre."
-    poster_not_in_group: "Il post non è stato creato da un utente in un gruppo consentito. Se vuoto è disabilitato."
+    poster_not_in_group: "Il messaggio non è stato creato da un utente in un gruppo consentito."
+  dashboard:
+    problem:
+      microsoft_azure_key: "È stata scelta la traduzione di Microsoft, ma non è stata fornita alcuna chiave di sottoscrizione di Azure."

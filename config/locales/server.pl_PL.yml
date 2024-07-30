@@ -18,8 +18,6 @@ pl_PL:
     translator_aws_secret_access: "Klucz tajnego dostępu AWS"
     translator_aws_iam_role: "Rola AWS IAM"
     translator_azure_custom_subdomain: "Wymagane w przypadku korzystania z sieci wirtualnej lub zapory dla usług Azure Cognitive Services. Uwaga: wprowadź tylko niestandardową subdomenę, a nie pełny niestandardowy punkt końcowy."
-    restrict_translation_by_group: "Tylko dozwolone grupy mogą tłumaczyć"
-    restrict_translation_by_poster_group: "Zezwalaj tylko na tłumaczenie postów napisanych przez dozwolonych użytkowników"
   translator:
     failed: "Tłumacz nie jest w stanie przetłumaczyć tego języka."
     not_supported: "Ten język nie jest obsługiwany przez tłumacza."
@@ -29,4 +27,3 @@ pl_PL:
       missing_key: "Nie podano klucza subskrypcji Azure"
   not_in_group:
     user_not_in_group: "Nie należysz do grupy, która może tłumaczyć."
-    poster_not_in_group: "Post nie został opublikowany przez użytkownika z grupy na liście dozwolonych. Jeśli jest pusty, jest wyłączony."
