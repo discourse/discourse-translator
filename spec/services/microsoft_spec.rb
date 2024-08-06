@@ -15,40 +15,50 @@ RSpec.describe DiscourseTranslator::Microsoft do
       uri.to_s
     end
 
-    before { SiteSetting.translator_azure_subscription_key = "e1bba646088021aaf1ef972a48" }
+    context "with azure key" do
+      before { SiteSetting.translator_azure_subscription_key = "e1bba646088021aaf1ef972a48" }
 
-    shared_examples "language detected" do
-      it "stores detected language in a custom field" do
-        described_class.detect(post)
+      shared_examples "language detected" do
+        it "stores detected language in a custom field" do
+          described_class.detect(post)
 
-        expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
-          detected_lang,
-        )
+          expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
+            detected_lang,
+          )
+        end
+      end
+
+      context "with a custom endpoint" do
+        before do
+          SiteSetting.translator_azure_custom_subdomain = "translator19191"
+
+          stub_request(:post, detect_endpoint).to_return(
+            status: 200,
+            body: [{ "language" => detected_lang }].to_json,
+          )
+        end
+
+        include_examples "language detected"
+      end
+
+      context "without a custom endpoint" do
+        before do
+          stub_request(:post, detect_endpoint).to_return(
+            status: 200,
+            body: [{ "language" => detected_lang }].to_json,
+          )
+        end
+
+        include_examples "language detected"
       end
     end
 
-    context "with a custom endpoint" do
-      before do
-        SiteSetting.translator_azure_custom_subdomain = "translator19191"
-
-        stub_request(:post, detect_endpoint).to_return(
-          status: 200,
-          body: [{ "language" => detected_lang }].to_json,
+    context "without azure key" do
+      it "raise a MicrosoftNoAzureKeyError" do
+        expect { described_class.detect(post) }.to raise_error(
+          DiscourseTranslator::MicrosoftNoAzureKeyError,
         )
       end
-
-      include_examples "language detected"
-    end
-
-    context "without a custom endpoint" do
-      before do
-        stub_request(:post, detect_endpoint).to_return(
-          status: 200,
-          body: [{ "language" => detected_lang }].to_json,
-        )
-      end
-
-      include_examples "language detected"
     end
   end
 
