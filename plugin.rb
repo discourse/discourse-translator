@@ -120,10 +120,14 @@ after_initialize do
         return unless post
 
         DistributedMutex.synchronize("detect_translation_#{post.id}") do
-          "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(post)
-          if !post.custom_fields_clean?
-            post.save_custom_fields
-            post.publish_change_to_clients! :revised
+          begin
+            "DiscourseTranslator::#{SiteSetting.translator}".constantize.detect(post)
+            if !post.custom_fields_clean?
+              post.save_custom_fields
+              post.publish_change_to_clients! :revised
+            end
+          rescue ::DiscourseTranslator::MicrosoftNoAzureKeyError
+            # We already have ProblemCheck::MicrosoftAzureKey, no need to log errors here
           end
         end
       end

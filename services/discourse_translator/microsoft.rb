@@ -3,6 +3,9 @@
 require_relative "base"
 
 module DiscourseTranslator
+  class MicrosoftNoAzureKeyError < TranslatorError
+  end
+
   class Microsoft < Base
     TRANSLATE_URI = "https://api.cognitive.microsofttranslator.com/translate"
     DETECT_URI = "https://api.cognitive.microsofttranslator.com/detect"
@@ -184,7 +187,7 @@ module DiscourseTranslator
 
     def self.default_headers
       if SiteSetting.translator_azure_subscription_key.blank?
-        raise TranslatorError.new(I18n.t("translator.microsoft.missing_key"))
+        raise MicrosoftNoAzureKeyError.new(I18n.t("translator.microsoft.missing_key"))
       end
 
       headers = {
