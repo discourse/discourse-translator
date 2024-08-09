@@ -36,7 +36,9 @@ after_initialize do
   end
 
   require_relative "app/services/problem_check/microsoft_azure_key"
+  require_relative "app/services/problem_check/translator_error"
   register_problem_check ProblemCheck::MicrosoftAzureKey
+  register_problem_check ProblemCheck::TranslatorError
 
   class DiscourseTranslator::TranslatorController < ::ApplicationController
     before_action :ensure_logged_in
@@ -126,8 +128,8 @@ after_initialize do
               post.save_custom_fields
               post.publish_change_to_clients! :revised
             end
-          rescue ::DiscourseTranslator::MicrosoftNoAzureKeyError
-            # We already have ProblemCheck::MicrosoftAzureKey, no need to log errors here
+          rescue ::DiscourseTranslator::ProblemCheckedTranslationError
+            # The error was handled by ProblemCheck., no need to log errors here
           end
         end
       end

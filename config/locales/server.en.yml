@@ -33,3 +33,4 @@ en:
   dashboard:
     problem:
       microsoft_azure_key: "Microsoft was used as the translator, but no Azure Subscription Key was provided."
+      translator_error: "%{provider} reported a translation error with code %{code}: %{message}"
