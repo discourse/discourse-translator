@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe DiscourseTranslator::Microsoft do
+  before { SiteSetting.translator_enabled = true }
   after { Discourse.redis.del(described_class.cache_key) }
 
   describe ".detect" do
@@ -51,12 +52,62 @@ RSpec.describe DiscourseTranslator::Microsoft do
 
         include_examples "language detected"
       end
+
+      it "raise a error and trigger a problemcheck when the server returns a error" do
+        stub_request(:post, detect_endpoint).to_return(
+          status: 429,
+          body: {
+            "error" => {
+              "code" => 429_001,
+              "message" =>
+                "The server rejected the request because the client has exceeded request limits.",
+            },
+          }.to_json,
+        )
+
+        ProblemCheckTracker[:translator_error].no_problem!
+
+        expect { described_class.detect(post) }.to raise_error(
+          DiscourseTranslator::ProblemCheckedTranslationError,
+        )
+
+        expect(AdminNotice.problem.last.message).to eq(
+          I18n.t(
+            "dashboard.problem.translator_error",
+            locale: "en",
+            provider: "Microsoft",
+            code: 429_001,
+            message:
+              "The server rejected the request because the client has exceeded request limits.",
+          ),
+        )
+      end
+
+      it "clean up errors on the admin dashboard when OK" do
+        stub_request(:post, detect_endpoint).to_return(
+          status: 200,
+          body: [{ "language" => detected_lang }].to_json,
+        )
+
+        ProblemCheckTracker[:translator_error].problem!(
+          details: {
+            provider: "Microsoft",
+            code: 429_001,
+            message: "example",
+          },
+        )
+
+        described_class.detect(post)
+
+        expect(AdminNotice.problem.last&.identifier).not_to eq("translator_error")
+      end
     end
 
     context "without azure key" do
       it "raise a MicrosoftNoAzureKeyError" do
         expect { described_class.detect(post) }.to raise_error(
-          DiscourseTranslator::MicrosoftNoAzureKeyError,
+          DiscourseTranslator::ProblemCheckedTranslationError,
+          I18n.t("translator.microsoft.missing_key"),
         )
       end
     end
