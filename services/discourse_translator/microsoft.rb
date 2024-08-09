@@ -3,7 +3,7 @@
 require_relative "base"
 
 module DiscourseTranslator
-  class MicrosoftNoAzureKeyError < TranslatorError
+  class MicrosoftNoAzureKeyError < ProblemCheckedTranslationError
   end
 
   class Microsoft < Base
@@ -179,8 +179,17 @@ module DiscourseTranslator
       response_body = JSON.parse(response.body)
 
       if response.status != 200
+        if response_body["error"] && response_body["error"]["code"]
+          ProblemCheckTracker[:translator_error].problem!(details: {
+            provider: "Microsoft",
+            code: response_body["error"]["code"],
+            message: response_body["error"]["message"]
+          })
+          raise ProblemCheckedTranslationError.new(response_body)
+        end
         raise TranslatorError.new(response_body)
       else
+        ProblemCheckTracker[:translator_error].no_problem!
         response_body
       end
     end

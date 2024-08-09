@@ -6,6 +6,9 @@ module DiscourseTranslator
   class TranslatorError < ::StandardError
   end
 
+  class ProblemCheckedTranslationError < TranslatorError
+  end
+
   class Base
     def self.key_prefix
       "#{PLUGIN_NAME}:".freeze
