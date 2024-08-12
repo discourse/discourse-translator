@@ -29,6 +29,7 @@ module DiscourseTranslator
       fi: "fi",
       fr: "fr",
       he: "iw",
+      hi: "hi",
       hr: "hr",
       hu: "hu",
       hy: "hy",
