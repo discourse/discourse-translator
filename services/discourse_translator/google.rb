@@ -76,8 +76,7 @@ module DiscourseTranslator
 
     def self.detect(topic_or_post)
       text =
-        topic_or_post.class.name == "Post" ? topic_or_post.cooked
-          : topic_or_post.first_post&.cooked
+        topic_or_post.class.name == "Post" ? topic_or_post.cooked : topic_or_post.first_post&.cooked
 
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(
         DETECT_URI,
@@ -90,7 +89,6 @@ module DiscourseTranslator
         "language"
       ]
     end
-
 
     def self.translate_supported?(source, target)
       res = result(SUPPORT_URI, target: SUPPORTED_LANG_MAPPING[target])
