@@ -20,13 +20,21 @@ ja:
     translator_aws_secret_access: "AWS シークレットアクセスキー"
     translator_aws_iam_role: "AWS IAM ロール"
     translator_azure_custom_subdomain: "Azure Cognitive Services に仮想ネットワークまたはファイアウォールを使用している場合は必須です。注意: 完全なカスタムエンドポイントではなく、カスタムサブドメインのみを入力します。"
+    restrict_translation_by_group: "許可されたグループのみが翻訳できます"
+    restrict_translation_by_poster_group: "許可されたグループのユーザーによる投稿の翻訳のみを許可します。空白の場合、すべてのユーザーによる投稿の翻訳を許可します。"
   translator:
     failed: "翻訳ツールはこの言語を翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
     too_long: "この投稿は翻訳ツールで翻訳するには長すぎます。"
     not_available: "現在、翻訳ツールサービスは使用できません。"
+    amazon:
+      invalid_credentials: "指定された AWS Translate の資格情報は無効です。"
     microsoft:
       missing_token: "翻訳ツールは有効なトークンを取得できませんでした。"
       missing_key: "Azure サブスクリプションキーが指定されていません。"
   not_in_group:
     user_not_in_group: "翻訳が許可されたグループに属していません。"
+    poster_not_in_group: "許可されたグループのユーザーによる投稿ではありません。"
+  dashboard:
+    problem:
+      microsoft_azure_key: "翻訳ツールとして Microsoft が使用されましたが、Azure Subscription Key は指定されませんでした。"

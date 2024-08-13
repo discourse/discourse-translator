@@ -38,3 +38,4 @@ ro:
   dashboard:
     problem:
       microsoft_azure_key: "Microsoft a fost folosit ca traducător, dar nu a fost furnizată nicio cheie de abonament Azure."
+      translator_error: "%{provider} a raportat o eroare de traducere cu codul %{code}: %{message}"

@@ -38,3 +38,4 @@ he:
   dashboard:
     problem:
       microsoft_azure_key: "נעשה שימוש ב־Microsoft כשירות תרגום, אך לא סופק מפתח מינוי של Azure."
+      translator_error: "%{provider} דיווח על שגיאת תרגום עם קוד %{code}: %{message}"
