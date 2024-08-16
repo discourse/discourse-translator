@@ -35,14 +35,14 @@ RSpec.describe DiscourseTranslator::Google do
 
       2.times do
         expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
-                                                                                           detected_lang,
-                                                                                         )
+          detected_lang,
+        )
       end
     end
 
     it "should truncate string to 5000 characters" do
       length = 6000
-      post.cooked = rand(36 ** length).to_s(36)
+      post.cooked = rand(36**length).to_s(36)
       detected_lang = "en"
 
       request_url = "#{DiscourseTranslator::Google::DETECT_URI}"

@@ -104,9 +104,7 @@ module DiscourseTranslator
       # string.
       # ---
       # here we handle that situation by returning the original string if the source and target lang are the same.
-      if (detected_lang&.to_s.eql? I18n.locale.to_s)
-        return [detected_lang,get_text(topic_or_post)]
-      end
+      return detected_lang, get_text(topic_or_post) if (detected_lang&.to_s.eql? I18n.locale.to_s)
 
       raise I18n.t("translator.failed") unless translate_supported?(detected_lang, I18n.locale)
 
