@@ -96,6 +96,18 @@ module DiscourseTranslator
     def self.translate(topic_or_post)
       detected_lang = detect(topic_or_post)
 
+      # the translate button appears if a given post is in a foreign language.
+      # however the title of the topic may be in a different language, and may be in the user's language.
+      # if this is the case, when this is called for a topic, the detected_lang will be the user's language,
+      # so the user's language and the detected language will be the same. For example, both could be "en"
+      # google will choke on this and return an error instead of gracefully handling it by returning the original
+      # string.
+      # ---
+      # here we handle that situation by returning the original string if the source and target lang are the same.
+      if (detected_lang&.to_s.eql? I18n.locale.to_s)
+        return [detected_lang,get_text(topic_or_post)]
+      end
+
       raise I18n.t("translator.failed") unless translate_supported?(detected_lang, I18n.locale)
 
       translated_text =
