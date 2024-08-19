@@ -74,6 +74,7 @@ RSpec.describe DiscourseTranslator::Google do
   end
 
   describe ".translate_supported?" do
+    let(:topic) { Fabricate(:topic, title: "This title is in english") }
     it "should equate source language to target" do
       source = "en"
       target = "fr"
@@ -82,6 +83,12 @@ RSpec.describe DiscourseTranslator::Google do
       )
       expect(described_class.translate_supported?(source, target)).to be true
     end
+
+    it "should pass through strings already in target language" do
+      lang = I18n.locale
+      described_class.expects(:detect).returns(lang)
+      expect(described_class.translate(topic)).to eq([lang, "This title is in english"])
+    end
   end
 
   describe ".translate" do
@@ -89,7 +96,7 @@ RSpec.describe DiscourseTranslator::Google do
 
     it "raises an error on failure" do
       described_class.expects(:access_token).returns("12345")
-      described_class.expects(:detect).returns("en")
+      described_class.expects(:detect).returns("__")
 
       Excon.expects(:post).returns(
         mock_response.new(
@@ -106,7 +113,7 @@ RSpec.describe DiscourseTranslator::Google do
 
     it "raises an error when the response is not JSON" do
       described_class.expects(:access_token).returns("12345")
-      described_class.expects(:detect).returns("en")
+      described_class.expects(:detect).returns("__")
 
       Excon.expects(:post).returns(mock_response.new(413, "<html><body>some html</body></html>"))
 
