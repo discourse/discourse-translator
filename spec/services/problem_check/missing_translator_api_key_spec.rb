@@ -19,6 +19,7 @@ RSpec.describe ProblemCheck::MissingTranslatorApiKey do
               locale: "en",
               provider:,
               key: I18n.t("site_settings.#{key}"),
+              key_name: key,
             ),
           )
         end

@@ -15,7 +15,11 @@ class ProblemCheck::MissingTranslatorApiKey < ProblemCheck
   private
 
   def translation_data
-    { provider: SiteSetting.translator, key: I18n.t("site_settings.#{api_key_site_setting_name}") }
+    {
+      provider: SiteSetting.translator,
+      key: I18n.t("site_settings.#{api_key_site_setting_name}"),
+      key_name: api_key_site_setting_name,
+    }
   end
 
   def api_key_site_setting_name
