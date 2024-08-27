@@ -32,5 +32,5 @@ en:
     poster_not_in_group: "Post wasn't made by an user in an allowed group."
   dashboard:
     problem:
-      missing_translator_api_key: "%{provider} was used as the translator, but no %{key} was provided"
+      missing_translator_api_key: "%{provider} was used as the translator, but no %{key} was provided."
       translator_error: "%{provider} reported a translation error with code %{code}: %{message}"
