@@ -35,9 +35,9 @@ after_initialize do
     end
   end
 
-  require_relative "app/services/problem_check/microsoft_azure_key"
+  require_relative "app/services/problem_check/missing_translator_api_key"
   require_relative "app/services/problem_check/translator_error"
-  register_problem_check ProblemCheck::MicrosoftAzureKey
+  register_problem_check ProblemCheck::MissingTranslatorApiKey
   register_problem_check ProblemCheck::TranslatorError
 
   class DiscourseTranslator::TranslatorController < ::ApplicationController

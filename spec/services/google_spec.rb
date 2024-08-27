@@ -3,12 +3,15 @@
 require "rails_helper"
 
 RSpec.describe DiscourseTranslator::Google do
+  let(:api_key) { "12345" }
+  before do
+    SiteSetting.translator_enabled = true
+    SiteSetting.translator_google_api_key = api_key
+  end
   let(:mock_response) { Struct.new(:status, :body) }
 
   describe ".access_token" do
     describe "when set" do
-      api_key = "12345"
-      before { SiteSetting.translator_google_api_key = api_key }
       it "should return back translator_google_api_key" do
         expect(described_class.access_token).to eq(api_key)
       end
@@ -20,7 +23,7 @@ RSpec.describe DiscourseTranslator::Google do
 
     it "should store the detected language in a custom field" do
       detected_lang = "en"
-      described_class.expects(:access_token).returns("12345")
+      described_class.expects(:access_token).returns(api_key)
       Excon
         .expects(:post)
         .returns(
@@ -48,7 +51,7 @@ RSpec.describe DiscourseTranslator::Google do
       request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
       body = {
         q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH, omission: nil),
-        key: "",
+        key: api_key,
       }
 
       Excon
@@ -94,25 +97,41 @@ RSpec.describe DiscourseTranslator::Google do
   describe ".translate" do
     let(:post) { Fabricate(:post) }
 
-    it "raises an error on failure" do
-      described_class.expects(:access_token).returns("12345")
+    it "raise an error and warns admin on failure" do
+      described_class.expects(:access_token).returns(api_key)
       described_class.expects(:detect).returns("__")
 
       Excon.expects(:post).returns(
         mock_response.new(
           400,
           {
-            error: "something went wrong",
-            error_description: "you passed in a wrong param",
+            error: {
+              code: "400",
+              message: "API key not valid. Please pass a valid API key.",
+            },
           }.to_json,
         ),
       )
 
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+      ProblemCheckTracker[:translator_error].no_problem!
+
+      expect { described_class.translate(post) }.to raise_error(
+        DiscourseTranslator::ProblemCheckedTranslationError,
+      )
+
+      expect(AdminNotice.problem.last.message).to eq(
+        I18n.t(
+          "dashboard.problem.translator_error",
+          locale: "en",
+          provider: "Google",
+          code: 400,
+          message: "API key not valid. Please pass a valid API key.",
+        ),
+      )
     end
 
     it "raises an error when the response is not JSON" do
-      described_class.expects(:access_token).returns("12345")
+      described_class.expects(:access_token).returns(api_key)
       described_class.expects(:detect).returns("__")
 
       Excon.expects(:post).returns(mock_response.new(413, "<html><body>some html</body></html>"))
