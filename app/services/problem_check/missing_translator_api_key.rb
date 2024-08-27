@@ -7,9 +7,9 @@ class ProblemCheck::MissingTranslatorApiKey < ProblemCheck
     return no_problem unless SiteSetting.translator_enabled
     name = api_key_site_setting_name
     return no_problem if name.nil?
-    return problem if SiteSetting.get(name).blank?
+    return no_problem if SiteSetting.get(name).present?
 
-    no_problem
+    problem
   end
 
   private
