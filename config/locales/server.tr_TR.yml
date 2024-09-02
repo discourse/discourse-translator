@@ -35,6 +35,3 @@ tr_TR:
   not_in_group:
     user_not_in_group: "Çeviri yapmanıza izin verilen bir grupta değilsiniz."
     poster_not_in_group: "Gönderi, izin verilen bir gruptaki bir kullanıcı tarafından yapılmadı."
-  dashboard:
-    problem:
-      microsoft_azure_key: "Çevirmen olarak Microsoft kullanıldı ancak Azure Abonelik Anahtarı sağlanmadı."

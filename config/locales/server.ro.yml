@@ -37,5 +37,5 @@ ro:
     poster_not_in_group: "Articolul nu a fost făcut de un utilizator dintr-un grup permis."
   dashboard:
     problem:
-      microsoft_azure_key: "Microsoft a fost folosit ca traducător, dar nu a fost furnizată nicio cheie de abonament Azure."
+      missing_translator_api_key: "%{provider} a fost utilizat ca traducător, dar %{key} nu a fost furnizat. Consultă <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">setările site-ului</a>."
       translator_error: "%{provider} a raportat o eroare de traducere cu codul %{code}: %{message}"

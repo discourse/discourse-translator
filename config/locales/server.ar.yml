@@ -35,6 +35,3 @@ ar:
   not_in_group:
     user_not_in_group: "أنت لا تنتمي إلى مجموعة مسموح لها بالترجمة."
     poster_not_in_group: "لم يتم إنشاء المنشور بواسطة مستخدم في مجموعة مسموح بها."
-  dashboard:
-    problem:
-      microsoft_azure_key: "تم استخدام Microsoft كمترجم، ولكن لم يتم توفير مفتاح اشتراك Azure."

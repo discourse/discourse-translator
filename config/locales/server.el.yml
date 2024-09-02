@@ -29,5 +29,4 @@ el:
       missing_key: "Δεν δόθηκε Κλειδί Συνδρομής Azure."
   dashboard:
     problem:
-      microsoft_azure_key: "Η Microsoft χρησιμοποιήθηκε ως μεταφραστής, αλλά δεν δόθηκε Κλειδί Συνδρομής Azure."
       translator_error: "Ο/Η %{provider} ανέφερε σφάλμα μετάφρασης με κωδικό %{code}: %{message}"

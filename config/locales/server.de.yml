@@ -37,5 +37,4 @@ de:
     poster_not_in_group: "Der Beitrag wurde nicht von einem Benutzer einer zulässigen Gruppe erstellt."
   dashboard:
     problem:
-      microsoft_azure_key: "Microsoft wurde als Übersetzungsdienst verwendet, aber es wurde kein Azure-Abonnementschlüssel bereitgestellt."
       translator_error: "%{provider} meldete einen Übersetzungsfehler mit dem Code %{code}: %{message}"

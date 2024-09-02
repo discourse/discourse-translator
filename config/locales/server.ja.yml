@@ -35,6 +35,3 @@ ja:
   not_in_group:
     user_not_in_group: "翻訳が許可されたグループに属していません。"
     poster_not_in_group: "許可されたグループのユーザーによる投稿ではありません。"
-  dashboard:
-    problem:
-      microsoft_azure_key: "翻訳ツールとして Microsoft が使用されましたが、Azure Subscription Key は指定されませんでした。"

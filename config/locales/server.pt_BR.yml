@@ -35,6 +35,3 @@ pt_BR:
   not_in_group:
     user_not_in_group: "Você não pertence a um grupo com permissão para traduzir."
     poster_not_in_group: "Esta postagem não foi feita por um(a) usuário(a) em um grupo permitido."
-  dashboard:
-    problem:
-      microsoft_azure_key: "O tradutor da Microsoft foi usado, mas nenhuma chave de assinatura do Azure foi fornecida."
