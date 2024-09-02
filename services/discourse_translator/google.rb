@@ -71,8 +71,8 @@ module DiscourseTranslator
     end
 
     def self.access_token
-      SiteSetting.translator_google_api_key ||
-        (raise TranslatorError.new("NotFound: Google Api Key not set."))
+      return SiteSetting.translator_google_api_key if SiteSetting.translator_google_api_key.present?
+      raise ProblemCheckedTranslationError.new("NotFound: Google Api Key not set.")
     end
 
     def self.detect(topic_or_post)
@@ -144,11 +144,19 @@ module DiscourseTranslator
 
       if response.status != 200
         if body && body["error"]
-          raise TranslatorError.new(body["error"]["message"])
+          ProblemCheckTracker[:translator_error].problem!(
+            details: {
+              provider: "Google",
+              code: body["error"]["code"],
+              message: body["error"]["message"],
+            },
+          )
+          raise ProblemCheckedTranslationError.new(body["error"]["message"])
         else
           raise TranslatorError.new(response.inspect)
         end
       else
+        ProblemCheckTracker[:translator_error].no_problem!
         body["data"]
       end
     end
