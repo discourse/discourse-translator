@@ -35,6 +35,3 @@ it:
   not_in_group:
     user_not_in_group: "Non appartieni a nessun gruppo autorizzato a tradurre."
     poster_not_in_group: "Il messaggio non è stato creato da un utente in un gruppo consentito."
-  dashboard:
-    problem:
-      microsoft_azure_key: "È stata scelta la traduzione di Microsoft, ma non è stata fornita alcuna chiave di sottoscrizione di Azure."

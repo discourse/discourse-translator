@@ -35,6 +35,3 @@ nl:
   not_in_group:
     user_not_in_group: "U behoort niet tot een groep die mag vertalen."
     poster_not_in_group: "Bericht is niet gemaakt door een gebruiker in een toegestane groep."
-  dashboard:
-    problem:
-      microsoft_azure_key: "Microsoft is gebruikt als vertaler, maar er is geen Azure-abonnementssleutel opgegeven."

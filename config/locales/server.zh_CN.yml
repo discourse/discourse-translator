@@ -35,6 +35,3 @@ zh_CN:
   not_in_group:
     user_not_in_group: "您不属于允许翻译的群组。"
     poster_not_in_group: "帖子不是由允许的群组中的用户发布的。"
-  dashboard:
-    problem:
-      microsoft_azure_key: "Microsoft 被用作翻译器，但没有提供 Azure 订阅密钥。"

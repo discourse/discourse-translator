@@ -35,6 +35,3 @@ es:
   not_in_group:
     user_not_in_group: "Usted no pertenece a un grupo autorizado para traducir."
     poster_not_in_group: "La publicación no la realizó ningún usuario de un grupo permitido."
-  dashboard:
-    problem:
-      microsoft_azure_key: "Se utilizó Microsoft como traductor, pero no se proporcionó ninguna clave de suscripción a Azure."

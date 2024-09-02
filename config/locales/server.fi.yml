@@ -35,6 +35,3 @@ fi:
   not_in_group:
     user_not_in_group: "Et kuulu ryhmään, jolla on oikeus kääntää."
     poster_not_in_group: "Viestiä ei tehnyt sallittuun ryhmään kuuluva käyttäjä."
-  dashboard:
-    problem:
-      microsoft_azure_key: "Microsoftia käytettiin kääntäjänä, mutta Azure-tilausavainta ei annettu."
