@@ -55,6 +55,7 @@ module DiscourseTranslator
       lo: "lo",
       lt: "lt",
       lv: "lv",
+      mg: "mg",
       mk: "mk",
       ml: "ml",
       mn: "mn-Cyrl",
