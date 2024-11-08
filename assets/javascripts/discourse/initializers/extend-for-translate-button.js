@@ -1,32 +1,58 @@
+import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { withPluginApi } from "discourse/lib/plugin-api";
+import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
 import I18n from "I18n";
-
-function translatePost(post) {
-  return ajax("/translator/translate", {
-    type: "POST",
-    data: { post_id: post.get("id") },
-  }).then(function (res) {
-    post.setProperties({
-      translated_text: res.translation,
-      detected_lang: res.detected_lang,
-      translated_title: res.title_translation,
-    });
-  });
-}
+import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
+import TranslatedPost from "../components/translated-post";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
   const currentUser = api.getCurrentUser();
 
-  if (!currentUser) {
-    return;
-  }
-  if (!siteSettings.translator_enabled) {
+  if (!currentUser || !siteSettings.translator_enabled) {
     return;
   }
 
+  customizePostMenu(api);
+}
+
+function customizePostMenu(api, container) {
+  const transformerRegistered = api.registerValueTransformer(
+    "post-menu-buttons",
+    ({ value: dag, context: { firstButtonKey } }) => {
+      dag.add("translate", ToggleTranslationButton, { before: firstButtonKey });
+    }
+  );
+
+  if (transformerRegistered) {
+    // the plugin outlet is not updated when the post instance is modified unless we extend it to add the tracking to
+    // the new properties
+    api.modifyClass(
+      "model:post",
+      (Superclass) =>
+        class extends Superclass {
+          @tracked detectedLang;
+          @tracked isTranslating;
+          @tracked isTranslated;
+          @tracked translatedText;
+          @tracked translatedTitle;
+        }
+    );
+
+    api.renderBeforeWrapperOutlet("post-menu", TranslatedPost);
+  }
+
+  const silencedKey =
+    transformerRegistered && "discourse.post-menu-widget-overrides";
+
+  withSilencedDeprecations(silencedKey, () =>
+    customizeWidgetPostMenu(api, container)
+  );
+}
+
+function customizeWidgetPostMenu(api) {
   api.includePostAttributes(
     "can_translate",
     "translated_text",
@@ -34,6 +60,7 @@ function initializeTranslation(api) {
     "translated_title"
   );
 
+  const siteSettings = api.container.lookup("service:site-settings");
   api.decorateWidget("post-menu:before", (dec) => {
     if (!dec.state.isTranslated) {
       return;
@@ -74,7 +101,17 @@ function initializeTranslation(api) {
     const post = this.findAncestorModel();
 
     if (post) {
-      return translatePost(post)
+      return ajax("/translator/translate", {
+        type: "POST",
+        data: { post_id: post.get("id") },
+      })
+        .then(function (res) {
+          post.setProperties({
+            translated_text: res.translation,
+            detected_lang: res.detected_lang,
+            translated_title: res.title_translation,
+          });
+        })
         .catch((error) => {
           popupAjaxError(error);
           state.isTranslating = false;
@@ -114,6 +151,6 @@ function initializeTranslation(api) {
 export default {
   name: "extend-for-translate-button",
   initialize() {
-    withPluginApi("0.1", (api) => initializeTranslation(api));
+    withPluginApi("1.34.0", (api) => initializeTranslation(api));
   },
 };
