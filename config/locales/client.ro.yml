@@ -15,3 +15,4 @@ ro:
       view_translation: "Vezi traducere"
       hide_translation: "Ascunde traducere"
       translated_from: "Tradus din %{language} cu %{translator}"
+      translating: "Traduce"

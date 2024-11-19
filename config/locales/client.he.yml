@@ -15,3 +15,4 @@ he:
       view_translation: "הצגת התרגום"
       hide_translation: "הסתרת התרגום"
       translated_from: "תורגם מ%{language} ע״י %{translator}"
+      translating: "תרגום"
