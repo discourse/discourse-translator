@@ -17,6 +17,7 @@ after_initialize do
     PLUGIN_NAME = "discourse_translator".freeze
     DETECTED_LANG_CUSTOM_FIELD = "post_detected_lang".freeze
     TRANSLATED_CUSTOM_FIELD = "translated_text".freeze
+    LANG_DETECT_NEEDED = "lang_detect_needed".freeze
 
     autoload :Microsoft,
              "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/microsoft"
@@ -134,9 +135,44 @@ after_initialize do
         end
       end
     end
-  end
 
-  on(:post_process) { |post| Jobs.enqueue(:detect_translation, post_id: post.id) }
+    class DetectPostsTranslation < ::Jobs::Scheduled
+      sidekiq_options retry: false
+      every 5.minutes
+
+      BATCH_SIZE = 100
+      MAX_QUEUE_SIZE = 1000
+
+      def execute(args)
+        return unless SiteSetting.translator_enabled
+
+        post_ids = Discourse.redis.spop(DiscourseTranslator::LANG_DETECT_NEEDED, MAX_QUEUE_SIZE)
+        return if post_ids.blank?
+
+        post_ids.each_slice(BATCH_SIZE) { |batch| process_batch(batch) }
+      end
+
+      private
+
+      def process_batch(post_ids)
+        posts = Post.where(id: post_ids).to_a
+        posts.each do |post|
+          DistributedMutex.synchronize("detect_translation_#{post.id}") do
+            begin
+              translator = "DiscourseTranslator::#{SiteSetting.translator}".constantize
+              translator.detect(post)
+              if !post.custom_fields_clean?
+                post.save_custom_fields
+                post.publish_change_to_clients!(:revised)
+              end
+            rescue ::DiscourseTranslator::ProblemCheckedTranslationError
+              # problem-checked translation errors gracefully
+            end
+          end
+        end
+      end
+    end
+  end
 
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
@@ -160,7 +196,7 @@ after_initialize do
     detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
     if !detected_lang
-      Jobs.enqueue(:detect_translation, post_id: object.id)
+      Discourse.redis.sadd?(DiscourseTranslator::LANG_DETECT_NEEDED, object.id)
       false
     else
       detected_lang !=

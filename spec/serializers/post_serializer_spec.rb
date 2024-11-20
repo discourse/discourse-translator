@@ -77,10 +77,13 @@ RSpec.describe PostSerializer do
               expect(serializer.can_translate).to eq(false)
             end
 
-            it "enqueues detect translation job" do
+            it "adds post id to redis if detected_language is blank" do
+              post.custom_fields["detected_language"] = nil
+              post.save_custom_fields
+
               expect { serializer.can_translate }.to change {
-                Jobs::DetectTranslation.jobs.size
-              }.by(1)
+                Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id)
+              }.from(false).to(true)
             end
           end
 

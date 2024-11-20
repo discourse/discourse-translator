@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Post do
+  before { SiteSetting.translator_enabled = true }
+
   describe "translator custom fields" do
     let(:post) do
       Fabricate(
@@ -16,10 +18,6 @@ RSpec.describe Post do
         },
       )
     end
-
-    before { SiteSetting.translator_enabled = true }
-
-    after { SiteSetting.translator_enabled = false }
 
     it "should reset custom fields when post has been updated" do
       post.update!(raw: "this is an updated post")
