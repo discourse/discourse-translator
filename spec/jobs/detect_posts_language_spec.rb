@@ -2,7 +2,7 @@
 
 require "aws-sdk-translate"
 
-describe Jobs::DetectPostsTranslation do
+describe Jobs::DetectPostsLanguage do
   fab!(:posts) { Fabricate.times(5, :post) }
   let(:redis_key) { DiscourseTranslator::LANG_DETECT_NEEDED }
 
@@ -47,7 +47,7 @@ describe Jobs::DetectPostsTranslation do
     described_class.new.execute({})
 
     remaining = Discourse.redis.scard(redis_key)
-    expect(remaining).to eq(large_number - Jobs::DetectPostsTranslation::MAX_QUEUE_SIZE)
+    expect(remaining).to eq(large_number - Jobs::DetectPostsLanguage::MAX_QUEUE_SIZE)
   end
 
   it "handles an empty Redis queue gracefully" do
