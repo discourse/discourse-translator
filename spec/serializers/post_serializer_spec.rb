@@ -81,11 +81,9 @@ RSpec.describe PostSerializer do
               post.custom_fields["detected_language"] = nil
               post.save_custom_fields
 
-              serializer.can_translate
-
-              expect(
-                Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id),
-              ).to eq(true)
+              expect { serializer.can_translate }.to change {
+                Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id)
+              }.from(false).to(true)
             end
           end
 

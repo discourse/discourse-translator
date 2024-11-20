@@ -174,8 +174,6 @@ after_initialize do
     end
   end
 
-  on(:post_process) { |post| Jobs.enqueue(:detect_translation, post_id: post.id) }
-
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
   require_relative "lib/discourse_translator/guardian_extension"
