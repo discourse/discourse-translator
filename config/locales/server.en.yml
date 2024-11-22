@@ -28,6 +28,10 @@ en:
     microsoft:
       missing_token: "The translator was unable to retrieve a valid token."
       missing_key: "No Azure Subscription Key provided."
+
+    discourse_ai:
+      not_installed: "You need to install the discourse-ai plugin to use this feature."
+      ai_helper_required: 'You need to <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">configure the ai helper</a> to use this feature.'
   not_in_group:
     user_not_in_group: "You don't belong to a group allowed to translate."
     poster_not_in_group: "Post wasn't made by an user in an allowed group."
