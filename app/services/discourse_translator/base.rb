@@ -60,5 +60,12 @@ module DiscourseTranslator
         topic_or_post.title
       end
     end
+
+    def self.language_supported?(detected_lang)
+      raise NotImplementedError unless self.const_defined?(:SUPPORTED_LANG_MAPPING)
+      supported_lang = const_get(:SUPPORTED_LANG_MAPPING)
+      return false if supported_lang[I18n.locale].nil?
+      detected_lang != supported_lang[I18n.locale]
+    end
   end
 end

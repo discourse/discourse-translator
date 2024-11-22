@@ -89,7 +89,8 @@ RSpec.describe PostSerializer do
 
           describe "when post has DETECTED_LANG_CUSTOM_FIELD matches user locale" do
             before do
-              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "en"
+              I18n.stubs(:locale).returns(:xx)
+              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "xx"
               post.save
             end
 

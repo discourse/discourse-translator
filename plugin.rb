@@ -50,10 +50,10 @@ after_initialize do
       Discourse.redis.sadd?(DiscourseTranslator::LANG_DETECT_NEEDED, object.id)
       false
     else
-      detected_lang !=
-        "DiscourseTranslator::#{SiteSetting.translator}::SUPPORTED_LANG_MAPPING".constantize[
-          I18n.locale
-        ]
+      detected_lang.to_sym != I18n.locale &&
+        "DiscourseTranslator::#{SiteSetting.translator}".constantize.language_supported?(
+          detected_lang,
+        )
     end
   end
 end
