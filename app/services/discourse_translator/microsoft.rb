@@ -96,9 +96,7 @@ module DiscourseTranslator
 
     def self.detect(topic_or_post)
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        text = get_text(topic_or_post).truncate(LENGTH_LIMIT, omission: nil)
-
-        body = [{ "Text" => text }].to_json
+        body = [{ "Text" => text_for_detection(topic_or_post) }].to_json
 
         uri = URI(detect_endpoint)
         uri.query = URI.encode_www_form(self.default_query)
@@ -125,7 +123,7 @@ module DiscourseTranslator
         from_custom_fields(topic_or_post) do
           query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
 
-          body = [{ "Text" => get_text(topic_or_post) }].to_json
+          body = [{ "Text" => text_for_translation(topic_or_post) }].to_json
 
           uri = URI(translate_endpoint)
           uri.query = URI.encode_www_form(query)

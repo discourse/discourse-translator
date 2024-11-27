@@ -8,7 +8,6 @@ module DiscourseTranslator
     TRANSLATE_URI = "https://www.googleapis.com/language/translate/v2".freeze
     DETECT_URI = "https://www.googleapis.com/language/translate/v2/detect".freeze
     SUPPORT_URI = "https://www.googleapis.com/language/translate/v2/languages".freeze
-    MAXLENGTH = 5000
 
     # Hash which maps Discourse's locale code to Google Translate's locale code found in
     # https://cloud.google.com/translate/docs/languages
@@ -76,11 +75,9 @@ module DiscourseTranslator
     end
 
     def self.detect(topic_or_post)
-      detection_text = get_text(topic_or_post).truncate(MAXLENGTH, omission: nil)
-      detection_text = strip_img_for_detection(detection_text)
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(
         DETECT_URI,
-        q: detection_text,
+        q: text_for_detection(topic_or_post),
       )[
         "detections"
       ][
@@ -115,7 +112,7 @@ module DiscourseTranslator
           res =
             result(
               TRANSLATE_URI,
-              q: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
+              q: text_for_translation(topic_or_post),
               source: detected_lang,
               target: SUPPORTED_LANG_MAPPING[I18n.locale],
             )

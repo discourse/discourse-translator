@@ -6,6 +6,7 @@ en:
     translator_azure_region: "Azure Region"
     translator_google_api_key: "Google API Key"
     translator_yandex_api_key: "Yandex API Key"
+    max_characters_per_translation: "The maximum number of characters that can be sent for translation. If content is longer than this, text will be truncated. Note that each provider also has their own limits."
     max_translations_per_minute: "The number of translations per minute a regular user can perform."
     translator_libretranslate_endpoint: "LibreTranslate API Endpoint"
     translator_libretranslate_api_key: "LibreTranslate API Key"

@@ -108,7 +108,7 @@ module DiscourseTranslator
     end
 
     def self.detect(topic_or_post)
-      text = truncate get_text(topic_or_post)
+      text = truncate text_for_detection(topic_or_post)
 
       return if text.blank?
 
@@ -133,7 +133,7 @@ module DiscourseTranslator
         result =
           client.translate_text(
             {
-              text: truncate(get_text(topic_or_post)),
+              text: truncate(text_for_translation(topic_or_post)),
               source_language_code: "auto",
               target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
             },

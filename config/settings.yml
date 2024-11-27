@@ -87,6 +87,9 @@ discourse_translator:
     default: ''
   translator_libretranslate_api_key:
     default: ''
+  max_characters_per_translation:
+    default: 5000
+    client: true
   max_translations_per_minute:
     default: 3
   restrict_translation_by_group:

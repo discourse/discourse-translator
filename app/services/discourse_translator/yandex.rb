@@ -125,7 +125,7 @@ module DiscourseTranslator
 
     def self.detect(topic_or_post)
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        query = default_query.merge("text" => get_text(topic_or_post))
+        query = default_query.merge("text" => text_for_detection(topic_or_post))
 
         uri = URI(DETECT_URI)
         uri.query = URI.encode_www_form(query)
@@ -149,7 +149,7 @@ module DiscourseTranslator
           query =
             default_query.merge(
               "lang" => "#{detected_lang}-#{locale}",
-              "text" => get_text(topic_or_post),
+              "text" => text_for_translation(topic_or_post),
               "format" => "html",
             )
 

@@ -10,6 +10,8 @@ module DiscourseTranslator
   end
 
   class Base
+    DETECTION_CHAR_LIMIT = 1000
+
     def self.key_prefix
       "#{PLUGIN_NAME}:".freeze
     end
@@ -61,17 +63,27 @@ module DiscourseTranslator
       end
     end
 
+    def self.language_supported?(detected_lang)
+      raise NotImplementedError unless self.const_defined?(:SUPPORTED_LANG_MAPPING)
+      supported_lang = const_get(:SUPPORTED_LANG_MAPPING)
+      return false if supported_lang[I18n.locale].nil?
+      detected_lang != supported_lang[I18n.locale]
+    end
+
+    private
+
     def self.strip_img_for_detection(detection_text)
       html_doc = Nokogiri::HTML::DocumentFragment.parse(detection_text)
       html_doc.css("img").remove
       html_doc.to_html
     end
 
-    def self.language_supported?(detected_lang)
-      raise NotImplementedError unless self.const_defined?(:SUPPORTED_LANG_MAPPING)
-      supported_lang = const_get(:SUPPORTED_LANG_MAPPING)
-      return false if supported_lang[I18n.locale].nil?
-      detected_lang != supported_lang[I18n.locale]
+    def self.text_for_detection(topic_or_post)
+      strip_img_for_detection(get_text(topic_or_post).truncate(DETECTION_CHAR_LIMIT, omission: nil))
+    end
+
+    def self.text_for_translation(topic_or_post)
+      get_text(topic_or_post).truncate(SiteSetting.max_characters_per_translation, omission: nil)
     end
   end
 end
