@@ -43,14 +43,14 @@ RSpec.describe DiscourseTranslator::Google do
       end
     end
 
-    it "should truncate string to 5000 characters" do
-      length = 6000
+    it "should truncate string to 1000 characters" do
+      length = 2000
       post.cooked = rand(36**length).to_s(36)
       detected_lang = "en"
 
       request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
       body = {
-        q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH, omission: nil),
+        q: post.cooked.truncate(DiscourseTranslator::Google::DETECTION_CHAR_LIMIT, omission: nil),
         key: api_key,
       }
 
@@ -165,6 +165,43 @@ RSpec.describe DiscourseTranslator::Google do
       Excon.expects(:post).returns(mock_response.new(413, "<html><body>some html</body></html>"))
 
       expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+    end
+
+    it "truncates text for translation to max_characters_per_translation setting" do
+      SiteSetting.max_characters_per_translation = 50
+      post.cooked = "a" * 100
+      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "de"
+      post.save_custom_fields
+      body = {
+        q: post.cooked.truncate(SiteSetting.max_characters_per_translation, omission: nil),
+        source: "de",
+        target: "en",
+        key: api_key,
+      }
+
+      translated_text = "hur dur hur dur"
+      Excon
+        .expects(:post)
+        .with(
+          DiscourseTranslator::Google::TRANSLATE_URI,
+          body: URI.encode_www_form(body),
+          headers: {
+            "Content-Type" => "application/x-www-form-urlencoded",
+            "Referer" => "http://test.localhost",
+          },
+        )
+        .returns(
+          mock_response.new(
+            200,
+            %{ { "data": { "translations": [ { "translatedText": "#{translated_text}" } ] } } },
+          ),
+        )
+        .once
+      Excon.expects(:post).returns(
+        mock_response.new(200, %{ { "data": { "languages": [ { "language": "de" }] } } }),
+      )
+
+      expect(described_class.translate(post)).to eq(["de", translated_text])
     end
   end
 end

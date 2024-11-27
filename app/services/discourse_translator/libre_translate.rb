@@ -5,8 +5,6 @@ require "json"
 
 module DiscourseTranslator
   class LibreTranslate < Base
-    MAXLENGTH = 5000
-
     SUPPORTED_LANG_MAPPING = {
       en: "en",
       en_GB: "en",
@@ -84,11 +82,7 @@ module DiscourseTranslator
       res =
         result(
           detect_uri,
-          q:
-            ActionController::Base
-              .helpers
-              .strip_tags(get_text(topic_or_post))
-              .truncate(MAXLENGTH, omission: nil),
+          q: ActionController::Base.helpers.strip_tags(text_for_detection(topic_or_post)),
         )
 
       if !res.empty?
@@ -116,7 +110,7 @@ module DiscourseTranslator
           res =
             result(
               translate_uri,
-              q: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
+              q: text_for_translation(topic_or_post),
               source: detected_lang,
               target: SUPPORTED_LANG_MAPPING[I18n.locale],
               format: "html",

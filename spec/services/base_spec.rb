@@ -32,4 +32,35 @@ describe DiscourseTranslator::Base do
       expect(TestTranslator.language_supported?("pt")).to eq(false)
     end
   end
+
+  describe ".text_for_detection" do
+    fab!(:post)
+
+    it "strips img tags" do
+      post.cooked = "<img src='http://example.com/image.png' />"
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
+    end
+
+    it "truncates to DETECTION_CHAR_LIMIT of 1000" do
+      post.cooked = "a" * 1001
+      expect(DiscourseTranslator::Base.text_for_detection(post).length).to eq(1000)
+    end
+
+    it "returns the text if it's less than DETECTION_CHAR_LIMIT" do
+      text = "a" * 999
+      post.cooked = text
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(text)
+    end
+  end
+
+  describe ".text_for_translation" do
+    fab!(:post)
+
+    it "truncates to max_characters_per_translation" do
+      post.cooked = "a" * (SiteSetting.max_characters_per_translation + 1)
+      expect(DiscourseTranslator::Base.text_for_translation(post).length).to eq(
+        SiteSetting.max_characters_per_translation,
+      )
+    end
+  end
 end
