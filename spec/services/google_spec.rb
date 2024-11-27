@@ -19,7 +19,7 @@ RSpec.describe DiscourseTranslator::Google do
   end
 
   describe ".detect" do
-    let(:post) { Fabricate(:post) }
+    fab!(:post)
 
     it "should store the detected language in a custom field" do
       detected_lang = "en"
@@ -53,6 +53,34 @@ RSpec.describe DiscourseTranslator::Google do
         q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH, omission: nil),
         key: api_key,
       }
+
+      Excon
+        .expects(:post)
+        .with(
+          request_url,
+          body: URI.encode_www_form(body),
+          headers: {
+            "Content-Type" => "application/x-www-form-urlencoded",
+            "Referer" => "http://test.localhost",
+          },
+        )
+        .returns(
+          mock_response.new(
+            200,
+            %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } },
+          ),
+        )
+        .once
+
+      expect(described_class.detect(post)).to eq(detected_lang)
+    end
+
+    it "strips img tags from detection text" do
+      post.cooked = "there are some words <img src='http://example.com/image.jpg'> to be said"
+      detected_lang = "en"
+
+      request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
+      body = { q: "there are some words  to be said", key: api_key }
 
       Excon
         .expects(:post)

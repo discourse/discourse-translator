@@ -61,6 +61,12 @@ module DiscourseTranslator
       end
     end
 
+    def self.strip_img_for_detection(detection_text)
+      html_doc = Nokogiri::HTML::DocumentFragment.parse(detection_text)
+      html_doc.css("img").remove
+      html_doc.to_html
+    end
+
     def self.language_supported?(detected_lang)
       raise NotImplementedError unless self.const_defined?(:SUPPORTED_LANG_MAPPING)
       supported_lang = const_get(:SUPPORTED_LANG_MAPPING)

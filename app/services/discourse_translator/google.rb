@@ -76,9 +76,11 @@ module DiscourseTranslator
     end
 
     def self.detect(topic_or_post)
+      detection_text = get_text(topic_or_post).truncate(MAXLENGTH, omission: nil)
+      detection_text = strip_img_for_detection(detection_text)
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(
         DETECT_URI,
-        q: get_text(topic_or_post).truncate(MAXLENGTH, omission: nil),
+        q: detection_text,
       )[
         "detections"
       ][
