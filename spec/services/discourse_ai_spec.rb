@@ -14,31 +14,21 @@ describe DiscourseTranslator::DiscourseAi do
     SiteSetting.translator = "DiscourseAi"
   end
 
+  describe ".language_supported?" do
+    it "returns true for any language" do
+      expect(described_class.language_supported?("any-language")).to eq(true)
+    end
+  end
+
   describe ".detect" do
     it "stores the detected language in a custom field" do
       locale = "de"
-      DiscourseAi::Completions::Llm.with_prepared_responses(["<output>de</output>"]) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(["<language>de</language>"]) do
         DiscourseTranslator::DiscourseAi.detect(post)
         post.save_custom_fields
       end
 
       expect(post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq locale
-    end
-
-    it "truncates to MAX LENGTH" do
-      truncated_text =
-        post.cooked.truncate(DiscourseTranslator::DiscourseAi::MAX_DETECT_LOCALE_TEXT_LENGTH)
-      expect_any_instance_of(::DiscourseAi::AiHelper::Assistant).to receive(
-        :generate_and_send_prompt,
-      ).with(
-        CompletionPrompt.find_by(id: CompletionPrompt::DETECT_TEXT_LOCALE),
-        truncated_text,
-        Discourse.system_user,
-      ).and_call_original
-
-      DiscourseAi::Completions::Llm.with_prepared_responses(["<output>de</output>"]) do
-        DiscourseTranslator::DiscourseAi.detect(post)
-      end
     end
   end
 
@@ -50,7 +40,7 @@ describe DiscourseTranslator::DiscourseAi do
 
     it "translates the post and returns [locale, translated_text]" do
       DiscourseAi::Completions::Llm.with_prepared_responses(
-        ["<output>some translated text</output>", "<output>translated</output>"],
+        ["<translation>some translated text</translation>"],
       ) do
         locale, translated_text = DiscourseTranslator::DiscourseAi.translate(post)
         expect(locale).to eq "de"

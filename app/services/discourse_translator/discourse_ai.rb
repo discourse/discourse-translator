@@ -14,14 +14,11 @@ module DiscourseTranslator
       return unless required_settings_enabled
 
       topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-        # we don't need that much text to determine the locale
-        text = get_text(topic_or_post).truncate(MAX_DETECT_LOCALE_TEXT_LENGTH)
-
-        get_ai_helper_output(
-          text,
-          CompletionPrompt.find_by(id: CompletionPrompt::DETECT_TEXT_LOCALE),
-        )
+        ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
       end
+    rescue => e
+      e.message
+      Rails.logger.warn("Failed to detect language: #{e}")
     end
 
     def self.translate(topic_or_post)
@@ -30,26 +27,13 @@ module DiscourseTranslator
       detected_lang = detect(topic_or_post)
       translated_text =
         from_custom_fields(topic_or_post) do
-          get_ai_helper_output(
-            get_text(topic_or_post),
-            CompletionPrompt.find_by(id: CompletionPrompt::TRANSLATE),
-          )
+          ::DiscourseAi::Translator.new(text_for_translation(topic_or_post), I18n.locale).translate
         end
 
       [detected_lang, translated_text]
     end
 
     private
-
-    def self.get_ai_helper_output(text, prompt)
-      ::DiscourseAi::AiHelper::Assistant.new.generate_and_send_prompt(
-        prompt,
-        text,
-        Discourse.system_user,
-      )[
-        :suggestions
-      ].first
-    end
 
     def self.required_settings_enabled
       SiteSetting.translator_enabled && SiteSetting.translator == "DiscourseAi" &&
