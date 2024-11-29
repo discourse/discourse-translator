@@ -17,8 +17,9 @@ module DiscourseTranslator
         ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
       end
     rescue => e
-      e.message
-      Rails.logger.warn("Failed to detect language: #{e}")
+      Rails.logger.warn(
+        "#{::DiscourseTranslator::PLUGIN_NAME}: Failed to detect language for #{topic_or_post.class.name} #{topic_or_post.id}: #{e}",
+      )
     end
 
     def self.translate(topic_or_post)
