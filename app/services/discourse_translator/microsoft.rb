@@ -112,7 +112,13 @@ module DiscourseTranslator
 
       if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
            !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
-        raise TranslatorError.new(I18n.t("translator.failed"))
+        raise TranslatorError.new(
+                I18n.t(
+                  "translator.failed",
+                  source_locale: detected_lang,
+                  target_locale: I18n.locale,
+                ),
+              )
       end
 
       if get_text(topic_or_post).length > LENGTH_LIMIT

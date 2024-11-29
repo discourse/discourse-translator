@@ -109,11 +109,10 @@ module DiscourseTranslator
 
     def self.detect(topic_or_post)
       text = truncate text_for_detection(topic_or_post)
-
       return if text.blank?
 
-      begin
-        detected_lang =
+      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= (
+        begin
           client.translate_text(
             {
               text: text,
@@ -121,30 +120,35 @@ module DiscourseTranslator
               target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
             },
           )&.source_language_code
-
-        assign_lang_custom_field(topic_or_post, detected_lang)
-      rescue Aws::Errors::MissingCredentialsError
-        raise I18n.t("translator.amazon.invalid_credentials")
-      end
+        rescue Aws::Errors::MissingCredentialsError
+          raise I18n.t("translator.amazon.invalid_credentials")
+        end
+      )
     end
 
     def self.translate(topic_or_post)
-      from_custom_fields(topic_or_post) do
-        result =
-          client.translate_text(
-            {
-              text: truncate(text_for_translation(topic_or_post)),
-              source_language_code: "auto",
-              target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
-            },
-          )
+      detected_lang = detect(topic_or_post)
 
-        detected_lang = assign_lang_custom_field(topic_or_post, result.source_language_code)
+      from_custom_fields(topic_or_post) do
+        begin
+          result =
+            client.translate_text(
+              {
+                text: truncate(text_for_translation(topic_or_post)),
+                source_language_code: "auto",
+                target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
+              },
+            )
+        rescue Aws::Translate::Errors::UnsupportedLanguagePairException
+          raise I18n.t(
+                  "translator.failed",
+                  source_locale: detected_lang,
+                  target_locale: I18n.locale,
+                )
+        end
 
         [detected_lang, result.translated_text]
       end
-    rescue Aws::Translate::Errors::UnsupportedLanguagePairException
-      raise I18n.t("translator.failed")
     end
 
     def self.client
