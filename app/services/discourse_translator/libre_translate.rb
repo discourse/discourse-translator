@@ -103,7 +103,9 @@ module DiscourseTranslator
     def self.translate(topic_or_post)
       detected_lang = detect(topic_or_post)
 
-      raise I18n.t("translator.failed") unless translate_supported?(detected_lang, I18n.locale)
+      unless translate_supported?(detected_lang, I18n.locale)
+        raise I18n.t("translator.failed", source_locale: detected_lang, target_locale: I18n.locale)
+      end
 
       translated_text =
         from_custom_fields(topic_or_post) do

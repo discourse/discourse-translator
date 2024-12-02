@@ -65,10 +65,15 @@ RSpec.describe DiscourseTranslator::Amazon do
         },
       )
       described_class.stubs(:client).returns(client)
+      post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "en"
+      post.save_custom_fields
+      I18n.stubs(:locale).returns(:es)
     end
 
     it "raises an error when trying to translate an unsupported language" do
-      expect { described_class.translate(post) }.to raise_error(I18n.t("translator.failed"))
+      expect { described_class.translate(post) }.to raise_error(
+        I18n.t("translator.failed", source_locale: "en", target_locale: "es"),
+      )
     end
   end
 end

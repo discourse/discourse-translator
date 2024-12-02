@@ -18,7 +18,7 @@ en:
     restrict_translation_by_group: "Only allowed groups can translate"
     restrict_translation_by_poster_group: "Only allow translation of posts made by users in allowed groups. If empty, allow translations of posts from all users."
   translator:
-    failed: "The translator is unable to translate this language."
+    failed: "The translator is unable to translate this content (%{source_locale}) to the default language of this site (%{target_locale})."
     not_supported: "This language is not supported by the translator."
     too_long: "This post is too long to be translated by the translator."
     not_available: "The translator service is currently not available."

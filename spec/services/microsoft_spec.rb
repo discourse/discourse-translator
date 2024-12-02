@@ -179,7 +179,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
 
         expect { described_class.translate(post) }.to raise_error(
           DiscourseTranslator::TranslatorError,
-          I18n.t("translator.failed"),
+          I18n.t("translator.failed", source_locale: "donkey", target_locale: I18n.locale),
         )
       end
 
