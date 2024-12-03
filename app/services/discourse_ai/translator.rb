@@ -29,7 +29,7 @@ module DiscourseAi
           feature_name: "translator-translate",
         )
 
-      (Nokogiri::HTML5.fragment(llm_translation).at("translation")&.text || llm_translation)
+      (Nokogiri::HTML5.fragment(llm_translation).at("translation")&.inner_html || llm_translation)
     end
 
     private
