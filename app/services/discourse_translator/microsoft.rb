@@ -72,6 +72,7 @@ module DiscourseTranslator
       ru: "ru",
       sk: "sk",
       sl: "sl",
+      sm: "sm",
       sq: "sq",
       sr: "sr-Cyrl",
       "sr-Latn": "sr-Latn",
