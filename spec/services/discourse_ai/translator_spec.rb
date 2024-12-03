@@ -17,10 +17,10 @@ describe DiscourseAi::Translator do
     it "creates the correct prompt" do
       allow(DiscourseAi::Completions::Prompt).to receive(:new).with(
         <<~TEXT,
-          You are a highly skilled translator with expertise in many languages.
+          You are a highly skilled linguist and web programmer, with expertise in many languages, and very well versed in HTML.
           Your task is to identify the language of the text I provide and accurately translate it into this language locale "de" while preserving the meaning, tone, and nuance of the original text.
-          The text may also contain html tags, which should be preserved in the translation.
-          Please maintain proper grammar, spelling, and punctuation in the translated version.
+          The text will contain html tags, which must absolutely be preserved in the translation.
+          Maintain proper grammar, spelling, and punctuation in the translated version.
           Wrap the translated text in a <translation> tag.
         TEXT
         messages: [{ type: :user, content: text_to_translate, id: "user" }],
