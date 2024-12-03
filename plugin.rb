@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # name: discourse-translator
-# about: Translates posts on Discourse using Microsoft, Google, Yandex or LibreTranslate translation APIs.
+# about: Translates posts on Discourse using Microsoft, Google, Yandex, LibreTranslate, or Discourse AI translation APIs.
 # meta_topic_id: 32630
 # version: 0.3.0
 # authors: Alan Tan
@@ -31,7 +31,7 @@ after_initialize do
 
   topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
 
-  reloadable_patch do |plugin|
+  reloadable_patch do
     Guardian.prepend(DiscourseTranslator::GuardianExtension)
     Post.prepend(DiscourseTranslator::PostExtension)
     Topic.prepend(DiscourseTranslator::TopicExtension)

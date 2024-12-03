@@ -7,11 +7,13 @@ discourse_translator:
     client: true
     type: enum
     choices:
+      - DiscourseAi
       - Microsoft
       - Google
       - Amazon
       - Yandex
       - LibreTranslate
+    validator: "DiscourseTranslator::TranslatorSelectionValidator"
   translator_azure_subscription_key:
     default: ''
   translator_azure_region:
