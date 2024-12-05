@@ -41,6 +41,11 @@ describe DiscourseTranslator::Base do
       expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
     end
 
+    it "strips anchor tags" do
+      post.cooked = "<a href='http://cat.com/image.png' />"
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
+    end
+
     it "truncates to DETECTION_CHAR_LIMIT of 1000" do
       post.cooked = "a" * 1001
       expect(DiscourseTranslator::Base.text_for_detection(post).length).to eq(1000)
