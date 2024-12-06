@@ -12,6 +12,7 @@ fi:
     translator_azure_region: "Azure-alue"
     translator_google_api_key: "Googlen API-avain"
     translator_yandex_api_key: "Yandexin API-avain"
+    max_characters_per_translation: "Merkkien enimmäismäärä, joka voidaan lähettää käännettäväksi. Jos sisältö on tätä pidempi, teksti katkaistaan. Huomaa, että jokaisella palveluntarjoajalla on myös omat rajansa."
     max_translations_per_minute: "Käännösten määrä minuutissa, jonka tavallinen käyttäjä voi tehdä."
     translator_libretranslate_endpoint: "LibreTranslaten API-päätepiste"
     translator_libretranslate_api_key: "LibreTranslaten API-avain"
@@ -23,7 +24,6 @@ fi:
     restrict_translation_by_group: "Vain sallitut ryhmät voivat kääntää"
     restrict_translation_by_poster_group: "Salli vain sallittujen ryhmien käyttäjien tekemien viestien kääntäminen. Jos tämä on tyhjä, salli kaikkien käyttäjien viestien käännökset."
   translator:
-    failed: "Kääntäjä ei osaa kääntää tätä kieltä."
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
     not_available: "Kääntäjäpalvelu ei ole tällä hetkellä käytettävissä."
@@ -35,3 +35,7 @@ fi:
   not_in_group:
     user_not_in_group: "Et kuulu ryhmään, jolla on oikeus kääntää."
     poster_not_in_group: "Viestiä ei tehnyt sallittuun ryhmään kuuluva käyttäjä."
+  dashboard:
+    problem:
+      missing_translator_api_key: "Kääntäjänä käytettiin palvelua %{provider}, mutta %{key} puuttuu. Katso <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">sivuston asetukset</a>."
+      translator_error: "%{provider} ilmoitti käännösvirheestä koodilla %{code}: %{message}"

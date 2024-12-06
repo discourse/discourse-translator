@@ -19,7 +19,6 @@ pl_PL:
     translator_aws_iam_role: "Rola AWS IAM"
     translator_azure_custom_subdomain: "Wymagane w przypadku korzystania z sieci wirtualnej lub zapory dla usług Azure Cognitive Services. Uwaga: wprowadź tylko niestandardową subdomenę, a nie pełny niestandardowy punkt końcowy."
   translator:
-    failed: "Tłumacz nie jest w stanie przetłumaczyć tego języka."
     not_supported: "Ten język nie jest obsługiwany przez tłumacza."
     too_long: "Ten post jest zbyt długi, aby mógł zostać przetłumaczony przez tłumacza."
     microsoft:

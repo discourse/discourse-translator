@@ -18,7 +18,6 @@ sv:
     translator_aws_secret_access: "AWS hemlig åtkomstnyckel"
     translator_aws_iam_role: "AWS IAM-roll"
   translator:
-    failed: "Översättaren kan inte översätta detta språk."
     not_supported: "Detta språk stöds inte av översättaren."
     too_long: "Det här inlägget är för långt för att översättas av översättaren."
     microsoft:

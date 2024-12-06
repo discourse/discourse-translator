@@ -12,6 +12,7 @@ ja:
     translator_azure_region: "Azure リージョン"
     translator_google_api_key: "Google API キー"
     translator_yandex_api_key: "Yandex API キー"
+    max_characters_per_translation: "翻訳に送信できる最大文字数。コンテンツがこれより長い場合、テキストは切り捨てられます。各プロバイダーにも独自の制限があることに注意してください。"
     max_translations_per_minute: "レギュラーユーザーが実行できる 1 分当たりの翻訳数。"
     translator_libretranslate_endpoint: "LibreTranslate API エンドポイント"
     translator_libretranslate_api_key: "LibreTranslate API キー"
@@ -23,7 +24,6 @@ ja:
     restrict_translation_by_group: "許可されたグループのみが翻訳できます"
     restrict_translation_by_poster_group: "許可されたグループのユーザーによる投稿の翻訳のみを許可します。空白の場合、すべてのユーザーによる投稿の翻訳を許可します。"
   translator:
-    failed: "翻訳ツールはこの言語を翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
     too_long: "この投稿は翻訳ツールで翻訳するには長すぎます。"
     not_available: "現在、翻訳ツールサービスは使用できません。"
@@ -35,3 +35,7 @@ ja:
   not_in_group:
     user_not_in_group: "翻訳が許可されたグループに属していません。"
     poster_not_in_group: "許可されたグループのユーザーによる投稿ではありません。"
+  dashboard:
+    problem:
+      missing_translator_api_key: "翻訳ツールとして %{provider} が使用されましたが、%{key} が提供されていません。<a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">サイト設定</a>をご覧ください。"
+      translator_error: "%{provider} はコード %{code} の翻訳エラーを報告しました: %{message}"

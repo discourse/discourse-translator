@@ -12,6 +12,7 @@ he:
     translator_azure_region: "אזור ב־Azure"
     translator_google_api_key: "מפתח API של Google"
     translator_yandex_api_key: "מפתח API של Yandex"
+    max_characters_per_translation: "מספר התווים המרבי שניתן לשלוח לתרגום. אם התוכן יותר ארוך מזה, הטקסט יקוצר. נא לשים לב שלכל ספק יש מגבלות משלו."
     max_translations_per_minute: "מספר התרגומים לדקה שמשתמש רגיל יכול לבצע."
     translator_libretranslate_endpoint: "נק׳ קצה ל־API של LibreTranslate"
     translator_libretranslate_api_key: "מפתח API ל־LibreTranslate"
@@ -23,7 +24,7 @@ he:
     restrict_translation_by_group: "רק קבוצות מורשות יכולות לתרגם"
     restrict_translation_by_poster_group: "לאפשר תרגום של פוסטים שנוצרו על ידי משתמשים בקבוצות מורשות בלבד. אם ריק, לאפשר תרגומים של פוסטים מכל המשתמשים."
   translator:
-    failed: "המתרגם אינו מסוגל לתרגם שפה זו."
+    failed: "המתרגם לא מסוגל לתרגם את התוכן הזה (%{source_locale}) לשפת ברירת המחדל של האתר הזה (%{target_locale})."
     not_supported: "שפה זו אינה נתמכת על ידי המתרגם."
     too_long: "פוסט זה ארוך מכדי לתרגם אותו על ידי המתרגם."
     not_available: "שירות התרגום אינו זמין כרגע."

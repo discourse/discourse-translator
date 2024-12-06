@@ -12,6 +12,7 @@ pt_BR:
     translator_azure_region: "Região do Azure"
     translator_google_api_key: "Chave de API do Google"
     translator_yandex_api_key: "Chave de API do Yandex"
+    max_characters_per_translation: "A quantidade máxima de caracteres que podem ser enviados para tradução. Se o conteúdo ultrapassar esse valor, o texto ficará truncado. Observação: cada provedor também tem seus próprios limites."
     max_translations_per_minute: "A quantidade de traduções por minuto que um(a) usuário(a) comum pode realizar."
     translator_libretranslate_endpoint: "Ponto de extremidade da API LibreTranslate"
     translator_libretranslate_api_key: "Chave da API LibreTranslate"
@@ -23,7 +24,6 @@ pt_BR:
     restrict_translation_by_group: "Apenas os grupos permitidos podem traduzir"
     restrict_translation_by_poster_group: "Permita tradução de postagens realizadas por usuários(as) nos grupos permitidos. Se estiver vazio, permita traduções de postagens de todos(as) usuários(as)."
   translator:
-    failed: "O(a) tradutor(a) não pode traduzir este idioma."
     not_supported: "Este idioma não é compatível com o(a) tradutor(a)."
     too_long: "Esta postagem é muito longa para ser traduzida pelo(a) tradutor(a)."
     not_available: "O serviço de tradução não está disponível por enquanto."
@@ -35,3 +35,7 @@ pt_BR:
   not_in_group:
     user_not_in_group: "Você não pertence a um grupo com permissão para traduzir."
     poster_not_in_group: "Esta postagem não foi feita por um(a) usuário(a) em um grupo permitido."
+  dashboard:
+    problem:
+      missing_translator_api_key: "Usaram %{provider} como tradutor, mas sem nenhuma %{key}. Confira as <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">configurações do site</a>."
+      translator_error: "%{provider} relatou um erro de tradução no código %{code}: %{message}"

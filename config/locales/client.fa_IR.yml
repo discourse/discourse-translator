@@ -15,3 +15,4 @@ fa_IR:
       view_translation: "مشاهده ترجمه"
       hide_translation: "پنهان کردن ترجمه"
       translated_from: "ترجمه شده از %{language} توسط %{translator}"
+      translating: "در حال ترجمه"
