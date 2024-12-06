@@ -15,3 +15,4 @@ it:
       view_translation: "Visualizza traduzione"
       hide_translation: "Nascondi traduzione"
       translated_from: "Tradotto dalla lingua %{language} da %{translator}"
+      translating: "Traduzione in corso"

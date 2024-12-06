@@ -12,6 +12,7 @@ nl:
     translator_azure_region: "Azure-regio"
     translator_google_api_key: "Google API-sleutel"
     translator_yandex_api_key: "Yandex API-sleutel"
+    max_characters_per_translation: "Het maximale aantal tekens dat kan worden verzonden voor vertaling. Als de inhoud langer is dan dit, wordt de tekst afgekapt. Elke aanbieder heeft ook zijn eigen limieten."
     max_translations_per_minute: "Het aantal vertalingen per minuut dat een gewone gebruiker kan uitvoeren."
     translator_libretranslate_endpoint: "LibreTranslate-API-eindpunt"
     translator_libretranslate_api_key: "LibreTranslate-API-sleutel"
@@ -23,7 +24,6 @@ nl:
     restrict_translation_by_group: "Alleen toegestane groepen kunnen vertalen"
     restrict_translation_by_poster_group: "Sta alleen vertalingen toe van berichten gemaakt door gebruikers in toegestane groepen. Als dit leeg is, worden vertalingen van berichten van alle gebruikers toegestaan."
   translator:
-    failed: "De vertaler kan deze taal niet vertalen."
     not_supported: "Deze taal wordt niet ondersteund door de vertaler."
     too_long: "Dit bericht is te lang om door de vertaler te worden vertaald."
     not_available: "De vertaalservice is momenteel niet beschikbaar."
@@ -35,3 +35,7 @@ nl:
   not_in_group:
     user_not_in_group: "U behoort niet tot een groep die mag vertalen."
     poster_not_in_group: "Bericht is niet gemaakt door een gebruiker in een toegestane groep."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} is gebruikt als vertaler, maar er is geen %{key} opgegeven. Zie de <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">site-instellingen</a>."
+      translator_error: "%{provider} heeft een vertaalfout gemeld met code %{code}: %{message}"

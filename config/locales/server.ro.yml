@@ -12,6 +12,7 @@ ro:
     translator_azure_region: "Regiune Azure"
     translator_google_api_key: "Cheie API Google"
     translator_yandex_api_key: "Cheie API Yandex"
+    max_characters_per_translation: "Numărul maxim de caractere care pot fi trimise pentru traducere. Dacă textul depășește această lungime, va fi trunchiat. Reține că fiecare furnizor are propriile sale limite."
     max_translations_per_minute: "Numărul de traduceri pe minut pe care un utilizator obișnuit le poate efectua."
     translator_libretranslate_endpoint: "Punct-final API LibreTranslate"
     translator_libretranslate_api_key: "Cheie API LibreTranslate"
@@ -23,7 +24,7 @@ ro:
     restrict_translation_by_group: "Doar grupurile permise pot traduce"
     restrict_translation_by_poster_group: "Permite traducerea numai a articolelor făcute de utilizatorii din grupurile permise. Dacă este gol, permite traducerea articolelor de la toți utilizatorii."
   translator:
-    failed: "Traducătorul nu poate traduce această limbă."
+    failed: "Traducătorul nu este în măsură să traducă acest conținut (%{source_locale}) în limba implicită a acestui site (%{target_locale})."
     not_supported: "Această limbă nu este acceptată de traducător."
     too_long: "Acest articol este prea lung pentru a fi tradusă de către traducător."
     not_available: "Momentan serviciul de traducere nu este disponibil."
@@ -32,6 +33,9 @@ ro:
     microsoft:
       missing_token: "Traducătorul nu a putut să recupereze un jeton valid."
       missing_key: "Nicio cheie de abonament Azure nu a fost furnizată."
+    discourse_ai:
+      not_installed: "Trebuie să instalezi modulul discourse-ai pentru a utiliza această funcționalitate."
+      ai_helper_required: 'Trebuie să <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">configurezi ajutorul IA</a> pentru a utiliza această funcționalitate.'
   not_in_group:
     user_not_in_group: "Nu faci parte dintr-un grup autorizat să traducă."
     poster_not_in_group: "Articolul nu a fost făcut de un utilizator dintr-un grup permis."

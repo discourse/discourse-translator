@@ -18,7 +18,6 @@ hu:
     translator_aws_secret_access: "AWS titkos hozzáférési kulcs"
     translator_aws_iam_role: "AWS IAM szerepkör"
   translator:
-    failed: "A fordító nem tudja lefordítani ezt a nyelvet."
     not_supported: "A fordító nem támogatja ezt a nyelvet."
     too_long: "Ez a bejegyzés túl hosszú ahhoz, hogy a fordító lefordítsa."
     microsoft:

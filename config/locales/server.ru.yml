@@ -12,6 +12,7 @@ ru:
     translator_azure_region: "Регион Azure"
     translator_google_api_key: "Ключ API Google"
     translator_yandex_api_key: "Ключ API Яндекса"
+    max_characters_per_translation: "Максимальное количество символов, которое можно отправить на перевод. Если контент длиннее, текст будет обрезан. Обратите внимание: у каждого поставщика также есть свои ограничения."
     max_translations_per_minute: "Количество переводов в минуту, которое может выполнять обычный пользователь."
     translator_libretranslate_endpoint: "Конечная точка API LibreTranslate"
     translator_libretranslate_api_key: "Ключ API LibreTranslate"
@@ -23,7 +24,6 @@ ru:
     restrict_translation_by_group: "Только разрешенные группы могут запрашивать перевод"
     restrict_translation_by_poster_group: "Допускает перевод только публикаций пользователей из разрешенных групп. Если параметр не задан, разрешаются переводы публикаций от всех пользователей."
   translator:
-    failed: "Переводчик не может перевести с этого языка."
     not_supported: "Этот язык не поддерживается переводчиком."
     too_long: "Эта запись слишком длинная для перевода."
     not_available: "Сервис перевода сейчас недоступен."
@@ -35,3 +35,7 @@ ru:
   not_in_group:
     user_not_in_group: "Вы не входите в группу, которой разрешено запрашивать перевод."
     poster_not_in_group: "Публикацию создал пользователь не из разрешенной группы."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} был использован в качестве переводчика, но %{key} не был предоставлен. См. настройки сайта <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\"></a>."
+      translator_error: "%{provider} сообщил об ошибке перевода с кодом %{code}: %{message}"

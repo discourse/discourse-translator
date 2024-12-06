@@ -12,6 +12,7 @@ de:
     translator_azure_region: "Azure-Region"
     translator_google_api_key: "Google-API-Schlüssel"
     translator_yandex_api_key: "Yandex-API-Schlüssel"
+    max_characters_per_translation: "Die maximale Anzahl von Zeichen, die zur Übersetzung gesendet werden können. Wenn der Inhalt länger als diese Zahl ist, wird der Text abgeschnitten. Beachte, dass jeder Anbieter auch seine eigenen Limits hat."
     max_translations_per_minute: "Die Anzahl der Übersetzungen pro Minute, die ein normaler Benutzer durchführen kann."
     translator_libretranslate_endpoint: "LibreTranslate-API-Endpunkt"
     translator_libretranslate_api_key: "LibreTranslate-API-Schlüssel"
@@ -23,7 +24,6 @@ de:
     restrict_translation_by_group: "Nur berechtigte Gruppen können übersetzen"
     restrict_translation_by_poster_group: "Erlaube nur die Übersetzung von Beiträgen von Benutzern aus zulässigen Gruppen. Wenn das Feld leer ist, wird die Übersetzung von Beiträgen aller Benutzer erlaubt."
   translator:
-    failed: "Der Übersetzer ist nicht in der Lage, diese Sprache zu übersetzen."
     not_supported: "Diese Sprache wird vom Übersetzer nicht unterstützt."
     too_long: "Dieser Beitrag ist zu lang, um vom Übersetzer übersetzt zu werden."
     not_available: "Der Übersetzerdienst ist derzeit nicht verfügbar."
@@ -37,4 +37,5 @@ de:
     poster_not_in_group: "Der Beitrag wurde nicht von einem Benutzer einer zulässigen Gruppe erstellt."
   dashboard:
     problem:
+      missing_translator_api_key: "%{provider} wurde als Übersetzer verwendet, aber %{key} wurde nicht angegeben. Siehe <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">Website-Einstellungen</a>."
       translator_error: "%{provider} meldete einen Übersetzungsfehler mit dem Code %{code}: %{message}"

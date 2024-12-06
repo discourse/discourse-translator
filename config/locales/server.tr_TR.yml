@@ -12,6 +12,7 @@ tr_TR:
     translator_azure_region: "Azure Region"
     translator_google_api_key: "Google API Anahtarı"
     translator_yandex_api_key: "Yandex API Anahtarı"
+    max_characters_per_translation: "Çeviri için gönderilebilecek maksimum karakter sayısı. İçerik bundan daha uzunsa metin kesilir. Her sağlayıcının kendi limitleri olduğunu unutmayın."
     max_translations_per_minute: "Normal bir kullanıcının gerçekleştirebileceği dakika başına çeviri sayısı."
     translator_libretranslate_endpoint: "LibreTranslate API Uç Noktası"
     translator_libretranslate_api_key: "LibreTranslate API Anahtarı"
@@ -23,7 +24,6 @@ tr_TR:
     restrict_translation_by_group: "Yalnızca izin verilen gruplar çeviri yapabilir"
     restrict_translation_by_poster_group: "Yalnızca izin verilen gruplardaki kullanıcılar tarafından oluşturulan gönderilerin çevirisine izin verin. Boşsa tüm kullanıcıların gönderilerinin çevrilmesine izin verin."
   translator:
-    failed: "Çevirmen bu dilde çeviri yapamıyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
     too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
     not_available: "Çevirmen hizmeti şu anda kullanılamıyor."
@@ -35,3 +35,7 @@ tr_TR:
   not_in_group:
     user_not_in_group: "Çeviri yapmanıza izin verilen bir grupta değilsiniz."
     poster_not_in_group: "Gönderi, izin verilen bir gruptaki bir kullanıcı tarafından yapılmadı."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} çevirmen olarak kullanıldı ancak %{key} sağlanmadı. <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">Site ayarlarına</a> bakın."
+      translator_error: "%{provider}, %{code} koduyla bir çeviri hatası bildirdi: %{message}"
