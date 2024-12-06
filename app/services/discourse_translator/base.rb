@@ -75,7 +75,7 @@ module DiscourseTranslator
     def self.strip_tags_for_detection(detection_text)
       html_doc = Nokogiri::HTML::DocumentFragment.parse(detection_text)
       html_doc.css("img").remove
-      html_doc.css("a").remove
+      html_doc.css("a.mention,a.lightbox").remove
       html_doc.to_html
     end
 
