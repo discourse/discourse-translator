@@ -41,6 +41,27 @@ describe DiscourseTranslator::Base do
       expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
     end
 
+    it "strips @ mention anchor tags" do
+      post.cooked = "<a class='mention' href='/u/cat' >cat</a>"
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
+    end
+
+    it "strips lightbox anchor tags" do
+      post.cooked = "<a class='lightbox' href='http://cloudfront.net/image.png' />"
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
+    end
+
+    it "leaves other anchor tags alone" do
+      cooked = <<~HTML
+        <p>
+          <a href="http://cat.com/image.png"></a>
+          <a class="derp" href="http://cat.com/image.png"></a>
+        </p>
+        HTML
+      post.cooked = cooked
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(cooked)
+    end
+
     it "truncates to DETECTION_CHAR_LIMIT of 1000" do
       post.cooked = "a" * 1001
       expect(DiscourseTranslator::Base.text_for_detection(post).length).to eq(1000)
