@@ -72,14 +72,17 @@ module DiscourseTranslator
 
     private
 
-    def self.strip_img_for_detection(detection_text)
+    def self.strip_tags_for_detection(detection_text)
       html_doc = Nokogiri::HTML::DocumentFragment.parse(detection_text)
       html_doc.css("img").remove
+      html_doc.css("a.mention,a.lightbox").remove
       html_doc.to_html
     end
 
     def self.text_for_detection(topic_or_post)
-      strip_img_for_detection(get_text(topic_or_post).truncate(DETECTION_CHAR_LIMIT, omission: nil))
+      strip_tags_for_detection(
+        get_text(topic_or_post).truncate(DETECTION_CHAR_LIMIT, omission: nil),
+      )
     end
 
     def self.text_for_translation(topic_or_post)
