@@ -12,6 +12,7 @@ ar:
     translator_azure_region: "منطقة Azure"
     translator_google_api_key: "مفتاح واجهة برمجة تطبيقات Google"
     translator_yandex_api_key: "مفتاح واجهة برمجة تطبيقات Yandex"
+    max_characters_per_translation: "الحد الأقصى لعدد الأحرف التي يمكن إرسالها للترجمة. إذا كان المحتوى أطول من هذا، فسيتم اقتطاع النص. لاحظ أن كل مقدِّم خدمة لديه حدوده الخاصة أيضًا."
     max_translations_per_minute: "عدد الترجمات التي يمكن للمستخدم المنتظم إجراؤها في الدقيقة"
     translator_libretranslate_endpoint: "نقطة نهاية واجهة برمجة التطبيقات لـ LibreTranslate"
     translator_libretranslate_api_key: "مفتاح واجهة برمجة التطبيقات لـ LibreTranslate"
@@ -23,6 +24,7 @@ ar:
     restrict_translation_by_group: "لا يمكن الترجمة إلا للمجموعات المُدرَجة في قائمة السماح"
     restrict_translation_by_poster_group: "السماح بترجمة المنشورات التي يُنشئها المستخدمون في المجموعات المسموح بها فقط. إذا كانت فارغة، فاسمح بترجمة المنشورات من جميع المستخدمين."
   translator:
+    failed: "يتعذَّر على المترجم ترجمة هذا المحتوى (%{source_locale}) إلى اللغة الافتراضية لهذا الموقع (%{target_locale})."
     not_supported: "لا يدعم المترجم هذه اللغة."
     too_long: "هذا المنشور طويل جدًا ولا يستطيع المترجم ترجمته."
     not_available: "خدمة المترجم غير متوفرة حاليًا."
@@ -31,6 +33,13 @@ ar:
     microsoft:
       missing_token: "لم يتمكَّن المترجم من استرداد رمز مميَّز صالح."
       missing_key: "لم يتم توفير مفتاح اشتراك Azure."
+    discourse_ai:
+      not_installed: "يجب عليك تثبيت المكوِّن الإضافي discourse-ai لاستخدام هذه الميزة."
+      ai_helper_required: 'يتعيَّن عليك <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">تكوين مساعد الذكاء الاصطناعي</a> لاستخدام هذه الميزة.'
   not_in_group:
     user_not_in_group: "أنت لا تنتمي إلى مجموعة مسموح لها بالترجمة."
     poster_not_in_group: "لم يتم إنشاء المنشور بواسطة مستخدم في مجموعة مسموح بها."
+  dashboard:
+    problem:
+      missing_translator_api_key: "تم استخدام %{provider} كمترجم، ولكن لم يتم تقديم مفتاح %{key}. انظر <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">إعدادات الموقع</a>."
+      translator_error: "أبلغ %{provider} عن خطأ في الترجمة بالرمز %{code}: %{message}"
