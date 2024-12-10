@@ -15,3 +15,4 @@ ar:
       view_translation: "عرض الترجمة"
       hide_translation: "إخفاء الترجمة"
       translated_from: "تمت الترجمة من %{language} بواسطة %{translator}"
+      translating: "جارٍ الترجمة"
