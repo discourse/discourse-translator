@@ -1,9 +1,8 @@
-import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
 import TranslatedPost from "../components/translated-post";
 
@@ -27,19 +26,13 @@ function customizePostMenu(api, container) {
   );
 
   if (transformerRegistered) {
-    // the plugin outlet is not updated when the post instance is modified unless we extend it to add the tracking to
-    // the new properties
-    api.modifyClass(
-      "model:post",
-      (Superclass) =>
-        class extends Superclass {
-          @tracked detectedLang;
-          @tracked isTranslating;
-          @tracked isTranslated;
-          @tracked translatedText;
-          @tracked translatedTitle;
-        }
-    );
+    // the plugin outlet is not updated when the post instance is modified unless we register the new properties as
+    // tracked
+    api.addTrackedPostProperty("detectedLang");
+    api.addTrackedPostProperty("isTranslating");
+    api.addTrackedPostProperty("isTranslated");
+    api.addTrackedPostProperty("translatedText");
+    api.addTrackedPostProperty("translatedTitle");
 
     api.renderBeforeWrapperOutlet("post-menu", TranslatedPost);
   }
@@ -86,7 +79,7 @@ function customizeWidgetPostMenu(api) {
       ...titleElements,
       dec.h(
         "div.post-attribution",
-        I18n.t("translator.translated_from", { language, translator })
+        i18n("translator.translated_from", { language, translator })
       ),
       dec.cooked(dec.attrs.translated_text),
     ]);
