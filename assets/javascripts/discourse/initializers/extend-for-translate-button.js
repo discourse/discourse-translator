@@ -144,6 +144,6 @@ function customizeWidgetPostMenu(api) {
 export default {
   name: "extend-for-translate-button",
   initialize() {
-    withPluginApi("1.34.0", (api) => initializeTranslation(api));
+    withPluginApi("1.39.0", (api) => initializeTranslation(api));
   },
 };
