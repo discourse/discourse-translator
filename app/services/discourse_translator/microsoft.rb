@@ -37,7 +37,6 @@ module DiscourseTranslator
       fr: "fr",
       ga: "ga",
       gl: "gl",
-      gl: "gl",
       gom: "gom",
       gu: "gu",
       ha: "ha",
