@@ -33,6 +33,9 @@ he:
     microsoft:
       missing_token: "המתרגם לא הצליח לקבל אסימון תקף."
       missing_key: "לא סופק מפתח מינוי של Azure."
+    discourse_ai:
+      not_installed: "יש להתקין את התוסף discourse-ai כדי להשתמש ביכולת הזאת."
+      ai_helper_required: 'יש <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">להגדיר את מסייע הבינה המלאכותית</a> כדי להשתמש ביכולת הזאת.'
   not_in_group:
     user_not_in_group: "לא חברת לקבוצה שמורשית לתרגם."
     poster_not_in_group: "הפוסט לא פורסם על ידי משתמש בקבוצה מותרת."
