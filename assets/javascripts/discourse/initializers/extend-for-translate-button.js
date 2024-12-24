@@ -28,11 +28,13 @@ function customizePostMenu(api, container) {
   if (transformerRegistered) {
     // the plugin outlet is not updated when the post instance is modified unless we register the new properties as
     // tracked
-    api.addTrackedPostProperty("detectedLang");
-    api.addTrackedPostProperty("isTranslating");
-    api.addTrackedPostProperty("isTranslated");
-    api.addTrackedPostProperty("translatedText");
-    api.addTrackedPostProperty("translatedTitle");
+    api.addTrackedPostProperties(
+      "detectedLang",
+      "isTranslating",
+      "isTranslated",
+      "translatedText",
+      "translatedTitle"
+    );
 
     api.renderBeforeWrapperOutlet("post-menu", TranslatedPost);
   }
@@ -144,6 +146,6 @@ function customizeWidgetPostMenu(api) {
 export default {
   name: "extend-for-translate-button",
   initialize() {
-    withPluginApi("1.39.0", (api) => initializeTranslation(api));
+    withPluginApi("1.39.2", (api) => initializeTranslation(api));
   },
 };
