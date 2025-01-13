@@ -85,7 +85,7 @@ describe DiscourseTranslator::GuardianExtension do
     let(:guardian) { Guardian.new(user) }
 
     it "returns false when the post user is not in restrict_translation_by_poster_group" do
-      SiteSetting.restrict_translation_by_poster_group = "#{group.id + 1}"
+      SiteSetting.restrict_translation_by_poster_group = "#{Fabricate(:group).id}"
 
       expect(guardian.can_detect_language?(post)).to eq(false)
     end
@@ -101,15 +101,15 @@ describe DiscourseTranslator::GuardianExtension do
       end
 
       it "returns false when the post is a small action post" do
-        post.update(post_type: Post.types[:small_action])
+        post.update!(post_type: Post.types[:small_action])
 
         expect(guardian.can_detect_language?(post)).to eq(false)
       end
 
       it "returns false when the post raw is empty" do
-        post.update(raw: "")
-
-        expect(guardian.can_detect_language?(post)).to eq(false)
+        expect { post.update(raw: "") }.to change { guardian.can_detect_language?(post) }.from(
+          true,
+        ).to(false)
       end
     end
   end
