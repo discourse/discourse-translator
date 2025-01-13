@@ -6,7 +6,7 @@ require "json"
 module DiscourseTranslator
   class DiscourseAi < Base
     MAX_DETECT_LOCALE_TEXT_LENGTH = 1000
-    def self.language_supported?(_)
+    def self.language_supported?(_, _)
       true
     end
 

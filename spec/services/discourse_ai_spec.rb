@@ -16,7 +16,7 @@ describe DiscourseTranslator::DiscourseAi do
 
   describe ".language_supported?" do
     it "returns true for any language" do
-      expect(described_class.language_supported?("any-language")).to eq(true)
+      expect(described_class.language_supported?("any-language", "??")).to eq(true)
     end
   end
 

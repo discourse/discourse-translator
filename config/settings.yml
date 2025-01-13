@@ -94,6 +94,11 @@ discourse_translator:
     client: true
   max_translations_per_minute:
     default: 3
+  normalize_language_variants:
+    type: list
+    list_type: compact
+    default: "en"
+    client: true
   restrict_translation_by_group:
     default: "11" # default group trust_level_1
     client: true
