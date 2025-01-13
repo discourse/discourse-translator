@@ -6,8 +6,9 @@ require "json"
 module DiscourseTranslator
   class DiscourseAi < Base
     MAX_DETECT_LOCALE_TEXT_LENGTH = 1000
-    def self.language_supported?(_)
-      true
+    def self.language_supported?(detected_lang)
+      locale_without_region = I18n.locale.to_s.split("_").first
+      detected_lang != locale_without_region
     end
 
     def self.detect(topic_or_post)

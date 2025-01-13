@@ -44,14 +44,6 @@ after_initialize do
   end
 
   add_to_serializer :post, :can_translate do
-    return false if !scope.user_group_allow_translate?
-
-    detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
-    return false if detected_lang.blank?
-
-    detected_lang.to_sym != I18n.locale &&
-      "DiscourseTranslator::#{SiteSetting.translator}".constantize.language_supported?(
-        detected_lang,
-      )
+    scope.can_translate?(object)
   end
 end

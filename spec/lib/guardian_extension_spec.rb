@@ -113,4 +113,64 @@ describe DiscourseTranslator::GuardianExtension do
       end
     end
   end
+
+  describe "#can_translate?" do
+    fab!(:group)
+    fab!(:user) { Fabricate(:user, locale: "en", groups: [group]) }
+    fab!(:post)
+
+    let(:guardian) { Guardian.new(user) }
+
+    it "returns false when translator disabled" do
+      SiteSetting.translator_enabled = false
+
+      expect(guardian.can_translate?(post)).to eq(false)
+    end
+
+    describe "when translator enabled" do
+      before { SiteSetting.translator_enabled = true }
+
+      describe "anon user" do
+        before { SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}" }
+
+        it "cannot translate" do
+          expect(Guardian.new.can_translate?(post)).to eq(false)
+        end
+      end
+
+      describe "logged in user" do
+        it "cannot translate when user is not in restrict_translation_by_group" do
+          SiteSetting.restrict_translation_by_group = "#{group.id + 1}"
+
+          expect(guardian.can_translate?(post)).to eq(false)
+        end
+
+        describe "user is in restrict_translation_by_group" do
+          before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
+
+          describe "locale is :xx" do
+            before { I18n.stubs(:locale).returns(:pt) }
+
+            it "cannot translate when post does not have DETECTED_LANG_CUSTOM_FIELD" do
+              expect(guardian.can_translate?(post)).to eq(false)
+            end
+
+            it "cannot translate when post has DETECTED_LANG_CUSTOM_FIELD matches locale" do
+              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "pt"
+              post.save
+
+              expect(guardian.can_translate?(post)).to eq(false)
+            end
+
+            it "can translate when post has DETECTED_LANG_CUSTOM_FIELD does not match locale" do
+              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "jp"
+              post.save
+
+              expect(guardian.can_translate?(post)).to eq(true)
+            end
+          end
+        end
+      end
+    end
+  end
 end
