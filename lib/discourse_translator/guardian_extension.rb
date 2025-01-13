@@ -11,4 +11,11 @@ module DiscourseTranslator::GuardianExtension
     return false if post.user.nil?
     post.user.in_any_groups?(SiteSetting.restrict_translation_by_poster_group_map)
   end
+
+  def can_detect_language?(post)
+    (
+      SiteSetting.restrict_translation_by_poster_group_map.empty? ||
+        post&.user&.in_any_groups?(SiteSetting.restrict_translation_by_poster_group_map)
+    ) && post.raw.present? && post.post_type != Post.types[:small_action]
+  end
 end

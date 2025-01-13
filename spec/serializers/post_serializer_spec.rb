@@ -12,34 +12,22 @@ RSpec.describe PostSerializer do
 
   describe "#can_translate" do
     it "returns false when translator disabled" do
-      SiteSetting.translator_enabled = true
+      SiteSetting.translator_enabled = false
       serializer = PostSerializer.new(post, scope: Guardian.new)
 
       expect(serializer.can_translate).to eq(false)
     end
 
     describe "when translator enabled" do
-      before do
-        SiteSetting.translator_enabled = true
-        Jobs.run_later!
-      end
+      before { SiteSetting.translator_enabled = true }
 
-      describe "when small action post" do
-        fab!(:small_action)
-        let(:serializer) { PostSerializer.new(small_action, scope: Guardian.new) }
+      describe "anon user" do
+        let(:serializer) { PostSerializer.new(post, scope: Guardian.new) }
 
-        it "cannot translate" do
-          expect(serializer.can_translate).to eq(false)
+        before do
+          SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}"
+          SiteSetting.restrict_translation_by_poster_group = ""
         end
-      end
-
-      describe "when post raw is empty" do
-        fab!(:empty_post) do
-          empty_post = Fabricate.build(:post, raw: "")
-          empty_post.save!(validate: false)
-          empty_post
-        end
-        let(:serializer) { PostSerializer.new(empty_post, scope: Guardian.new) }
 
         it "cannot translate" do
           expect(serializer.can_translate).to eq(false)
@@ -49,61 +37,44 @@ RSpec.describe PostSerializer do
       describe "logged in user" do
         let(:serializer) { PostSerializer.new(post, scope: Guardian.new(user)) }
 
-        describe "when user is not in restrict_translation_by_group" do
-          it "cannot translate" do
-            SiteSetting.restrict_translation_by_group = ""
+        it "cannot translate when user is not in restrict_translation_by_group" do
+          SiteSetting.restrict_translation_by_group = "#{group.id + 1}"
+
+          expect(serializer.can_translate).to eq(false)
+        end
+
+        describe "user is in restrict_translation_by_group" do
+          before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
+
+          it "cannot translate when post author is not in restrict_translation_by_poster_group" do
+            SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
 
             expect(serializer.can_translate).to eq(false)
           end
-        end
 
-        describe "when post is not in restrict_translation_by_poster_group" do
-          it "cannot translate" do
-            SiteSetting.restrict_translation_by_group = "#{group.id}"
-            SiteSetting.restrict_translation_by_poster_group = ""
+          describe "post author in restrict_translation_by_poster_group and locale is :xx" do
+            before do
+              SiteSetting.restrict_translation_by_poster_group = "#{post_user_group.id}"
+              I18n.stubs(:locale).returns(:pt)
+            end
 
-            expect(serializer.can_translate).to eq(false)
-          end
-        end
-
-        describe "when user is in restrict_translation_by_group and poster in restrict_translation_by_poster_group" do
-          before do
-            SiteSetting.restrict_translation_by_group = "#{group.id}"
-            SiteSetting.restrict_translation_by_poster_group = "#{post_user_group.id}"
-          end
-
-          describe "when post does not have DETECTED_LANG_CUSTOM_FIELD" do
-            it "cannot translate" do
+            it "cannot translate when post does not have DETECTED_LANG_CUSTOM_FIELD" do
               expect(serializer.can_translate).to eq(false)
             end
 
-            it "adds post id to redis if detected_language is blank" do
-              post.custom_fields["detected_language"] = nil
-              post.save_custom_fields
-
-              expect { serializer.can_translate }.to change {
-                Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id)
-              }.from(false).to(true)
-            end
-          end
-
-          describe "when post has DETECTED_LANG_CUSTOM_FIELD matches user locale" do
-            before do
-              I18n.stubs(:locale).returns(:xx)
-              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "xx"
+            it "cannot translate when post has DETECTED_LANG_CUSTOM_FIELD matches locale" do
+              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "pt"
               post.save
+
+              expect(serializer.can_translate).to eq(false)
             end
 
-            it { expect(serializer.can_translate).to eq(false) }
-          end
-
-          describe "when post has DETECTED_LANG_CUSTOM_FIELD does not match user locale" do
-            before do
+            it "can translate when post has DETECTED_LANG_CUSTOM_FIELD does not match locale" do
               post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "jp"
               post.save
-            end
 
-            it { expect(serializer.can_translate).to eq(true) }
+              expect(serializer.can_translate).to eq(true)
+            end
           end
         end
       end
