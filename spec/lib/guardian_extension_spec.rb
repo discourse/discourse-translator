@@ -77,4 +77,40 @@ describe DiscourseTranslator::GuardianExtension do
       end
     end
   end
+
+  describe "#can_detect_language?" do
+    fab!(:group)
+    fab!(:user) { Fabricate(:user, groups: [group]) }
+    fab!(:post) { Fabricate(:post, user: user, raw: "Hello, world!") }
+    let(:guardian) { Guardian.new(user) }
+
+    it "returns false when the post user is not in restrict_translation_by_poster_group" do
+      SiteSetting.restrict_translation_by_poster_group = "#{group.id + 1}"
+
+      expect(guardian.can_detect_language?(post)).to eq(false)
+    end
+
+    context "when post author is in allowed groups" do
+      before do
+        SiteSetting.restrict_translation_by_group = "#{group.id}"
+        SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
+      end
+
+      it "returns true when the post is not a small action post" do
+        expect(guardian.can_detect_language?(post)).to eq(true)
+      end
+
+      it "returns false when the post is a small action post" do
+        post.update(post_type: Post.types[:small_action])
+
+        expect(guardian.can_detect_language?(post)).to eq(false)
+      end
+
+      it "returns false when the post raw is empty" do
+        post.update(raw: "")
+
+        expect(guardian.can_detect_language?(post)).to eq(false)
+      end
+    end
+  end
 end

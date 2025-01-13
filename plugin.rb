@@ -37,23 +37,21 @@ after_initialize do
     Topic.prepend(DiscourseTranslator::TopicExtension)
   end
 
-  add_to_serializer :post, :can_translate do
-    return false if !SiteSetting.translator_enabled
-    if !scope.user_group_allow_translate? || !scope.poster_group_allow_translate?(object)
-      return false
+  on(:post_process_cooked) do |_, post|
+    if Guardian.new.can_detect_language?(post)
+      Discourse.redis.sadd?(DiscourseTranslator::LANG_DETECT_NEEDED, post.id)
     end
-    return false if raw.blank? || post_type == Post.types[:small_action]
+  end
+
+  add_to_serializer :post, :can_translate do
+    return false if !scope.user_group_allow_translate?
 
     detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+    return false if detected_lang.blank?
 
-    if !detected_lang
-      Discourse.redis.sadd?(DiscourseTranslator::LANG_DETECT_NEEDED, object.id)
-      false
-    else
-      detected_lang.to_sym != I18n.locale &&
-        "DiscourseTranslator::#{SiteSetting.translator}".constantize.language_supported?(
-          detected_lang,
-        )
-    end
+    detected_lang.to_sym != I18n.locale &&
+      "DiscourseTranslator::#{SiteSetting.translator}".constantize.language_supported?(
+        detected_lang,
+      )
   end
 end
