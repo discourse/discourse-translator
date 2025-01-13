@@ -15,8 +15,14 @@ describe DiscourseTranslator::DiscourseAi do
   end
 
   describe ".language_supported?" do
-    it "returns true for any language" do
-      expect(described_class.language_supported?("any-language", "??")).to eq(true)
+    it "returns true when detected language is different from i18n locale" do
+      I18n.stubs(:locale).returns(:xx)
+      expect(described_class.language_supported?("any-language")).to eq(true)
+    end
+
+    it "returns false when detected language is same base language as i18n locale" do
+      I18n.stubs(:locale).returns(:en_GB)
+      expect(described_class.language_supported?("en")).to eq(false)
     end
   end
 

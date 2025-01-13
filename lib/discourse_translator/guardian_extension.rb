@@ -22,24 +22,17 @@ module DiscourseTranslator::GuardianExtension
   def can_translate?(post)
     return false if !user_group_allow_translate?
 
-    # we will deal with strings (not syms) when comparing locales below
+    # we will deal with regionalized_strings (not syms) when comparing locales
+    # e.g. "en_GB"
+    #      not "en-GB"
+    #      nor :en_GB (I18n.locale)
     detected_lang =
       post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD].to_s.sub("-", "_")
     return false if detected_lang.blank?
 
-    locale_without_region = I18n.locale.to_s.split("_").first
-    site_locale =
-      (
-        if SiteSetting.normalize_language_variants_map.include?(locale_without_region)
-          locale_without_region
-        else
-          I18n.locale.to_s
-        end
-      )
-    detected_lang != site_locale &&
+    detected_lang != I18n.locale.to_s &&
       "DiscourseTranslator::#{SiteSetting.translator}".constantize.language_supported?(
         detected_lang,
-        site_locale,
       )
   end
 end

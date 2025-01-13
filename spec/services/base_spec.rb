@@ -12,21 +12,24 @@ describe DiscourseTranslator::Base do
 
   describe ".language_supported?" do
     it "raises an error when the method is not implemented" do
-      expect { EmptyTranslator.language_supported?("en", "en") }.to raise_error(NotImplementedError)
+      expect { EmptyTranslator.language_supported?("en") }.to raise_error(NotImplementedError)
     end
 
     it "returns false when the locale is not supported" do
-      expect(TestTranslator.language_supported?("en", "xx")).to eq(false)
+      I18n.stubs(:locale).returns(:xx)
+      expect(TestTranslator.language_supported?("en")).to eq(false)
     end
 
     it "returns true when the detected language is not the current locale" do
-      expect(TestTranslator.language_supported?("en", "pt")).to eq(true)
-      expect(TestTranslator.language_supported?("ar", "pt")).to eq(true)
-      expect(TestTranslator.language_supported?("es-MX", "pt")).to eq(true)
+      I18n.locale = :pt
+      expect(TestTranslator.language_supported?("en")).to eq(true)
+      expect(TestTranslator.language_supported?("ar")).to eq(true)
+      expect(TestTranslator.language_supported?("es-MX")).to eq(true)
     end
 
     it "returns false when the detected language is the detected locale" do
-      expect(TestTranslator.language_supported?("pt", "pt")).to eq(false)
+      I18n.locale = :pt
+      expect(TestTranslator.language_supported?("pt")).to eq(false)
     end
   end
 
