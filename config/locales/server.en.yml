@@ -17,6 +17,7 @@ en:
     translator_azure_custom_subdomain: "Required if using a Virtual Network or Firewall for Azure Cognitive Services. Note: Only enter the custom subdomain not the full custom endpoint."
     restrict_translation_by_group: "Only allowed groups can translate"
     restrict_translation_by_poster_group: "Only allow translation of posts made by users in allowed groups. If empty, allow translations of posts from all users."
+    normalize_language_variants: "Locales are normalized to the base locale without region or variant. When this setting includes 'en', 'en-GB' or 'en-US' will be normalized to 'en', and posts are not translatable within the same locale."
   translator:
     failed: "The translator is unable to translate this content (%{source_locale}) to the default language of this site (%{target_locale})."
     not_supported: "This language is not supported by the translator."
