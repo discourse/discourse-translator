@@ -51,13 +51,23 @@ describe DiscourseTranslator::Base do
       expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
     end
 
+    it "strips lightboxes" do
+      post.cooked = "<div class='lightbox-wrapper' />"
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
+    end
+
+    it "strips quotes" do
+      post.cooked = "<aside class='quote'>多言語トピック</aside>"
+      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
+    end
+
     it "leaves other anchor tags alone" do
       cooked = <<~HTML
         <p>
           <a href="http://cat.com/image.png"></a>
           <a class="derp" href="http://cat.com/image.png"></a>
         </p>
-        HTML
+      HTML
       post.cooked = cooked
       expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(cooked)
     end
