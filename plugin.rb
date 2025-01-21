@@ -47,4 +47,13 @@ after_initialize do
   add_to_serializer :post, :can_translate do
     scope.can_translate?(object)
   end
+
+  add_to_serializer :post, :cooked, respect_plugin_enabled: false do
+    return super() if cooked_hidden
+    DiscourseTranslator::TranslatorHelper.translated_value(super(), object, scope)
+  end
+
+  add_to_serializer :basic_topic, :fancy_title do
+    DiscourseTranslator::TranslatorHelper.translated_value(object.fancy_title, object, scope)
+  end
 end

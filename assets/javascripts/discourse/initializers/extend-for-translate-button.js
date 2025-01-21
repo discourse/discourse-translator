@@ -6,6 +6,7 @@ import { i18n } from "discourse-i18n";
 import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
 import TranslatedPost from "../components/translated-post";
+import ShowOriginalContent from "../components/show-original-content";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
@@ -22,8 +23,9 @@ function initializeTranslation(api) {
       { before: ["search"] }
     );
   }
-
-  if (currentUser) {
+  if (siteSettings.experimental_topic_translation) {
+    api.renderInOutlet("topic-navigation", ShowOriginalContent);
+  } else {
     customizePostMenu(api);
   }
 }

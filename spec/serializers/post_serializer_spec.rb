@@ -80,4 +80,44 @@ RSpec.describe PostSerializer do
       end
     end
   end
+
+  describe "#cooked" do
+    def serialize_post(guardian_user: user, params: {})
+      env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
+      request = ActionDispatch::Request.new(env)
+      guardian = Guardian.new(guardian_user, request)
+      PostSerializer.new(post, scope: guardian)
+    end
+
+    before { SiteSetting.experimental_topic_translation = true }
+
+    it "returns original cooked when experimental_topic_translation is disabled" do
+      SiteSetting.experimental_topic_translation = false
+      original_cooked = post.cooked
+      expect(serialize_post.cooked).to eq(original_cooked)
+    end
+
+    it "returns original cooked when show=original param is present" do
+      original_cooked = post.cooked
+      I18n.locale = "ja"
+      post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = { "ja" => "こんにちは" }
+      expect(serialize_post(params: { "show" => "original" }).cooked).to eq(original_cooked)
+      expect(serialize_post(params: { "show" => "derp" }).cooked).to eq("こんにちは")
+    end
+
+    it "returns translated content based on locale" do
+      I18n.locale = "ja"
+      post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] = {
+        "ja" => "こんにちは",
+        "es" => "Hola",
+      }
+      expect(serialize_post.cooked).to eq("こんにちは")
+    end
+
+    it "returns original cooked when plugin is disabled" do
+      SiteSetting.translator_enabled = false
+      original_cooked = post.cooked
+      expect(serialize_post.cooked).to eq(original_cooked)
+    end
+  end
 end
