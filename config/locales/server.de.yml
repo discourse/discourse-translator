@@ -24,6 +24,7 @@ de:
     restrict_translation_by_group: "Nur berechtigte Gruppen können übersetzen"
     restrict_translation_by_poster_group: "Erlaube nur die Übersetzung von Beiträgen von Benutzern aus zulässigen Gruppen. Wenn das Feld leer ist, wird die Übersetzung von Beiträgen aller Benutzer erlaubt."
   translator:
+    failed: "Der Übersetzer kann diesen Inhalt (%{source_locale}) nicht in die Standardsprache dieser Website (%{target_locale}) übersetzen."
     not_supported: "Diese Sprache wird vom Übersetzer nicht unterstützt."
     too_long: "Dieser Beitrag ist zu lang, um vom Übersetzer übersetzt zu werden."
     not_available: "Der Übersetzerdienst ist derzeit nicht verfügbar."
@@ -32,6 +33,9 @@ de:
     microsoft:
       missing_token: "Der Übersetzer konnte kein gültiges Token abrufen."
       missing_key: "Kein Azure-Abonnementschlüssel bereitgestellt."
+    discourse_ai:
+      not_installed: "Um diese Funktion zu nutzen, musst du das discourse-ai-Plug-in installieren."
+      ai_helper_required: 'Du musst <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">den KI-Helfer konfigurieren</a>, um diese Funktion zu nutzen.'
   not_in_group:
     user_not_in_group: "Du gehörst nicht zu einer Gruppe, die übersetzen darf."
     poster_not_in_group: "Der Beitrag wurde nicht von einem Benutzer einer zulässigen Gruppe erstellt."

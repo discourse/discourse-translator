@@ -24,6 +24,7 @@ fi:
     restrict_translation_by_group: "Vain sallitut ryhmät voivat kääntää"
     restrict_translation_by_poster_group: "Salli vain sallittujen ryhmien käyttäjien tekemien viestien kääntäminen. Jos tämä on tyhjä, salli kaikkien käyttäjien viestien käännökset."
   translator:
+    failed: "Kääntäjä ei pysty kääntämään tätä sisältöä (%{source_locale}) tämän sivuston oletuskielelle (%{target_locale})."
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
     not_available: "Kääntäjäpalvelu ei ole tällä hetkellä käytettävissä."
@@ -32,6 +33,9 @@ fi:
     microsoft:
       missing_token: "Kääntäjä ei voinut noutaa kelvollista tunnusta."
       missing_key: "Azure Subscription Key -tilaustunnistetta ei ole ilmoitettu."
+    discourse_ai:
+      not_installed: "Sinun täytyy asentaa discourse-ai-lisäosa tämän ominaisuuden käyttämiseksi."
+      ai_helper_required: 'Sinun täytyy <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">määrittää ai-apuohjelma</a> tämän ominaisuuden käyttämiseksi.'
   not_in_group:
     user_not_in_group: "Et kuulu ryhmään, jolla on oikeus kääntää."
     poster_not_in_group: "Viestiä ei tehnyt sallittuun ryhmään kuuluva käyttäjä."

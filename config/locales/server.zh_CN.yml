@@ -24,6 +24,7 @@ zh_CN:
     restrict_translation_by_group: "只有允许的群组才能翻译"
     restrict_translation_by_poster_group: "仅允许翻译允许的群组中用户发布的帖子。如果为空，则允许翻译所有用户的帖子。"
   translator:
+    failed: "翻译器无法将此内容 (%{source_locale}) 翻译成此网站的默认语言 (%{target_locale})。"
     not_supported: "翻译器不支持此语言。"
     too_long: "帖子过长，翻译器无法翻译。"
     not_available: "该翻译服务目前不可用。"
@@ -32,6 +33,9 @@ zh_CN:
     microsoft:
       missing_token: "翻译器无法检索有效令牌。"
       missing_key: "未提供 Azure 订阅密钥。"
+    discourse_ai:
+      not_installed: "您需要安装 discourse-ai 插件才能使用此功能。"
+      ai_helper_required: '您需要<a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">配置 AI 助手</a>才能使用此功能。'
   not_in_group:
     user_not_in_group: "您不属于允许翻译的群组。"
     poster_not_in_group: "帖子不是由允许的群组中的用户发布的。"
