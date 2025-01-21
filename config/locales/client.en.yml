@@ -6,7 +6,7 @@ en:
           discourse_translator: "Discourse Translator"
   js:
     translator:
-      view_translation: "View translation"
-      hide_translation: "Hide translation"
+      content_not_translated: "Content not translated. Click to translate"
+      content_translated: "Content is translated. Click to view original"
       translated_from: "Translated from %{language} by %{translator}"
       translating: "Translating"

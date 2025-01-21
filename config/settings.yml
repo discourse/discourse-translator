@@ -106,3 +106,6 @@ discourse_translator:
     default: false
     client: true
     validator: "LanguageSwitcherSettingValidator"
+  experimental_topic_translation:
+    default: false
+    client: true

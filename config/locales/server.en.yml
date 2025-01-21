@@ -20,6 +20,7 @@ en:
     experimental_anon_language_switcher: "Enable experimental language switcher for anonymous users. This will allow anonymous users to switch between translated versions of Discourse and user-contributed content in topics."
     errors:
       set_locale_cookie_requirements: "The experimental language switcher for anonymous users requires the `set locale from cookie` site setting to be enabled."
+    experimental_topic_translation: "Enable experimental topic translation feature. This replaces existing post in-line translation with a button that allows users to translate the entire topic."
   translator:
     failed: "The translator is unable to translate this content (%{source_locale}) to the default language of this site (%{target_locale})."
     not_supported: "This language is not supported by the translator."

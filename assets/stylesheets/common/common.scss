@@ -2,3 +2,19 @@
   .fk-d-menu__inner-content {
   max-height: 50vh;
 }
+
+.topic-navigation.with-timeline .discourse-translator_toggle-original {
+  margin-bottom: 0.5em;
+}
+
+.topic-navigation.with-topic-progress
+  .discourse-translator_toggle-original
+  button {
+  height: 100%;
+}
+
+.discourse-translator_toggle-original {
+  button.active svg {
+    color: var(--tertiary);
+  }
+}
