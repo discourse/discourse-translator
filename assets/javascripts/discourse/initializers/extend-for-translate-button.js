@@ -5,6 +5,7 @@ import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
 import { i18n } from "discourse-i18n";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
 import TranslatedPost from "../components/translated-post";
+import ShowOriginalContent from "../components/show-original-content";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
@@ -14,7 +15,13 @@ function initializeTranslation(api) {
     return;
   }
 
-  customizePostMenu(api);
+  if (siteSettings.experimental_topic_translation) {
+    api.renderInOutlet("post-menu__before", ShowOriginalContent, (args) => ({
+      post: args.post,
+    }));
+  } else {
+    customizePostMenu(api);
+  }
 }
 
 function customizePostMenu(api, container) {
@@ -122,24 +129,6 @@ function customizeWidgetPostMenu(api) {
     if (post) {
       post.set("translated_text", "");
     }
-  });
-
-  api.addPostMenuButton("translate", (attrs, state) => {
-    if (!attrs.can_translate) {
-      return;
-    }
-
-    const [action, title] = !state.isTranslated
-      ? ["translate", "translator.view_translation"]
-      : ["hideTranslation", "translator.hide_translation"];
-
-    return {
-      action,
-      title,
-      icon: "globe",
-      position: "first",
-      className: state.isTranslated ? "translated" : null,
-    };
   });
 }
 
