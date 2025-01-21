@@ -24,6 +24,7 @@ nl:
     restrict_translation_by_group: "Alleen toegestane groepen kunnen vertalen"
     restrict_translation_by_poster_group: "Sta alleen vertalingen toe van berichten gemaakt door gebruikers in toegestane groepen. Als dit leeg is, worden vertalingen van berichten van alle gebruikers toegestaan."
   translator:
+    failed: "De vertaler kan deze inhoud (%{source_locale}) niet vertalen naar de standaardtaal van deze site (%{target_locale})."
     not_supported: "Deze taal wordt niet ondersteund door de vertaler."
     too_long: "Dit bericht is te lang om door de vertaler te worden vertaald."
     not_available: "De vertaalservice is momenteel niet beschikbaar."
@@ -32,6 +33,9 @@ nl:
     microsoft:
       missing_token: "De vertaler kon geen geldig token ophalen."
       missing_key: "Geen Azure-abonnementscode opgegeven."
+    discourse_ai:
+      not_installed: "Je moet de plug-in discourse-ai installeren om deze functie te kunnen gebruiken."
+      ai_helper_required: 'Je moet <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">de AI-helper configureren</a> om deze functie te kunnen gebruiken.'
   not_in_group:
     user_not_in_group: "U behoort niet tot een groep die mag vertalen."
     poster_not_in_group: "Bericht is niet gemaakt door een gebruiker in een toegestane groep."

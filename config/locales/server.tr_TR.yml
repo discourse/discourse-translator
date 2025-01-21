@@ -24,6 +24,7 @@ tr_TR:
     restrict_translation_by_group: "Yalnızca izin verilen gruplar çeviri yapabilir"
     restrict_translation_by_poster_group: "Yalnızca izin verilen gruplardaki kullanıcılar tarafından oluşturulan gönderilerin çevirisine izin verin. Boşsa tüm kullanıcıların gönderilerinin çevrilmesine izin verin."
   translator:
+    failed: "Çevirmen bu içeriği (%{source_locale}) bu sitenin varsayılan diline (%{target_locale}) çeviremiyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
     too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
     not_available: "Çevirmen hizmeti şu anda kullanılamıyor."
@@ -32,6 +33,9 @@ tr_TR:
     microsoft:
       missing_token: "Çevirmen geçerli bir belirteç alamadı."
       missing_key: "Azure Abonelik Anahtarı sağlanmadı."
+    discourse_ai:
+      not_installed: "Bu özelliği kullanabilmek için discourse-ai eklentisini yüklemeniz gerekiyor."
+      ai_helper_required: 'Bu özelliği kullanmak için <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">yapay zekâ yardımcısını yapılandırmanız</a> gerekiyor.'
   not_in_group:
     user_not_in_group: "Çeviri yapmanıza izin verilen bir grupta değilsiniz."
     poster_not_in_group: "Gönderi, izin verilen bir gruptaki bir kullanıcı tarafından yapılmadı."

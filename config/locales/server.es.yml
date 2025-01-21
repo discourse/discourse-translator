@@ -24,6 +24,7 @@ es:
     restrict_translation_by_group: "Solo los grupos autorizados pueden traducir"
     restrict_translation_by_poster_group: "Permitir solo la traducción de las publicaciones realizadas por usuarios de los grupos permitidos. Si está vacío, permite la traducción de las publicaciones por parte de todos los usuarios."
   translator:
+    failed: "El traductor no puede traducir este contenido (%{source_locale}) al idioma predeterminado de este sitio (%{target_locale})."
     not_supported: "El traductor no admite este idioma."
     too_long: "Esta publicación es demasiado larga para ser traducida por el traductor."
     not_available: "El servicio de traducción no está disponible actualmente."
@@ -32,6 +33,9 @@ es:
     microsoft:
       missing_token: "El traductor no pudo recuperar un token válido."
       missing_key: "No se ha proporcionado la clave de suscripción a Azure."
+    discourse_ai:
+      not_installed: "Necesitas instalar el plugin discourse-ai para utilizar esta característica."
+      ai_helper_required: 'Necesitas <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">configurar el asistente de IA</a> para utilizar esta característica.'
   not_in_group:
     user_not_in_group: "Usted no pertenece a un grupo autorizado para traducir."
     poster_not_in_group: "La publicación no la realizó ningún usuario de un grupo permitido."

@@ -24,6 +24,7 @@ ja:
     restrict_translation_by_group: "許可されたグループのみが翻訳できます"
     restrict_translation_by_poster_group: "許可されたグループのユーザーによる投稿の翻訳のみを許可します。空白の場合、すべてのユーザーによる投稿の翻訳を許可します。"
   translator:
+    failed: "翻訳ツールはこのコンテンツ (%{source_locale}) をこのサイトのデフォルトの言語 (%{target_locale}) に翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
     too_long: "この投稿は翻訳ツールで翻訳するには長すぎます。"
     not_available: "現在、翻訳ツールサービスは使用できません。"
@@ -32,6 +33,9 @@ ja:
     microsoft:
       missing_token: "翻訳ツールは有効なトークンを取得できませんでした。"
       missing_key: "Azure サブスクリプションキーが指定されていません。"
+    discourse_ai:
+      not_installed: "この機能を使用するには、discourse-ai プラグインをインストールする必要があります。"
+      ai_helper_required: 'この機能を使用するには、<a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">ai ヘルパーを構成</a>する必要があります。'
   not_in_group:
     user_not_in_group: "翻訳が許可されたグループに属していません。"
     poster_not_in_group: "許可されたグループのユーザーによる投稿ではありません。"
