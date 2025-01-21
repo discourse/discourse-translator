@@ -11,6 +11,7 @@ gem "aws-sdk-translate", "1.35.0", require: false
 
 enabled_site_setting :translator_enabled
 register_asset "stylesheets/common/post.scss"
+register_asset "stylesheets/common/common.scss"
 
 module ::DiscourseTranslator
   PLUGIN_NAME = "discourse-translator".freeze
@@ -45,5 +46,15 @@ after_initialize do
 
   add_to_serializer :post, :can_translate do
     scope.can_translate?(object)
+  end
+
+  add_to_serializer :post, :translated_cooked, include_condition: -> do
+    language = I18n.locale # @options[:lang]
+    translated = object.custom_fields[::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]
+    !(language.blank? || translated.blank? || translated[language].blank?)
+  end do
+    language = I18n.locale # @options[:lang]
+    translated = object.custom_fields[::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]
+    translated[language]
   end
 end

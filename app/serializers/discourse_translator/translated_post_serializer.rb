@@ -10,7 +10,6 @@ module ::DiscourseTranslator
       !(language.blank? || translated.blank? || translated[language].blank?)
     end
 
-
     def cooked
       language = @options[:lang]
       translated = object.custom_fields[::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]

@@ -11,15 +11,23 @@ function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
   const currentUser = api.getCurrentUser();
 
+  if (siteSettings.translator_enabled && siteSettings.experimental_topic_translation) {
+    api.renderInOutlet("timeline-controls-before", ShowOriginalContent);
+
+    api.decorateCookedElement((cookedElement, helper) => {
+      if (helper) {
+        const post = helper.getModel();
+        console.log(post);
+        cookedElement.innerHTML = post.get("translated_cooked") || post.get("cooked");
+      }
+    });
+  }
+
   if (!currentUser || !siteSettings.translator_enabled) {
     return;
   }
 
-  if (siteSettings.experimental_topic_translation) {
-    api.renderInOutlet("post-menu__before", ShowOriginalContent, (args) => ({
-      post: args.post,
-    }));
-  } else {
+  if (!siteSettings.experimental_topic_translation) {
     customizePostMenu(api);
   }
 }

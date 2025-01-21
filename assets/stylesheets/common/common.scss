@@ -1,0 +1,11 @@
+.timeline-controls {
+  display: flex;
+
+  .discourse-translator_toggle-original {
+    margin-right: 0.5em;
+
+    button.active svg {
+      color: var(--tertiary);
+    }
+  }
+}
