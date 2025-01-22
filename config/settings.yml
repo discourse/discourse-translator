@@ -102,3 +102,7 @@ discourse_translator:
     default: ""
     client: true
     type: group_list
+  experimental_anon_language_switcher:
+    default: false
+    client: true
+    validator: "LanguageSwitcherSettingValidator"

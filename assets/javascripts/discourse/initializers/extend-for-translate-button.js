@@ -1,20 +1,31 @@
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import { withSilencedDeprecations } from "discourse/lib/deprecated";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
 import { i18n } from "discourse-i18n";
+import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
 import TranslatedPost from "../components/translated-post";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
-  const currentUser = api.getCurrentUser();
-
-  if (!currentUser || !siteSettings.translator_enabled) {
+  if (!siteSettings.translator_enabled) {
     return;
   }
 
-  customizePostMenu(api);
+  const currentUser = api.getCurrentUser();
+
+  if (!currentUser && siteSettings.experimental_anon_language_switcher) {
+    api.headerIcons.add(
+      "discourse-translator_language-switcher",
+      LanguageSwitcher,
+      { before: ["search"] }
+    );
+  }
+
+  if (currentUser) {
+    customizePostMenu(api);
+  }
 }
 
 function customizePostMenu(api, container) {
@@ -122,24 +133,6 @@ function customizeWidgetPostMenu(api) {
     if (post) {
       post.set("translated_text", "");
     }
-  });
-
-  api.addPostMenuButton("translate", (attrs, state) => {
-    if (!attrs.can_translate) {
-      return;
-    }
-
-    const [action, title] = !state.isTranslated
-      ? ["translate", "translator.view_translation"]
-      : ["hideTranslation", "translator.hide_translation"];
-
-    return {
-      action,
-      title,
-      icon: "globe",
-      position: "first",
-      className: state.isTranslated ? "translated" : null,
-    };
   });
 }
 
