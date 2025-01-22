@@ -36,6 +36,7 @@ after_initialize do
     Guardian.prepend(DiscourseTranslator::GuardianExtension)
     Post.prepend(DiscourseTranslator::PostExtension)
     Topic.prepend(DiscourseTranslator::TopicExtension)
+    # ApplicationController.prepend(DiscourseTranslator::ApplicationControllerExtension)
   end
 
   on(:post_process_cooked) do |_, post|
@@ -48,13 +49,15 @@ after_initialize do
     scope.can_translate?(object)
   end
 
-  add_to_serializer :post, :translated_cooked, include_condition: -> do
-    language = I18n.locale # @options[:lang]
+  add_to_serializer :post, :translated_cooked do
+    # get language from params or cookies
+    lang_param = scope.request.params[:lang]
+    lang_cookie = scope.request.cookies["locale"] || scope.request.cookies[:locale] || scope.request.cookies[:discourse_locale]
+    language = lang_param || lang_cookie || I18n.locale
+    puts "lang_param: #{lang_param}, lang_cookie: #{lang_cookie}, I18n.locale: #{I18n.locale}, language: #{language}"
     translated = object.custom_fields[::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]
-    !(language.blank? || translated.blank? || translated[language].blank?)
-  end do
-    language = I18n.locale # @options[:lang]
-    translated = object.custom_fields[::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]
+    return if language.blank? || translated.blank? || translated[language].blank?
+
     translated[language]
   end
 end

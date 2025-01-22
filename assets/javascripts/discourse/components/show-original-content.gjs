@@ -1,10 +1,9 @@
 import Component from "@glimmer/component";
-import {service} from "@ember/service";
-import {action} from "@ember/object";
+import { tracked } from "@glimmer/tracking";
+import { action } from "@ember/object";
+import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
-import { tracked } from "@glimmer/tracking";
-import I18n, { i18n } from "discourse-i18n";
 
 export default class ShowOriginalContent extends Component {
   @service router;
@@ -13,7 +12,8 @@ export default class ShowOriginalContent extends Component {
   @action
   async showOriginal() {
     this.active = !this.active;
-    // invoke decorateCookedElement directly?
+    // we'll need to refresh with a param
+    // that tells the backend to show the original cooked
   }
 
   get title() {

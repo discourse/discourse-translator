@@ -1,34 +1,45 @@
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import { withSilencedDeprecations } from "discourse/lib/deprecated";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
 import { i18n } from "discourse-i18n";
+import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
-import TranslatedPost from "../components/translated-post";
 import ShowOriginalContent from "../components/show-original-content";
+import TranslatedPost from "../components/translated-post";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
   const currentUser = api.getCurrentUser();
 
-  if (siteSettings.translator_enabled && siteSettings.experimental_topic_translation) {
-    api.renderInOutlet("timeline-controls-before", ShowOriginalContent);
+  if (!siteSettings.translator_enabled) {
+    return;
+  }
 
+  if (!currentUser && siteSettings.experimental_anon_language_switcher) {
+    api.headerIcons.add(
+      "discourse-translator_language-switcher",
+      LanguageSwitcher,
+      { before: ["search"] }
+    );
+  }
+
+  if (siteSettings.experimental_full_topic_translation) {
     api.decorateCookedElement((cookedElement, helper) => {
       if (helper) {
         const post = helper.getModel();
-        console.log(post);
-        cookedElement.innerHTML = post.get("translated_cooked") || post.get("cooked");
+        cookedElement.innerHTML =
+          post.get("translated_cooked") || post.get("cooked");
       }
     });
   }
 
-  if (!currentUser || !siteSettings.translator_enabled) {
-    return;
-  }
-
-  if (!siteSettings.experimental_topic_translation) {
-    customizePostMenu(api);
+  if (currentUser) {
+    if (siteSettings.experimental_full_topic_translation) {
+      api.renderInOutlet("timeline-controls-before", ShowOriginalContent);
+    } else {
+      customizePostMenu(api);
+    }
   }
 }
 
