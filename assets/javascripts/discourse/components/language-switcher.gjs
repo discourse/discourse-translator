@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
-import {fn} from "@ember/helper";
-import {action} from "@ember/object";
-import {service} from "@ember/service";
+import { fn } from "@ember/helper";
+import { action } from "@ember/object";
+import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import DropdownMenu from "discourse/components/dropdown-menu";
 import cookie from "discourse/lib/cookie";
@@ -13,12 +13,14 @@ export default class LanguageSwitcher extends Component {
   @service router;
 
   get localeOptions() {
-    return JSON.parse(this.siteSettings.available_locales).map(({ name, value }) => {
-      return {
-        label: name,
-        value,
-      };
-    });
+    return JSON.parse(this.siteSettings.available_locales).map(
+      ({ name, value }) => {
+        return {
+          label: name,
+          value,
+        };
+      }
+    );
   }
 
   @action
@@ -36,6 +38,7 @@ export default class LanguageSwitcher extends Component {
 
   <template>
     <DMenu
+      @identifier="discourse-translator_language-switcher"
       title="Language switcher"
       @icon="language"
       class="btn-flat btn-icon icon"
