@@ -11,6 +11,7 @@ gem "aws-sdk-translate", "1.35.0", require: false
 
 enabled_site_setting :translator_enabled
 register_asset "stylesheets/common/post.scss"
+register_asset "stylesheets/common/common.scss"
 
 module ::DiscourseTranslator
   PLUGIN_NAME = "discourse-translator".freeze
