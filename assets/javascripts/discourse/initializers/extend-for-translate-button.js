@@ -134,6 +134,24 @@ function customizeWidgetPostMenu(api) {
       post.set("translated_text", "");
     }
   });
+
+  api.addPostMenuButton("translate", (attrs, state) => {
+    if (!attrs.can_translate) {
+      return;
+    }
+
+    const [action, title] = !state.isTranslated
+      ? ["translate", "translator.view_translation"]
+      : ["hideTranslation", "translator.hide_translation"];
+
+    return {
+      action,
+      title,
+      icon: "globe",
+      position: "first",
+      className: state.isTranslated ? "translated" : null,
+    };
+  });
 }
 
 export default {
