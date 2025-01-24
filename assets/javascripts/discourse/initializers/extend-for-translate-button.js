@@ -5,8 +5,8 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 import { i18n } from "discourse-i18n";
 import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
-import TranslatedPost from "../components/translated-post";
 import ShowOriginalContent from "../components/show-original-content";
+import TranslatedPost from "../components/translated-post";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");

@@ -1,9 +1,9 @@
 import Component from "@glimmer/component";
-import { service } from "@ember/service";
+import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
-import { tracked } from "@glimmer/tracking";
 
 export default class ShowOriginalContent extends Component {
   @service router;
