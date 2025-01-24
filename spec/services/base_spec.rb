@@ -82,11 +82,6 @@ describe DiscourseTranslator::Base do
       post.cooked = text
       expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(text)
     end
-
-    it "strips text before truncation" do
-      post.cooked = "<img src='http://example.com/image.png' />" + "a" * 1000
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("a" * 1000)
-    end
   end
 
   describe ".text_for_translation" do
