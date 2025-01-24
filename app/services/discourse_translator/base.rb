@@ -79,8 +79,9 @@ module DiscourseTranslator
     end
 
     def self.text_for_detection(topic_or_post)
-      strip_tags_for_detection(
-        get_text(topic_or_post).truncate(DETECTION_CHAR_LIMIT, omission: nil),
+      strip_tags_for_detection(get_text(topic_or_post)).truncate(
+        DETECTION_CHAR_LIMIT,
+        omission: nil,
       )
     end
 
