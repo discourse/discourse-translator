@@ -23,6 +23,9 @@ zh_CN:
     translator_azure_custom_subdomain: "如果将虚拟网络或防火墙用于 Azure 认知服务，则为必需。注意：仅输入自定义子域，而不是完整的自定义端点。"
     restrict_translation_by_group: "只有允许的群组才能翻译"
     restrict_translation_by_poster_group: "仅允许翻译允许的群组中用户发布的帖子。如果为空，则允许翻译所有用户的帖子。"
+    experimental_anon_language_switcher: "为匿名用户启用实验性语言切换器。这将使匿名用户能够在 Discourse 的翻译版本和话题中用户贡献的内容之间切换。"
+    errors:
+      set_locale_cookie_requirements: "匿名用户的实验性语言切换器需要启用 `set locale from cookie` 网站设置。"
   translator:
     failed: "翻译器无法将此内容 (%{source_locale}) 翻译成此网站的默认语言 (%{target_locale})。"
     not_supported: "翻译器不支持此语言。"

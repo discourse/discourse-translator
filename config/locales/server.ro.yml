@@ -23,6 +23,9 @@ ro:
     translator_azure_custom_subdomain: "Necesar dacă utilizezi o rețea virtuală sau un firewall pentru Azure Cognitive Services. Notă: introdu numai subdomeniul personalizat, nu punctul-final personalizat complet."
     restrict_translation_by_group: "Doar grupurile permise pot traduce"
     restrict_translation_by_poster_group: "Permite traducerea numai a articolelor făcute de utilizatorii din grupurile permise. Dacă este gol, permite traducerea articolelor de la toți utilizatorii."
+    experimental_anon_language_switcher: "Activează comutatorul experimental de limbi pentru utilizatorii anonimi. Acest lucru va permite utilizatorilor anonimi să comute între versiunile traduse ale Discourse și conținutul la care au contribuit utilizatorii în subiecte."
+    errors:
+      set_locale_cookie_requirements: "Comutatorul experimental de limbă pentru utilizatori anonimi necesită activarea setării site-ului „Setează locală din cookie”."
   translator:
     failed: "Traducătorul nu este în măsură să traducă acest conținut (%{source_locale}) în limba implicită a acestui site (%{target_locale})."
     not_supported: "Această limbă nu este acceptată de traducător."
