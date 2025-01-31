@@ -23,6 +23,9 @@ tr_TR:
     translator_azure_custom_subdomain: "Azure Bilişsel Hizmetler için bir Sanal Ağ veya Güvenlik Duvarı kullanılıyorsa gereklidir. Not: Tam özel uç noktayı değil, yalnızca özel alt etki alanını girin."
     restrict_translation_by_group: "Yalnızca izin verilen gruplar çeviri yapabilir"
     restrict_translation_by_poster_group: "Yalnızca izin verilen gruplardaki kullanıcılar tarafından oluşturulan gönderilerin çevirisine izin verin. Boşsa tüm kullanıcıların gönderilerinin çevrilmesine izin verin."
+    experimental_anon_language_switcher: "Anonim kullanıcılar için deneysel dil değiştiriciyi etkinleştirin. Bu, anonim kullanıcıların Discourse'un çevrilmiş sürümleriyle konulardaki kullanıcı katkılı içerik arasında geçiş yapmasına olanak tanır."
+    errors:
+      set_locale_cookie_requirements: "Anonim kullanıcılar için deneysel dil değiştirici, `set locale from cookie` site ayarının etkinleştirilmesini gerektirir."
   translator:
     failed: "Çevirmen bu içeriği (%{source_locale}) bu sitenin varsayılan diline (%{target_locale}) çeviremiyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."

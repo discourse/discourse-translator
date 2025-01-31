@@ -23,6 +23,9 @@ es:
     translator_azure_custom_subdomain: "Obligatorio si se utiliza una red virtual o un cortafuegos para Azure Cognitive Services. Nota: Introduzca únicamente el subdominio personalizado, no el terminal personalizado completo."
     restrict_translation_by_group: "Solo los grupos autorizados pueden traducir"
     restrict_translation_by_poster_group: "Permitir solo la traducción de las publicaciones realizadas por usuarios de los grupos permitidos. Si está vacío, permite la traducción de las publicaciones por parte de todos los usuarios."
+    experimental_anon_language_switcher: "Define el icono utilizado para el botón principal de reacción. Debe ser un nombre de icono <a href='https://fontawesome.com/v6/search?o=r&m=free' target='_blank'>Font Awesome</a>, no un nombre de emoji."
+    errors:
+      set_locale_cookie_requirements: "El cambiador de idioma experimental para usuarios anónimos requiere que esté activada la configuración del sitio `set locale from cookie`."
   translator:
     failed: "El traductor no puede traducir este contenido (%{source_locale}) al idioma predeterminado de este sitio (%{target_locale})."
     not_supported: "El traductor no admite este idioma."

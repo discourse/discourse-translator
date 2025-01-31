@@ -23,6 +23,9 @@ de:
     translator_azure_custom_subdomain: "Erforderlich, wenn du ein virtuelles Netzwerk oder eine Firewall für Azure Cognitive Services verwendest. Hinweis: Gib nur die benutzerdefinierte Subdomain ein, nicht den vollständigen benutzerdefinierten Endpunkt."
     restrict_translation_by_group: "Nur berechtigte Gruppen können übersetzen"
     restrict_translation_by_poster_group: "Erlaube nur die Übersetzung von Beiträgen von Benutzern aus zulässigen Gruppen. Wenn das Feld leer ist, wird die Übersetzung von Beiträgen aller Benutzer erlaubt."
+    experimental_anon_language_switcher: "Aktiviere die experimentelle Sprachumschaltung für anonyme Benutzer. Damit können anonyme Benutzer zwischen übersetzten Versionen von Discourse und von Benutzern beigetragenen Inhalten in Themen wechseln."
+    errors:
+      set_locale_cookie_requirements: "Die experimentelle Sprachumschaltung für anonyme Benutzer erfordert die Aktivierung der Website-Einstellung `set locale from cookie`."
   translator:
     failed: "Der Übersetzer kann diesen Inhalt (%{source_locale}) nicht in die Standardsprache dieser Website (%{target_locale}) übersetzen."
     not_supported: "Diese Sprache wird vom Übersetzer nicht unterstützt."
