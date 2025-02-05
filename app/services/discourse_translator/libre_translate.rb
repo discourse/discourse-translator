@@ -78,19 +78,14 @@ module DiscourseTranslator
       SiteSetting.translator_libretranslate_api_key
     end
 
-    def self.detect(topic_or_post)
-      res =
-        result(
-          detect_uri,
-          q: ActionController::Base.helpers.strip_tags(text_for_detection(topic_or_post)),
-        )
-
-      if !res.empty?
-        topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= res[0][
-          "language"
-        ]
-      else
-        topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= "en"
+    def self.detect!(topic_or_post)
+      save_detected_locale(topic_or_post) do
+        res =
+          result(
+            detect_uri,
+            q: ActionController::Base.helpers.strip_tags(text_for_detection(topic_or_post)),
+          )
+        !res.empty? ? res[0]["language"] : "en"
       end
     end
 
@@ -100,27 +95,20 @@ module DiscourseTranslator
       res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang }
     end
 
-    def self.translate(topic_or_post)
+    def self.translate!(topic_or_post)
       detected_lang = detect(topic_or_post)
 
-      unless translate_supported?(detected_lang, I18n.locale)
-        raise I18n.t("translator.failed", source_locale: detected_lang, target_locale: I18n.locale)
+      save_translation(topic_or_post) do
+        res =
+          result(
+            translate_uri,
+            q: text_for_translation(topic_or_post),
+            source: detected_lang,
+            target: SUPPORTED_LANG_MAPPING[I18n.locale],
+            format: "html",
+          )
+        res["translatedText"]
       end
-
-      translated_text =
-        from_custom_fields(topic_or_post) do
-          res =
-            result(
-              translate_uri,
-              q: text_for_translation(topic_or_post),
-              source: detected_lang,
-              target: SUPPORTED_LANG_MAPPING[I18n.locale],
-              format: "html",
-            )
-          res["translatedText"]
-        end
-
-      [detected_lang, translated_text]
     end
 
     def self.get(url)

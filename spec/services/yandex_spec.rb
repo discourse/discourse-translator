@@ -41,7 +41,7 @@ RSpec.describe DiscourseTranslator::Yandex do
 
     it "raises an error on failure" do
       described_class.expects(:access_token).returns("12345")
-      described_class.expects(:detect).returns("en")
+      described_class.expects(:detect).at_least_once.returns("de")
 
       Excon.expects(:post).returns(
         mock_response.new(

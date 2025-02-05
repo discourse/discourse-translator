@@ -148,51 +148,38 @@ module DiscourseTranslator
       "microsoft-translator"
     end
 
-    def self.detect(topic_or_post)
-      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+    def self.detect!(topic_or_post)
+      save_detected_locale(topic_or_post) do
         body = [{ "Text" => text_for_detection(topic_or_post) }].to_json
-
         uri = URI(detect_endpoint)
         uri.query = URI.encode_www_form(self.default_query)
-
-        response_body = result(uri.to_s, body, default_headers)
-
-        response_body.first["language"]
+        result(uri.to_s, body, default_headers).first["language"]
       end
     end
 
-    def self.translate(topic_or_post)
+    def self.translate!(topic_or_post)
       detected_lang = detect(topic_or_post)
 
-      if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
-           !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
-        raise TranslatorError.new(
-                I18n.t(
-                  "translator.failed",
-                  source_locale: detected_lang,
-                  target_locale: I18n.locale,
-                ),
-              )
-      end
-
-      if get_text(topic_or_post).length > LENGTH_LIMIT
+      if text_for_translation(topic_or_post).length > LENGTH_LIMIT
         raise TranslatorError.new(I18n.t("translator.too_long"))
       end
 
-      translated_text =
-        from_custom_fields(topic_or_post) do
-          query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
+      save_translation(topic_or_post) do
+        query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
 
-          body = [{ "Text" => text_for_translation(topic_or_post) }].to_json
+        body = [{ "Text" => text_for_translation(topic_or_post) }].to_json
 
-          uri = URI(translate_endpoint)
-          uri.query = URI.encode_www_form(query)
+        uri = URI(translate_endpoint)
+        uri.query = URI.encode_www_form(query)
 
-          response_body = result(uri.to_s, body, default_headers)
-          response_body.first["translations"].first["text"]
-        end
+        response_body = result(uri.to_s, body, default_headers)
+        response_body.first["translations"].first["text"]
+      end
+    end
 
-      [detected_lang, translated_text]
+    def self.translate_supported?(detected_lang, target_lang)
+      SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
+        SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
     end
 
     private

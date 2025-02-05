@@ -107,15 +107,12 @@ module DiscourseTranslator
       "aws-translator"
     end
 
-    def self.detect(topic_or_post)
-      text = truncate text_for_detection(topic_or_post)
-      return if text.blank?
-
-      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= (
+    def self.detect!(topic_or_post)
+      save_detected_locale(topic_or_post) do
         begin
           client.translate_text(
             {
-              text: text,
+              text: truncate(text_for_detection(topic_or_post)),
               source_language_code: "auto",
               target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
             },
@@ -123,22 +120,21 @@ module DiscourseTranslator
         rescue Aws::Errors::MissingCredentialsError
           raise I18n.t("translator.amazon.invalid_credentials")
         end
-      )
+      end
     end
 
-    def self.translate(topic_or_post)
+    def self.translate!(topic_or_post)
       detected_lang = detect(topic_or_post)
 
-      from_custom_fields(topic_or_post) do
+      save_translation(topic_or_post) do
         begin
-          result =
-            client.translate_text(
-              {
-                text: truncate(text_for_translation(topic_or_post)),
-                source_language_code: "auto",
-                target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
-              },
-            )
+          client.translate_text(
+            {
+              text: truncate(text_for_translation(topic_or_post)),
+              source_language_code: "auto",
+              target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
+            },
+          )
         rescue Aws::Translate::Errors::UnsupportedLanguagePairException
           raise I18n.t(
                   "translator.failed",
@@ -146,8 +142,6 @@ module DiscourseTranslator
                   target_locale: I18n.locale,
                 )
         end
-
-        [detected_lang, result.translated_text]
       end
     end
 

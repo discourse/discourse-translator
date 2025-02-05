@@ -26,10 +26,6 @@ module ::Jobs
           begin
             translator = "DiscourseTranslator::#{SiteSetting.translator}".constantize
             translator.detect(post)
-            if !post.custom_fields_clean?
-              post.save_custom_fields
-              post.publish_change_to_clients!(:revised)
-            end
           rescue ::DiscourseTranslator::ProblemCheckedTranslationError
             # problem-checked translation errors gracefully
           end
