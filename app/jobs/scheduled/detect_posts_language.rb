@@ -3,10 +3,10 @@
 module ::Jobs
   class DetectPostsLanguage < ::Jobs::Scheduled
     sidekiq_options retry: false
-    every 5.minutes
+    every 1.minutes
 
-    BATCH_SIZE = 100
-    MAX_QUEUE_SIZE = 1000
+    BATCH_SIZE = 10
+    MAX_QUEUE_SIZE = 100
 
     def execute(args)
       return unless SiteSetting.translator_enabled
