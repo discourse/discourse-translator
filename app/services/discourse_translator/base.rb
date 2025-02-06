@@ -43,7 +43,7 @@ module DiscourseTranslator
               )
       end
 
-      translated_text = get_detected_locale(topic_or_post) || translate!(topic_or_post)
+      translated_text = get_translation(topic_or_post) || translate!(topic_or_post)
 
       [detected_lang, translated_text]
     end
