@@ -27,11 +27,6 @@ after_initialize do
   register_problem_check ProblemCheck::MissingTranslatorApiKey
   register_problem_check ProblemCheck::TranslatorError
 
-  Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
-  Topic.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
-
-  topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
-
   reloadable_patch do
     Guardian.prepend(DiscourseTranslator::GuardianExtension)
     Post.prepend(DiscourseTranslator::PostExtension)

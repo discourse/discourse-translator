@@ -5,26 +5,63 @@ require "rails_helper"
 RSpec.describe Post do
   before { SiteSetting.translator_enabled = true }
 
-  describe "translator custom fields" do
-    let(:post) do
-      Fabricate(
-        :post,
-        raw: "this is a sample post",
-        custom_fields: {
-          ::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => "en",
-          ::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD => {
-            "en" => "lol",
-          },
-        },
-      )
+  describe "translatable" do
+    fab!(:post)
+
+    it "should reset translation data when post title has been updated" do
+      Fabricate(:post_translation, post:)
+      Fabricate(:post_locale, post:)
+      post.update!(title: "this is an updated title")
+
+      expect(DiscourseTranslator::PostLocale.where(post:)).to be_empty
+      expect(DiscourseTranslator::PostLocale.find_by(post:)).to be_nil
     end
 
-    it "should reset custom fields when post has been updated" do
-      post.update!(raw: "this is an updated post")
+    describe "#set_translation" do
+      it "creates new translation" do
+        post.set_translation("en", "Hello")
 
-      expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to be_nil
+        translation = post.translations.find_by(locale: "en")
+        expect(translation.translation).to eq("Hello")
+      end
 
-      expect(post.custom_fields[::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD]).to be_nil
+      it "updates existing translation" do
+        post.set_translation("en", "Hello")
+        post.set_translation("en", "Updated hello")
+
+        expect(post.translations.where(locale: "en").count).to eq(1)
+        expect(post.translation_for("en")).to eq("Updated hello")
+      end
+
+      it "converts underscore to hyphen in locale" do
+        post.set_translation("en_US", "Hello")
+
+        expect(post.translations.find_by(locale: "en-US")).to be_present
+        expect(post.translations.find_by(locale: "en_US")).to be_nil
+      end
+    end
+
+    describe "#translation_for" do
+      it "returns nil when translation doesn't exist" do
+        expect(post.translation_for("fr")).to be_nil
+      end
+
+      it "returns translation when it exists" do
+        post.set_translation("es", "Hola")
+        expect(post.translation_for("es")).to eq("Hola")
+      end
+    end
+
+    describe "#set_locale" do
+      it "creates new locale" do
+        post.set_detected_locale("en-US")
+        expect(post.content_locale.detected_locale).to eq("en-US")
+      end
+
+      it "converts underscore to hyphen" do
+        post.set_detected_locale("en_US")
+        expect(post.content_locale.detected_locale).to eq("en-US")
+      end
     end
   end
 

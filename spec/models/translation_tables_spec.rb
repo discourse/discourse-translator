@@ -4,53 +4,64 @@ require_relative "../../db/migrate/20250205082401_move_translations_custom_field
 
 module DiscourseTranslator
   describe MoveTranslationsCustomFieldsToTable do
-    let!(:batch_size) { 5 }
+    let!(:batch_size) { 3 }
 
     before { described_class.const_set(:BATCH_SIZE, batch_size) }
 
-    def create_custom_fields(count)
+    def create_translation_custom_fields(count)
       count.times do
-        post = Fabricate(:post)
-        topic = Fabricate(:topic)
+        t_post = Fabricate(:post)
+        t_topic = Fabricate(:topic)
 
-        post.custom_fields[DETECTED_LANG_CUSTOM_FIELD] = "pt"
-        post.save_custom_fields
+        t_post.custom_fields[DETECTED_LANG_CUSTOM_FIELD] = "pt"
+        t_post.save_custom_fields
 
-        topic.custom_fields[DETECTED_LANG_CUSTOM_FIELD] = "es"
-        topic.save_custom_fields
+        t_topic.custom_fields[DETECTED_LANG_CUSTOM_FIELD] = "es"
+        t_topic.save_custom_fields
 
-        post.custom_fields[TRANSLATED_CUSTOM_FIELD] = {
+        t_post.custom_fields[TRANSLATED_CUSTOM_FIELD] = {
           en_GB: "The Romance of the Three Kingdoms",
           de: "Die Romanze der Drei Königreiche",
         }
-        post.save_custom_fields
+        t_post.save_custom_fields
 
-        topic.custom_fields[TRANSLATED_CUSTOM_FIELD] = {
+        t_topic.custom_fields[TRANSLATED_CUSTOM_FIELD] = {
           en_GB: "The Romance of the Three Kingdoms",
           de: "Die Romanze der Drei Königreiche",
         }
-        topic.save_custom_fields
+        t_topic.save_custom_fields
       end
     end
 
     it "correctly migrates custom fields in batches" do
-      # batch size is 5
-      create_custom_fields(12)
+      # batch size is 3
+      create_translation_custom_fields(4)
+      # create some random custom fields in between
+      # to test the migrate loop doesn't end prematurely
+      4.times do
+        post = Fabricate(:post)
+        post.custom_fields["x"] = "x"
+        post.save_custom_fields
+
+        topic = Fabricate(:topic)
+        topic.custom_fields["x"] = "x"
+        topic.save_custom_fields
+      end
+      # another 4
+      create_translation_custom_fields(4)
 
       migration = described_class.new
       migration.up
 
-      # 12 posts * 2 translations each
-      expect(PostLocale.count).to eq(12)
-      expect(PostTranslation.count).to eq(24)
+      expect(PostLocale.count).to eq(8)
+      expect(PostTranslation.count).to eq(16)
 
-      # 12 topics * 2 translations each
-      expect(TopicLocale.count).to eq(12)
-      expect(TopicTranslation.count).to eq(24)
+      expect(TopicLocale.count).to eq(8)
+      expect(TopicTranslation.count).to eq(16)
 
-      expect(PostLocale.first.detected_locale).to eq("pt")
+      expect(PostLocale.last.detected_locale).to eq("pt")
 
-      expect(PostTranslation.where(post_id: Post.first.id).pluck(:locale, :translation)).to include(
+      expect(PostTranslation.where(post_id: Post.last.id).pluck(:locale, :translation)).to include(
         ["en_GB", "The Romance of the Three Kingdoms"],
         ["de", "Die Romanze der Drei Königreiche"],
       )
