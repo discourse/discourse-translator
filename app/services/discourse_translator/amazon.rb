@@ -164,12 +164,5 @@ module DiscourseTranslator
 
       @client ||= Aws::Translate::Client.new(opts)
     end
-
-    def self.assign_lang_custom_field(post, value)
-      if value.nil?
-        return post.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
-      end
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= value
-    end
   end
 end

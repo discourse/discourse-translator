@@ -4,11 +4,11 @@ module DiscourseTranslator
   module TopicExtension
     extend ActiveSupport::Concern
 
-    prepended { before_update :clear_translator_custom_fields, if: :title_changed? }
+    prepended { before_update :clear_translations, if: :title_changed? }
 
     private
 
-    def clear_translator_custom_fields
+    def clear_translations
       return if !SiteSetting.translator_enabled
 
       self.custom_fields.delete(DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD)
