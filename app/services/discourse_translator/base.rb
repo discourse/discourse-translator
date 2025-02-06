@@ -32,7 +32,7 @@ module DiscourseTranslator
       return if text_for_translation(topic_or_post).blank?
       detected_lang = detect(topic_or_post)
 
-      return detected_lang, get_text(topic_or_post) if (detected_lang&.to_s.eql? I18n.locale.to_s)
+      return detected_lang, get_text(topic_or_post) if (detected_lang&.to_s == I18n.locale.to_s)
       unless translate_supported?(detected_lang, I18n.locale)
         raise TranslatorError.new(
                 I18n.t(
