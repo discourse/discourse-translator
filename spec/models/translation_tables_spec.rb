@@ -90,7 +90,8 @@ module DiscourseTranslator
       post.save_custom_fields(true)
 
       migration = described_class.new
-      migration.up
+      expect { migration.up }.not_to raise_error
+
       expect(PostLocale.count).to eq(0)
       expect(PostTranslation.count).to eq(0)
     end

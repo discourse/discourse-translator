@@ -28,11 +28,7 @@ RSpec.describe DiscourseTranslator::Yandex do
         .once
       expect(described_class.detect(post)).to eq(detected_lang)
 
-      2.times do
-        expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
-          detected_lang,
-        )
-      end
+      expect(post.detected_locale).to eq(detected_lang)
     end
   end
 

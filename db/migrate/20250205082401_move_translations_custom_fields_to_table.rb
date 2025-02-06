@@ -35,6 +35,7 @@ class MoveTranslationsCustomFieldsToTable < ActiveRecord::Migration[7.2]
           SELECT #{model}_id, value
           FROM #{model}_custom_fields
           WHERE name = 'post_detected_lang'
+          AND length(value) <= 20
           AND id >= :start_id
           AND id < :end_id
           ORDER BY id

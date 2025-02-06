@@ -156,15 +156,13 @@ describe DiscourseTranslator::GuardianExtension do
             end
 
             it "cannot translate when post has DETECTED_LANG_CUSTOM_FIELD matches locale" do
-              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "pt"
-              post.save
+              post.set_detected_locale("pt")
 
               expect(guardian.can_translate?(post)).to eq(false)
             end
 
             it "can translate when post has DETECTED_LANG_CUSTOM_FIELD does not match locale" do
-              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "jp"
-              post.save
+              post.set_detected_locale("jp")
 
               expect(guardian.can_translate?(post)).to eq(true)
             end

@@ -11,7 +11,7 @@ RSpec.describe Post do
     it "should reset translation data when post title has been updated" do
       Fabricate(:post_translation, post:)
       Fabricate(:post_locale, post:)
-      post.update!(title: "this is an updated title")
+      post.update!(raw: "this is an updated title")
 
       expect(DiscourseTranslator::PostLocale.where(post:)).to be_empty
       expect(DiscourseTranslator::PostLocale.find_by(post:)).to be_nil

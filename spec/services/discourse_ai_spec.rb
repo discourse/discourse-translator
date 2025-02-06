@@ -26,23 +26,19 @@ describe DiscourseTranslator::DiscourseAi do
     end
   end
 
-  describe ".detect" do
-    it "stores the detected language in a custom field" do
+  describe ".detect!" do
+    it "stores the detected language" do
       locale = "de"
       DiscourseAi::Completions::Llm.with_prepared_responses(["<language>de</language>"]) do
-        DiscourseTranslator::DiscourseAi.detect(post)
-        post.save_custom_fields
+        DiscourseTranslator::DiscourseAi.detect!(post)
       end
 
-      expect(post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq locale
+      expect(post.detected_locale).to eq locale
     end
   end
 
   describe ".translate" do
-    before do
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "de"
-      post.save_custom_fields
-    end
+    before { post.set_detected_locale("de") }
 
     it "translates the post and returns [locale, translated_text]" do
       DiscourseAi::Completions::Llm.with_prepared_responses(

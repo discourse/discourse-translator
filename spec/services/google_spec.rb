@@ -35,12 +35,7 @@ RSpec.describe DiscourseTranslator::Google do
         .once
 
       expect(described_class.detect(post)).to eq(detected_lang)
-
-      2.times do
-        expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
-          detected_lang,
-        )
-      end
+      expect(post.detected_locale).to eq(detected_lang)
     end
 
     it "should truncate string to 1000 characters" do
@@ -168,8 +163,7 @@ RSpec.describe DiscourseTranslator::Google do
     end
 
     it "returns error with source and target locale when translation is not supported" do
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "cat"
-      post.save_custom_fields
+      post.set_detected_locale("cat")
       I18n.stubs(:locale).returns(:dog)
 
       Excon.expects(:post).returns(
@@ -184,8 +178,7 @@ RSpec.describe DiscourseTranslator::Google do
     it "truncates text for translation to max_characters_per_translation setting" do
       SiteSetting.max_characters_per_translation = 50
       post.cooked = "a" * 100
-      post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "de"
-      post.save_custom_fields
+      post.set_detected_locale("de")
       body = {
         q: post.cooked.truncate(SiteSetting.max_characters_per_translation, omission: nil),
         source: "de",
