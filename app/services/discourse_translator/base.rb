@@ -33,6 +33,10 @@ module DiscourseTranslator
       detected_lang = detect(topic_or_post)
 
       return detected_lang, get_text(topic_or_post) if (detected_lang&.to_s == I18n.locale.to_s)
+
+      existing_translation = get_translation(topic_or_post)
+      return detected_lang, existing_translation if existing_translation.present?
+
       unless translate_supported?(detected_lang, I18n.locale)
         raise TranslatorError.new(
                 I18n.t(
@@ -42,10 +46,7 @@ module DiscourseTranslator
                 ),
               )
       end
-
-      translated_text = get_translation(topic_or_post) || translate!(topic_or_post)
-
-      [detected_lang, translated_text]
+      [detected_lang, translate!(topic_or_post)]
     end
 
     # Subclasses must implement this method to translate the text of a post or topic
