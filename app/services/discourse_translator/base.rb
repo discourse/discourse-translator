@@ -24,6 +24,10 @@ module DiscourseTranslator
       "#{key_prefix}#{access_token_key}"
     end
 
+    # Returns the stored translation of a post or topic.
+    # If the translation does not exist yet, it will be translated first via the API then stored.
+    # If the detected language is the same as the target language, the original text will be returned.
+    # @param topic_or_post [Post|Topic]
     def self.translate(topic_or_post)
       return if text_for_translation(topic_or_post).blank?
       detected_lang = detect(topic_or_post)
@@ -39,12 +43,15 @@ module DiscourseTranslator
               )
       end
 
-      translated_text = translate!(topic_or_post)
+      translated_text = get_detected_locale(topic_or_post) || translate!(topic_or_post)
 
       [detected_lang, translated_text]
     end
 
-    def self.translate!(post)
+    # Subclasses must implement this method to translate the text of a post or topic
+    # then use the save_translation method to store the translated text.
+    # @param topic_or_post [Post|Topic]
+    def self.translate!(topic_or_post)
       raise "Not Implemented"
     end
 
@@ -56,6 +63,9 @@ module DiscourseTranslator
       get_detected_locale(topic_or_post) || detect!(topic_or_post)
     end
 
+    # Subclasses must implement this method to translate the text of a post or topic
+    # then use the save_translation method to store the translated text.
+    # @param topic_or_post [Post|Topic]
     def self.detect!(post)
       raise "Not Implemented"
     end
