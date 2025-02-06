@@ -11,16 +11,12 @@ module DiscourseTranslator
       detected_lang != locale_without_region
     end
 
-    def self.detect(topic_or_post)
+    def self.detect!(topic_or_post)
       return unless required_settings_enabled
 
-      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+      save_detected_locale(topic_or_post) do
         ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
       end
-    rescue => e
-      Rails.logger.warn(
-        "#{::DiscourseTranslator::PLUGIN_NAME}: Failed to detect language for #{topic_or_post.class.name} #{topic_or_post.id}: #{e}",
-      )
     end
 
     def self.translate(topic_or_post)
@@ -28,7 +24,7 @@ module DiscourseTranslator
 
       detected_lang = detect(topic_or_post)
       translated_text =
-        from_custom_fields(topic_or_post) do
+        save_translation(topic_or_post) do
           ::DiscourseAi::Translator.new(text_for_translation(topic_or_post), I18n.locale).translate
         end
 

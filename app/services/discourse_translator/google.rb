@@ -74,17 +74,14 @@ module DiscourseTranslator
       raise ProblemCheckedTranslationError.new("NotFound: Google Api Key not set.")
     end
 
-    def self.detect(topic_or_post)
-      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= result(
-        DETECT_URI,
-        q: text_for_detection(topic_or_post),
-      )[
-        "detections"
-      ][
-        0
-      ].max { |a, b| a.confidence <=> b.confidence }[
-        "language"
-      ]
+    def self.detect!(topic_or_post)
+      save_detected_locale(topic_or_post) do
+        result(DETECT_URI, q: text_for_detection(topic_or_post))["detections"][0].max do |a, b|
+          a.confidence <=> b.confidence
+        end[
+          "language"
+        ]
+      end
     end
 
     def self.translate_supported?(source, target)
@@ -92,36 +89,18 @@ module DiscourseTranslator
       res["languages"].any? { |obj| obj["language"] == source }
     end
 
-    def self.translate(topic_or_post)
-      detected_lang = detect(topic_or_post)
-
-      # the translate button appears if a given post is in a foreign language.
-      # however the title of the topic may be in a different language, and may be in the user's language.
-      # if this is the case, when this is called for a topic, the detected_lang will be the user's language,
-      # so the user's language and the detected language will be the same. For example, both could be "en"
-      # google will choke on this and return an error instead of gracefully handling it by returning the original
-      # string.
-      # ---
-      # here we handle that situation by returning the original string if the source and target lang are the same.
-      return detected_lang, get_text(topic_or_post) if (detected_lang&.to_s.eql? I18n.locale.to_s)
-
-      unless translate_supported?(detected_lang, I18n.locale)
-        raise I18n.t("translator.failed", source_locale: detected_lang, target_locale: I18n.locale)
+    def self.translate!(topic_or_post)
+      detected_locale = detect(topic_or_post)
+      save_translation(topic_or_post) do
+        res =
+          result(
+            TRANSLATE_URI,
+            q: text_for_translation(topic_or_post),
+            source: detected_locale,
+            target: SUPPORTED_LANG_MAPPING[I18n.locale],
+          )
+        res["translations"][0]["translatedText"]
       end
-
-      translated_text =
-        from_custom_fields(topic_or_post) do
-          res =
-            result(
-              TRANSLATE_URI,
-              q: text_for_translation(topic_or_post),
-              source: detected_lang,
-              target: SUPPORTED_LANG_MAPPING[I18n.locale],
-            )
-          res["translations"][0]["translatedText"]
-        end
-
-      [detected_lang, translated_text]
     end
 
     def self.result(url, body)

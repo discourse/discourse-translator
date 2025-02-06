@@ -99,4 +99,66 @@ describe DiscourseTranslator::Base do
       )
     end
   end
+
+  describe ".detect" do
+    fab!(:post)
+
+    it "returns nil when text is blank" do
+      post.cooked = ""
+      expect(TestTranslator.detect(post)).to be_nil
+    end
+
+    it "returns cached detection if available" do
+      TestTranslator.save_detected_locale(post) { "en" }
+
+      TestTranslator.expects(:detect!).never
+      expect(TestTranslator.detect(post)).to eq("en")
+    end
+
+    it "performs detection if no cached result" do
+      TestTranslator.save_detected_locale(post) { nil }
+      TestTranslator.expects(:detect!).with(post).returns("es")
+
+      expect(TestTranslator.detect(post)).to eq("es")
+    end
+  end
+
+  describe ".translate" do
+    fab!(:post)
+
+    it "returns nil when text is blank" do
+      post.cooked = ""
+      expect(TestTranslator.translate(post)).to be_nil
+    end
+
+    it "returns original text when detected language matches current locale" do
+      TestTranslator.save_detected_locale(post) { I18n.locale.to_s }
+      post.cooked = "hello"
+
+      expect(TestTranslator.translate(post)).to eq(%w[en hello])
+    end
+
+    it "returns cached translation if available" do
+      TestTranslator.save_detected_locale(post) { "es" }
+      TestTranslator.save_translation(post) { "hello" }
+
+      expect(TestTranslator.translate(post)).to eq(%w[es hello])
+    end
+
+    it "raises error when translation not supported" do
+      TestTranslator.save_detected_locale(post) { "xx" }
+      TestTranslator.save_translation(post) { nil }
+      TestTranslator.expects(:translate_supported?).with("xx", :en).returns(false)
+
+      expect { TestTranslator.translate(post) }.to raise_error(DiscourseTranslator::TranslatorError)
+    end
+
+    it "performs translation when needed" do
+      TestTranslator.save_detected_locale(post) { "es" }
+      TestTranslator.save_translation(post) { nil }
+      TestTranslator.expects(:translate!).returns("hello")
+
+      expect(TestTranslator.translate(post)).to eq(%w[es hello])
+    end
+  end
 end
