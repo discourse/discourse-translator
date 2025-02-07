@@ -16,3 +16,19 @@ module DiscourseTranslator
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: discourse_translator_topic_translations
+#
+#  id          :bigint           not null, primary key
+#  topic_id    :integer          not null
+#  locale      :string           not null
+#  translation :text             not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  idx_on_topic_id_locale_70b2f83213  (topic_id,locale) UNIQUE
+#
