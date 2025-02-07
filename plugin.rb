@@ -16,8 +16,6 @@ register_asset "stylesheets/common/common.scss"
 module ::DiscourseTranslator
   PLUGIN_NAME = "discourse-translator".freeze
 
-  DETECTED_LANG_CUSTOM_FIELD = "post_detected_lang".freeze
-  TRANSLATED_CUSTOM_FIELD = "translated_text".freeze
   LANG_DETECT_NEEDED = "lang_detect_needed".freeze
 end
 

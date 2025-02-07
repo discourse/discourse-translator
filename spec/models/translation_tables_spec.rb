@@ -4,6 +4,9 @@ require_relative "../../db/migrate/20250205082401_move_translations_custom_field
 
 module DiscourseTranslator
   describe MoveTranslationsCustomFieldsToTable do
+    DETECTED_LANG_CUSTOM_FIELD = "post_detected_lang".freeze
+    TRANSLATED_CUSTOM_FIELD = "translated_text".freeze
+
     let!(:batch_size) { 3 }
 
     before { described_class.const_set(:BATCH_SIZE, batch_size) }
