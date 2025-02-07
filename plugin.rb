@@ -31,6 +31,7 @@ after_initialize do
     Guardian.prepend(DiscourseTranslator::GuardianExtension)
     Post.prepend(DiscourseTranslator::PostExtension)
     Topic.prepend(DiscourseTranslator::TopicExtension)
+    TopicViewSerializer.prepend(DiscourseTranslator::TopicViewSerializerExtension)
   end
 
   on(:post_process_cooked) do |_, post|
