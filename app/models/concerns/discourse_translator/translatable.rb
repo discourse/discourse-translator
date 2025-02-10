@@ -23,11 +23,23 @@ module DiscourseTranslator
     end
 
     def translation_for(locale)
+      locale = locale.to_s.gsub("_", "-")
       translations.find_by(locale: locale)&.translation
     end
 
     def detected_locale
       content_locale&.detected_locale
+    end
+
+    def locale_matches?(locale, normalise_region: true)
+      return false if detected_locale.blank? || locale.blank?
+
+      # locales can be :en :en_US "en" "en-US"
+      detected = detected_locale.gsub("_", "-")
+      target = locale.to_s.gsub("_", "-")
+      detected = detected.split("-").first if normalise_region
+      target = target.split("-").first if normalise_region
+      detected == target
     end
 
     private

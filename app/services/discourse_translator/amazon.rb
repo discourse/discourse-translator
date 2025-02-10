@@ -123,23 +123,23 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate!(topic_or_post)
-      detected_lang = detect(topic_or_post)
+    def self.translate!(translatable, target_locale_sym = I18n.locale)
+      detected_lang = detect(translatable)
 
-      save_translation(topic_or_post) do
+      save_translation(translatable) do
         begin
           client.translate_text(
             {
-              text: truncate(text_for_translation(topic_or_post)),
+              text: truncate(text_for_translation(translatable)),
               source_language_code: "auto",
-              target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
+              target_language_code: SUPPORTED_LANG_MAPPING[target_locale_sym],
             },
           )
         rescue Aws::Translate::Errors::UnsupportedLanguagePairException
           raise I18n.t(
                   "translator.failed",
                   source_locale: detected_lang,
-                  target_locale: I18n.locale,
+                  target_locale: target_locale_sym,
                 )
         end
       end

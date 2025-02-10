@@ -19,16 +19,14 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate(topic_or_post)
+    def self.translate!(translatable, target_locale_sym = I18n.locale)
       return unless required_settings_enabled
-
-      detected_lang = detect(topic_or_post)
-      translated_text =
-        save_translation(topic_or_post) do
-          ::DiscourseAi::Translator.new(text_for_translation(topic_or_post), I18n.locale).translate
-        end
-
-      [detected_lang, translated_text]
+      save_translation(translatable) do
+        ::DiscourseAi::Translator.new(
+          text_for_translation(translatable),
+          target_locale_sym,
+        ).translate
+      end
     end
 
     private
