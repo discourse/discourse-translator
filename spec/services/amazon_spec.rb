@@ -37,11 +37,7 @@ RSpec.describe DiscourseTranslator::Amazon do
     it "should store the detected language in a custom field" do
       expect(described_class.detect(post)).to eq(detected_lang)
 
-      2.times do
-        expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
-          detected_lang,
-        )
-      end
+      expect(post.detected_locale).to eq(detected_lang)
     end
 
     it "should fail graciously when the cooked translated text is blank" do
@@ -65,8 +61,7 @@ RSpec.describe DiscourseTranslator::Amazon do
         },
       )
       described_class.stubs(:client).returns(client)
-      post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "en"
-      post.save_custom_fields
+      post.set_detected_locale("en")
       I18n.stubs(:locale).returns(:es)
     end
 

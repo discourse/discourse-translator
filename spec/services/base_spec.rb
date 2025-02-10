@@ -116,7 +116,6 @@ describe DiscourseTranslator::Base do
     end
 
     it "performs detection if no cached result" do
-      TestTranslator.save_detected_locale(post) { nil }
       TestTranslator.expects(:detect!).with(post).returns("es")
 
       expect(TestTranslator.detect(post)).to eq("es")
@@ -147,7 +146,6 @@ describe DiscourseTranslator::Base do
 
     it "raises error when translation not supported" do
       TestTranslator.save_detected_locale(post) { "xx" }
-      TestTranslator.save_translation(post) { nil }
       TestTranslator.expects(:translate_supported?).with("xx", :en).returns(false)
 
       expect { TestTranslator.translate(post) }.to raise_error(DiscourseTranslator::TranslatorError)
@@ -155,7 +153,6 @@ describe DiscourseTranslator::Base do
 
     it "performs translation when needed" do
       TestTranslator.save_detected_locale(post) { "es" }
-      TestTranslator.save_translation(post) { nil }
       TestTranslator.expects(:translate!).returns("hello")
 
       expect(TestTranslator.translate(post)).to eq(%w[es hello])

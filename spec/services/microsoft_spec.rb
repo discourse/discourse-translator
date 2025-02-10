@@ -20,12 +20,10 @@ RSpec.describe DiscourseTranslator::Microsoft do
       before { SiteSetting.translator_azure_subscription_key = "e1bba646088021aaf1ef972a48" }
 
       shared_examples "language detected" do
-        it "stores detected language in a custom field" do
+        it "stores detected language" do
           described_class.detect(post)
 
-          expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
-            detected_lang,
-          )
+          expect(post.detected_locale).to eq(detected_lang)
         end
       end
 
@@ -131,8 +129,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
     end
 
     before do
-      post.custom_fields = { DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => "en" }
-      post.save_custom_fields
+      post.set_detected_locale("en")
       SiteSetting.translator_azure_subscription_key = "e1bba646088021aaf1ef972a48"
     end
 
@@ -161,21 +158,14 @@ RSpec.describe DiscourseTranslator::Microsoft do
       it "returns stored translation if post has already been translated" do
         I18n.locale = "en"
 
-        post.custom_fields = {
-          DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => "tr",
-          DiscourseTranslator::TRANSLATED_CUSTOM_FIELD => {
-            "en" => "some english text",
-          },
-        }
-
-        post.save_custom_fields
+        post.set_detected_locale("tr")
+        post.set_translation("en", "some english text")
 
         expect(described_class.translate(post)).to eq(["tr", "some english text"])
       end
 
       it "raises an error if detected language of the post is not supported" do
-        post.custom_fields = { DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD => "donkey" }
-        post.save_custom_fields
+        post.set_detected_locale("donkey")
 
         expect { described_class.translate(post) }.to raise_error(
           DiscourseTranslator::TranslatorError,

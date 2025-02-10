@@ -58,20 +58,19 @@ RSpec.describe PostSerializer do
               I18n.stubs(:locale).returns(:pt)
             end
 
-            it "cannot translate when post does not have DETECTED_LANG_CUSTOM_FIELD" do
+            it "cannot translate when post does not have detected locale" do
+              expect(post.detected_locale).to eq(nil)
               expect(serializer.can_translate).to eq(false)
             end
 
-            it "cannot translate when post has DETECTED_LANG_CUSTOM_FIELD matches locale" do
-              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "pt"
-              post.save
+            it "cannot translate when post detected locale matches i18n locale" do
+              post.set_detected_locale("pt")
 
               expect(serializer.can_translate).to eq(false)
             end
 
-            it "can translate when post has DETECTED_LANG_CUSTOM_FIELD does not match locale" do
-              post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = "jp"
-              post.save
+            it "can translate when post detected locale does not match i18n locale" do
+              post.set_detected_locale("jp")
 
               expect(serializer.can_translate).to eq(true)
             end

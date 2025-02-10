@@ -27,14 +27,14 @@ module DiscourseTranslator
     # Returns the stored translation of a post or topic.
     # If the translation does not exist yet, it will be translated first via the API then stored.
     # If the detected language is the same as the target language, the original text will be returned.
-    # @param topic_or_post [Post|Topic]
-    def self.translate(topic_or_post)
-      return if text_for_translation(topic_or_post).blank?
-      detected_lang = detect(topic_or_post)
+    # @param translatable [Post|Topic]
+    def self.translate(translatable)
+      return if text_for_translation(translatable).blank?
+      detected_lang = detect(translatable)
 
-      return detected_lang, get_text(topic_or_post) if (detected_lang&.to_s == I18n.locale.to_s)
+      return detected_lang, get_text(translatable) if (detected_lang&.to_s == I18n.locale.to_s)
 
-      existing_translation = get_translation(topic_or_post)
+      existing_translation = get_translation(translatable)
       return detected_lang, existing_translation if existing_translation.present?
 
       unless translate_supported?(detected_lang, I18n.locale)
@@ -46,27 +46,27 @@ module DiscourseTranslator
                 ),
               )
       end
-      [detected_lang, translate!(topic_or_post)]
+      [detected_lang, translate!(translatable)]
     end
 
     # Subclasses must implement this method to translate the text of a post or topic
     # then use the save_translation method to store the translated text.
-    # @param topic_or_post [Post|Topic]
-    def self.translate!(topic_or_post)
+    # @param translatable [Post|Topic]
+    def self.translate!(translatable)
       raise "Not Implemented"
     end
 
     # Returns the stored detected locale of a post or topic.
     # If the locale does not exist yet, it will be detected first via the API then stored.
-    # @param topic_or_post [Post|Topic]
-    def self.detect(topic_or_post)
-      return if text_for_detection(topic_or_post).blank?
-      get_detected_locale(topic_or_post) || detect!(topic_or_post)
+    # @param translatable [Post|Topic]
+    def self.detect(translatable)
+      return if text_for_detection(translatable).blank?
+      get_detected_locale(translatable) || detect!(translatable)
     end
 
-    # Subclasses must implement this method to translate the text of a post or topic
-    # then use the save_translation method to store the translated text.
-    # @param topic_or_post [Post|Topic]
+    # Subclasses must implement this method to detect the text of a post or topic
+    # then use the save_detected_locale method to store the detected locale.
+    # @param translatable [Post|Topic]
     def self.detect!(post)
       raise "Not Implemented"
     end
@@ -75,52 +75,33 @@ module DiscourseTranslator
       raise "Not Implemented"
     end
 
-    def self.get_translation(topic_or_post)
-      translated_custom_field =
-        topic_or_post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] || {}
-      translated_custom_field[I18n.locale]
+    def self.get_translation(translatable)
+      translatable.translation_for(I18n.locale)
     end
 
-    def self.save_translation(topic_or_post)
-      translated_custom_field =
-        topic_or_post.custom_fields[DiscourseTranslator::TRANSLATED_CUSTOM_FIELD] || {}
-      translated_text = translated_custom_field[I18n.locale]
-
-      if translated_text.nil?
-        translated_text = yield
-
-        topic_or_post.custom_fields[
-          DiscourseTranslator::TRANSLATED_CUSTOM_FIELD
-        ] = translated_custom_field.merge(I18n.locale => translated_text)
-
-        topic_or_post.save!
-      end
-
-      translated_text
+    def self.save_translation(translatable)
+      translation = yield
+      translatable.set_translation(I18n.locale, translation)
+      translation
     end
 
-    def self.get_detected_locale(topic_or_post)
-      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
+    def self.get_detected_locale(translatable)
+      translatable.detected_locale
     end
 
-    def self.save_detected_locale(topic_or_post)
+    def self.save_detected_locale(translatable)
       detected_locale = yield
-      topic_or_post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] = detected_locale
-
-      if !topic_or_post.custom_fields_clean?
-        topic_or_post.save_custom_fields
-        topic_or_post.publish_change_to_clients!(:revised) if topic_or_post.class.name == "Post"
-      end
+      translatable.set_detected_locale(detected_locale)
 
       detected_locale
     end
 
-    def self.get_text(topic_or_post)
-      case topic_or_post.class.name
+    def self.get_text(translatable)
+      case translatable.class.name
       when "Post"
-        topic_or_post.cooked
+        translatable.cooked
       when "Topic"
-        topic_or_post.title
+        translatable.title
       end
     end
 
@@ -143,15 +124,12 @@ module DiscourseTranslator
       html_doc.to_html
     end
 
-    def self.text_for_detection(topic_or_post)
-      strip_tags_for_detection(get_text(topic_or_post)).truncate(
-        DETECTION_CHAR_LIMIT,
-        omission: nil,
-      )
+    def self.text_for_detection(translatable)
+      strip_tags_for_detection(get_text(translatable)).truncate(DETECTION_CHAR_LIMIT, omission: nil)
     end
 
-    def self.text_for_translation(topic_or_post)
-      get_text(topic_or_post).truncate(SiteSetting.max_characters_per_translation, omission: nil)
+    def self.text_for_translation(translatable)
+      get_text(translatable).truncate(SiteSetting.max_characters_per_translation, omission: nil)
     end
   end
 end

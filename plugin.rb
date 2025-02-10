@@ -16,8 +16,6 @@ register_asset "stylesheets/common/common.scss"
 module ::DiscourseTranslator
   PLUGIN_NAME = "discourse-translator".freeze
 
-  DETECTED_LANG_CUSTOM_FIELD = "post_detected_lang".freeze
-  TRANSLATED_CUSTOM_FIELD = "translated_text".freeze
   LANG_DETECT_NEEDED = "lang_detect_needed".freeze
 end
 
@@ -27,15 +25,11 @@ after_initialize do
   register_problem_check ProblemCheck::MissingTranslatorApiKey
   register_problem_check ProblemCheck::TranslatorError
 
-  Post.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
-  Topic.register_custom_field_type(::DiscourseTranslator::TRANSLATED_CUSTOM_FIELD, :json)
-
-  topic_view_post_custom_fields_allowlister { [::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] }
-
   reloadable_patch do
     Guardian.prepend(DiscourseTranslator::GuardianExtension)
     Post.prepend(DiscourseTranslator::PostExtension)
     Topic.prepend(DiscourseTranslator::TopicExtension)
+    TopicViewSerializer.prepend(DiscourseTranslator::TopicViewSerializerExtension)
   end
 
   on(:post_process_cooked) do |_, post|

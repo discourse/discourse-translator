@@ -23,7 +23,7 @@ describe Jobs::DetectPostsLanguage do
 
     posts.each do |post|
       post.reload
-      expect(post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).not_to be_nil
+      expect(post.detected_locale).not_to be_nil
     end
 
     expect(Discourse.redis.smembers(redis_key)).to be_empty
@@ -35,7 +35,7 @@ describe Jobs::DetectPostsLanguage do
 
     posts.each do |post|
       post.reload
-      expect(post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to be_nil
+      expect(post.detected_locale).to be_nil
     end
 
     expect(Discourse.redis.smembers(redis_key)).to match_array(posts.map(&:id).map(&:to_s))
