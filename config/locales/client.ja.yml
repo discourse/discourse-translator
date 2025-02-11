@@ -12,7 +12,5 @@ ja:
           discourse_translator: "Discourse 翻訳ツール"
   js:
     translator:
-      view_translation: "翻訳を表示"
-      hide_translation: "翻訳を非表示"
       translated_from: "%{translator} で%{language}から翻訳"
       translating: "翻訳中"

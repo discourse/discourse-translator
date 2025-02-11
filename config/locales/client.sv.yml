@@ -7,6 +7,4 @@
 sv:
   js:
     translator:
-      view_translation: "Visa översättning"
-      hide_translation: "Dölj översättning"
       translated_from: "Översatt från %{language} av %{translator}"

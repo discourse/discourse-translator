@@ -12,7 +12,5 @@ fa_IR:
           discourse_translator: "مترجم دیسکورس"
   js:
     translator:
-      view_translation: "مشاهده ترجمه"
-      hide_translation: "پنهان کردن ترجمه"
       translated_from: "ترجمه شده از %{language} توسط %{translator}"
       translating: "در حال ترجمه"

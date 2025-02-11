@@ -12,7 +12,5 @@ it:
           discourse_translator: "Traduttore Discourse"
   js:
     translator:
-      view_translation: "Visualizza traduzione"
-      hide_translation: "Nascondi traduzione"
       translated_from: "Tradotto dalla lingua %{language} da %{translator}"
       translating: "Traduzione in corso"
