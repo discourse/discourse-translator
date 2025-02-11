@@ -12,7 +12,5 @@ ru:
           discourse_translator: "Плагин Discourse «Переводчик»"
   js:
     translator:
-      view_translation: "Показать перевод"
-      hide_translation: "Скрыть перевод"
       translated_from: "Перевод; переводчик — %{translator}, исходный язык — %{language}"
       translating: "Переводится"
