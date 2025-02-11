@@ -132,14 +132,16 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate!(topic_or_post)
-      detected_lang = detect(topic_or_post)
+    def self.translate!(translatable, target_locale_sym = I18n.locale)
+      detected_lang = detect(translatable)
+      locale =
+        SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
 
-      save_translation(topic_or_post) do
+      save_translation(translatable) do
         query =
           default_query.merge(
             "lang" => "#{detected_lang}-#{locale}",
-            "text" => text_for_translation(topic_or_post),
+            "text" => text_for_translation(translatable),
             "format" => "html",
           )
 
@@ -157,10 +159,6 @@ module DiscourseTranslator
     end
 
     private
-
-    def self.locale
-      SUPPORTED_LANG_MAPPING[I18n.locale] || (raise I18n.t("translator.not_supported"))
-    end
 
     def self.post(uri, body, headers = {})
       Excon.post(uri, body: body, headers: headers)

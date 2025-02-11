@@ -28,21 +28,23 @@ module DiscourseTranslator
     # If the translation does not exist yet, it will be translated first via the API then stored.
     # If the detected language is the same as the target language, the original text will be returned.
     # @param translatable [Post|Topic]
-    def self.translate(translatable)
+    def self.translate(translatable, target_locale_sym = I18n.locale)
       return if text_for_translation(translatable).blank?
       detected_lang = detect(translatable)
 
-      return detected_lang, get_text(translatable) if (detected_lang&.to_s == I18n.locale.to_s)
+      if translatable.locale_matches?(target_locale_sym)
+        return detected_lang, get_text(translatable)
+      end
 
-      existing_translation = get_translation(translatable)
-      return detected_lang, existing_translation if existing_translation.present?
+      translation = translatable.translation_for(target_locale_sym)
+      return detected_lang, translation if translation.present?
 
-      unless translate_supported?(detected_lang, I18n.locale)
+      unless translate_supported?(detected_lang, target_locale_sym)
         raise TranslatorError.new(
                 I18n.t(
                   "translator.failed",
                   source_locale: detected_lang,
-                  target_locale: I18n.locale,
+                  target_locale: target_locale_sym,
                 ),
               )
       end
@@ -52,7 +54,7 @@ module DiscourseTranslator
     # Subclasses must implement this method to translate the text of a post or topic
     # then use the save_translation method to store the translated text.
     # @param translatable [Post|Topic]
-    def self.translate!(translatable)
+    def self.translate!(translatable, target_locale_sym = I18n.locale)
       raise "Not Implemented"
     end
 
@@ -73,10 +75,6 @@ module DiscourseTranslator
 
     def self.access_token
       raise "Not Implemented"
-    end
-
-    def self.get_translation(translatable)
-      translatable.translation_for(I18n.locale)
     end
 
     def self.save_translation(translatable)

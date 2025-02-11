@@ -157,17 +157,19 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate!(topic_or_post)
-      detected_lang = detect(topic_or_post)
+    def self.translate!(translatable, target_locale_sym = I18n.locale)
+      detected_lang = detect(translatable)
 
-      if text_for_translation(topic_or_post).length > LENGTH_LIMIT
+      if text_for_translation(translatable).length > LENGTH_LIMIT
         raise TranslatorError.new(I18n.t("translator.too_long"))
       end
+      locale =
+        SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
 
-      save_translation(topic_or_post) do
+      save_translation(translatable) do
         query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
 
-        body = [{ "Text" => text_for_translation(topic_or_post) }].to_json
+        body = [{ "Text" => text_for_translation(translatable) }].to_json
 
         uri = URI(translate_endpoint)
         uri.query = URI.encode_www_form(query)
@@ -206,10 +208,6 @@ module DiscourseTranslator
 
     def self.custom_endpoint?
       SiteSetting.translator_azure_custom_subdomain.present?
-    end
-
-    def self.locale
-      SUPPORTED_LANG_MAPPING[I18n.locale] || (raise I18n.t("translator.not_supported"))
     end
 
     def self.post(uri, body, headers = {})

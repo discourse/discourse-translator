@@ -63,5 +63,37 @@ describe Topic do
         expect(topic.content_locale.detected_locale).to eq("en-US")
       end
     end
+
+    describe "#locale_matches?" do
+      it "returns false when detected locale is blank" do
+        expect(topic.locale_matches?("en-US")).to eq(false)
+      end
+
+      it "returns false when locale is blank" do
+        topic.set_detected_locale("en-US")
+        expect(topic.locale_matches?(nil)).to eq(false)
+      end
+
+      [:en, "en", "en-US", :en_US, "en-GB", "en_GB", :en_GB].each do |locale|
+        it "returns true when matching normalised #{locale} to \"en\"" do
+          topic.set_detected_locale("en")
+          expect(topic.locale_matches?(locale)).to eq(true)
+        end
+      end
+
+      ["en-GB", "en_GB", :en_GB].each do |locale|
+        it "returns true when matching #{locale} to \"en_GB\"" do
+          topic.set_detected_locale("en_GB")
+          expect(topic.locale_matches?(locale, normalise_region: false)).to eq(true)
+        end
+      end
+
+      [:en, "en", "en-US", :en_US].each do |locale|
+        it "returns false when matching #{locale} to \"en_GB\"" do
+          topic.set_detected_locale("en_GB")
+          expect(topic.locale_matches?(locale, normalise_region: false)).to eq(false)
+        end
+      end
+    end
   end
 end

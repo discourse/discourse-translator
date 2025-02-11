@@ -95,16 +95,16 @@ module DiscourseTranslator
       res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang }
     end
 
-    def self.translate!(topic_or_post)
-      detected_lang = detect(topic_or_post)
+    def self.translate!(translatable, target_locale_sym = I18n.locale)
+      detected_lang = detect(translatable)
 
-      save_translation(topic_or_post) do
+      save_translation(translatable) do
         res =
           result(
             translate_uri,
-            q: text_for_translation(topic_or_post),
+            q: text_for_translation(translatable),
             source: detected_lang,
-            target: SUPPORTED_LANG_MAPPING[I18n.locale],
+            target: SUPPORTED_LANG_MAPPING[target_locale],
             format: "html",
           )
         res["translatedText"]

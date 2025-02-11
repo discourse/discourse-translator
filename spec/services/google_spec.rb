@@ -112,8 +112,8 @@ RSpec.describe DiscourseTranslator::Google do
 
     it "should pass through strings already in target language" do
       lang = I18n.locale
-      described_class.expects(:detect).returns(lang)
-      expect(described_class.translate(topic)).to eq([lang, "This title is in english"])
+      topic.set_detected_locale(lang)
+      expect(described_class.translate(topic)).to eq(["en", "This title is in english"])
     end
   end
 
