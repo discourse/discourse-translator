@@ -41,4 +41,18 @@ after_initialize do
   add_to_serializer :post, :can_translate do
     scope.can_translate?(object)
   end
+
+  add_to_serializer :post, :translated_cooked do
+    if !SiteSetting.experimental_topic_translation || scope.request.params["show"] == "original"
+      return nil
+    end
+    object.translation_for(I18n.locale) || nil
+  end
+
+  add_to_serializer :topic_view, :translated_title do
+    if !SiteSetting.experimental_topic_translation || scope.request.params["show"] == "original"
+      return nil
+    end
+    object.topic.translation_for(I18n.locale) || nil
+  end
 end

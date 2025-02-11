@@ -30,4 +30,47 @@ describe TopicViewSerializer do
 
     expect(topic_view.posts.first.association(:content_locale)).to be_loaded
   end
+
+  describe "#translated_title" do
+    fab!(:user) { Fabricate(:user, locale: "ja") }
+    fab!(:topic)
+
+    let!(:guardian) { Guardian.new(user) }
+    let!(:original_title) { "FUS ROH DAAHHH" }
+    let!(:jap_title) { "フス・ロ・ダ・ア" }
+
+    before do
+      topic.title = original_title
+      SiteSetting.experimental_topic_translation = true
+      I18n.locale = "ja"
+    end
+
+    def serialize_topic(guardian_user: user, params: {})
+      env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
+      request = ActionDispatch::Request.new(env)
+      guardian = Guardian.new(guardian_user, request)
+      TopicViewSerializer.new(TopicView.new(topic), scope: guardian)
+    end
+
+    it "does not return translated_title when experimental_topic_translation is disabled" do
+      SiteSetting.experimental_topic_translation = false
+      topic.set_translation("ja", jap_title)
+
+      expect(serialize_topic.translated_title).to eq(nil)
+    end
+
+    it "does not return translated_title when show_original param is present" do
+      topic.set_translation("ja", jap_title)
+      expect(serialize_topic(params: { "show" => "original" }).translated_title).to eq(nil)
+    end
+
+    it "does not return translated_title when no translation exists" do
+      expect(serialize_topic.translated_title).to eq(nil)
+    end
+
+    it "returns translated title when translation exists for current locale" do
+      topic.set_translation("ja", jap_title)
+      expect(serialize_topic.translated_title).to eq(jap_title)
+    end
+  end
 end

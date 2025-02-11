@@ -79,4 +79,40 @@ RSpec.describe PostSerializer do
       end
     end
   end
+
+  describe "#cooked" do
+    def serialize_post(guardian_user: user, params: {})
+      env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
+      request = ActionDispatch::Request.new(env)
+      guardian = Guardian.new(guardian_user, request)
+      PostSerializer.new(post, scope: guardian)
+    end
+
+    before { SiteSetting.experimental_topic_translation = true }
+
+    it "does not return translated_cooked when experimental_topic_translation is disabled" do
+      SiteSetting.experimental_topic_translation = false
+      expect(serialize_post.translated_cooked).to eq(nil)
+    end
+
+    it "does not return translated_cooked when show=original param is present" do
+      I18n.locale = "ja"
+      post.set_translation("ja", "こんにちは")
+
+      expect(serialize_post(params: { "show" => "original" }).translated_cooked).to eq(nil)
+      expect(serialize_post(params: { "show" => "derp" }).translated_cooked).to eq("こんにちは")
+    end
+
+    it "returns translated content based on locale" do
+      I18n.locale = "ja"
+      post.set_translation("ja", "こんにちは")
+      post.set_translation("es", "Hola")
+      expect(serialize_post.translated_cooked).to eq("こんにちは")
+    end
+
+    it "does not return translated_cooked when plugin is disabled" do
+      SiteSetting.translator_enabled = false
+      expect(serialize_post.translated_cooked).to eq(nil)
+    end
+  end
 end
