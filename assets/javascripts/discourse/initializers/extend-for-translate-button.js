@@ -29,17 +29,6 @@ function initializeTranslation(api) {
     (currentUser || siteSettings.experimental_anon_language_switcher)
   ) {
     api.renderInOutlet("topic-navigation", ShowOriginalContent);
-    api.decorateCookedElement((cookedElement, helper) => {
-      if (helper) {
-        const translatedCooked = helper.getModel().get("translated_cooked");
-        if (translatedCooked) {
-          cookedElement.innerHTML = translatedCooked;
-        } else {
-          // this experimental feature does not yet support
-          // translating individual untranslated posts
-        }
-      }
-    });
 
     api.registerModelTransformer("topic", (topics) => {
       topics.forEach((topic) => {
@@ -47,6 +36,12 @@ function initializeTranslation(api) {
           topic.set("fancy_title", topic.translated_title);
         }
       });
+    });
+
+    api.registerModelTransformer("post", (post) => {
+      if (post.translated_cooked) {
+        post.set("cooked", post.translated_cooked);
+      }
     });
   }
 

@@ -137,7 +137,7 @@ module DiscourseTranslator
       locale =
         SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
 
-      save_translation(translatable) do
+      save_translation(translatable, target_locale_sym) do
         query =
           default_query.merge(
             "lang" => "#{detected_lang}-#{locale}",
