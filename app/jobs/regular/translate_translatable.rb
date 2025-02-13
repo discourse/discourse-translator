@@ -17,8 +17,8 @@ module Jobs
         )
       end
 
-      topic_id = translatable.is_a?(Post) ? translatable.topic.id : translatable.id
-      post_id = translatable.is_a?(Post) ? translatable.id : 1
+      topic_id, post_id =
+        translatable.is_a?(Post) ? [translatable.topic_id, translatable.id] : [translatable.id, 1]
       MessageBus.publish("/topic/#{topic_id}", type: :revised, id: post_id)
     end
   end
