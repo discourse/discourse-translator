@@ -1,55 +1,58 @@
 # frozen_string_literal: true
 
-RSpec.describe Jobs::TranslateTranslatable do
-  fab!(:post) { Fabricate(:post) }
-  fab!(:topic) { Fabricate(:topic) }
+describe Jobs::TranslateTranslatable do
+  fab!(:post)
+  fab!(:topic)
+  let!(:job) { Jobs::TranslateTranslatable.new }
 
   before do
     SiteSetting.translator_enabled = true
     SiteSetting.translator = "Google"
     SiteSetting.automatic_translation_target_languages = "es|fr"
+    allow(DiscourseTranslator::Google).to receive(:translate)
   end
 
   describe "#execute" do
     it "does nothing when translator is disabled" do
       SiteSetting.translator_enabled = false
-      expect(DiscourseTranslator::Google).not_to receive(:translate)
 
-      subject.execute(type: "Post", translatable_id: post.id)
+      job.execute(type: "Post", translatable_id: post.id)
+
+      expect(DiscourseTranslator::Google).not_to have_received(:translate)
     end
 
     it "does nothing when target languages are empty" do
       SiteSetting.automatic_translation_target_languages = ""
-      expect(DiscourseTranslator::Google).not_to receive(:translate)
 
-      subject.execute(type: "Post", translatable_id: post.id)
+      job.execute(type: "Post", translatable_id: post.id)
+
+      expect(DiscourseTranslator::Google).not_to have_received(:translate)
     end
 
     it "translates posts to configured target languages" do
-      expect(DiscourseTranslator::Google).to receive(:translate).with(post, :es)
-      expect(DiscourseTranslator::Google).to receive(:translate).with(post, :fr)
-      expect(MessageBus).to receive(:publish).with(
-        "/topic/#{post.topic_id}",
-        type: :revised,
-        id: post.id,
-      )
+      MessageBus.expects(:publish).with("/topic/#{post.topic.id}", type: :revised, id: post.id).once
 
-      subject.execute(type: "Post", translatable_id: post.id)
+      job.execute(type: "Post", translatable_id: post.id)
+
+      expect(DiscourseTranslator::Google).to have_received(:translate).with(post, :es)
+      expect(DiscourseTranslator::Google).to have_received(:translate).with(post, :fr)
     end
 
     it "translates topics to configured target languages" do
-      expect(DiscourseTranslator::Google).to receive(:translate).with(topic, :es)
-      expect(DiscourseTranslator::Google).to receive(:translate).with(topic, :fr)
-      expect(MessageBus).to receive(:publish).with("/topic/#{topic.id}", type: :revised, id: 1)
+      MessageBus.expects(:publish).with("/topic/#{topic.id}", type: :revised, id: 1).once
 
-      subject.execute(type: "Topic", translatable_id: topic.id)
+      job.execute(type: "Topic", translatable_id: topic.id)
+
+      expect(DiscourseTranslator::Google).to have_received(:translate).with(topic, :es)
+      expect(DiscourseTranslator::Google).to have_received(:translate).with(topic, :fr)
     end
 
     it "does nothing when translatable is not found" do
-      expect(DiscourseTranslator::Google).not_to receive(:translate)
-      expect(MessageBus).not_to receive(:publish)
+      MessageBus.expects(:publish).never
 
-      subject.execute(type: "Post", translatable_id: -1)
+      job.execute(type: "Post", translatable_id: -1)
+
+      expect(DiscourseTranslator::Google).not_to have_received(:translate)
     end
   end
 end
