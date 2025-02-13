@@ -106,6 +106,14 @@ RSpec.describe PostSerializer do
       expect(serialize_post(params: { "show" => "derp" }).cooked).to eq("こんにちは")
     end
 
+    it "does not return translated_cooked when post is already in correct locale" do
+      I18n.locale = "ja"
+      post.set_detected_locale("ja")
+      post.set_translation("ja", "こんにちは")
+
+      expect(serialize_post.cooked).to eq(post.cooked)
+    end
+
     it "returns translated content based on locale" do
       I18n.locale = "ja"
       post.set_translation("ja", "こんにちは")

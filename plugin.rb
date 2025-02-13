@@ -44,7 +44,8 @@ after_initialize do
 
   register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
     if !SiteSetting.experimental_topic_translation ||
-         serializer.scope.request.params["show"] == "original"
+         serializer.scope.request.params["show"] == "original" ||
+         serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
       cooked
     else
       translation = serializer.object.translation_for(I18n.locale)
