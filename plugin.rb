@@ -42,17 +42,33 @@ after_initialize do
     scope.can_translate?(object)
   end
 
-  add_to_serializer :post, :translated_cooked do
-    if !SiteSetting.experimental_topic_translation || scope.request.params["show"] == "original"
-      return nil
+  register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
+    if !SiteSetting.experimental_topic_translation ||
+         serializer.scope.request.params["show"] == "original"
+      cooked
+    else
+      translation = serializer.object.translation_for(I18n.locale)
+      translation if translation.present?
     end
-    object.translation_for(I18n.locale) || nil
   end
 
-  add_to_serializer :topic_view, :translated_title do
-    if !SiteSetting.experimental_topic_translation || scope.request.params["show"] == "original"
-      return nil
+  register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
+    if !SiteSetting.experimental_topic_translation ||
+         serializer.scope.request.params["show"] == "original"
+      fancy_title
+    else
+      translation = serializer.object.translation_for(I18n.locale)
+      translation if translation.present?
     end
-    object.topic.translation_for(I18n.locale) || nil
+  end
+
+  register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
+    if !SiteSetting.experimental_topic_translation ||
+         serializer.scope.request.params["show"] == "original"
+      fancy_title
+    else
+      translation = serializer.object.topic.translation_for(I18n.locale)
+      translation if translation.present?
+    end
   end
 end
