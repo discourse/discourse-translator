@@ -48,7 +48,7 @@ module DiscourseTranslator
                 ),
               )
       end
-      [detected_lang, translate!(translatable)]
+      [detected_lang, translate!(translatable, target_locale_sym)]
     end
 
     # Subclasses must implement this method to translate the text of a post or topic
@@ -77,9 +77,9 @@ module DiscourseTranslator
       raise "Not Implemented"
     end
 
-    def self.save_translation(translatable)
+    def self.save_translation(translatable, target_locale_sym = I18n.locale)
       translation = yield
-      translatable.set_translation(I18n.locale, translation)
+      translatable.set_translation(target_locale_sym, translation)
       translation
     end
 
