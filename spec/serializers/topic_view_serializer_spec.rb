@@ -68,6 +68,14 @@ describe TopicViewSerializer do
       expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
     end
 
+    it "does not replace fancy_title when topic is already in correct locale" do
+      I18n.locale = "ja"
+      topic.set_detected_locale("ja")
+      topic.set_translation("ja", jap_title)
+
+      expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
+    end
+
     it "returns translated title in fancy_title when translation exists for current locale" do
       topic.set_translation("ja", jap_title)
       expect(serialize_topic.fancy_title).to eq(jap_title)

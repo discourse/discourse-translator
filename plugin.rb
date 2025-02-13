@@ -55,7 +55,8 @@ after_initialize do
 
   register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
     if !SiteSetting.experimental_topic_translation ||
-         serializer.scope.request.params["show"] == "original"
+         serializer.scope.request.params["show"] == "original" ||
+         serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
       fancy_title
     else
       translation = serializer.object.translation_for(I18n.locale)
@@ -65,7 +66,8 @@ after_initialize do
 
   register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
     if !SiteSetting.experimental_topic_translation ||
-         serializer.scope.request.params["show"] == "original"
+         serializer.scope.request.params["show"] == "original" ||
+         serializer.object.topic.detected_locale == I18n.locale.to_s.gsub("_", "-")
       fancy_title
     else
       translation = serializer.object.topic.translation_for(I18n.locale)
