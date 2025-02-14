@@ -88,31 +88,42 @@ RSpec.describe PostSerializer do
       PostSerializer.new(post, scope: guardian)
     end
 
-    before { SiteSetting.experimental_topic_translation = true }
+    before do
+      SiteSetting.translator_enabled = true
+      SiteSetting.experimental_topic_translation = true
+    end
 
     it "does not return translated_cooked when experimental_topic_translation is disabled" do
       SiteSetting.experimental_topic_translation = false
-      expect(serialize_post.translated_cooked).to eq(nil)
+      expect(serialize_post.cooked).to eq(post.cooked)
     end
 
     it "does not return translated_cooked when show=original param is present" do
       I18n.locale = "ja"
       post.set_translation("ja", "こんにちは")
 
-      expect(serialize_post(params: { "show" => "original" }).translated_cooked).to eq(nil)
-      expect(serialize_post(params: { "show" => "derp" }).translated_cooked).to eq("こんにちは")
+      expect(serialize_post(params: { "show" => "original" }).cooked).to eq(post.cooked)
+      expect(serialize_post(params: { "show" => "derp" }).cooked).to eq("こんにちは")
+    end
+
+    it "does not return translated_cooked when post is already in correct locale" do
+      I18n.locale = "ja"
+      post.set_detected_locale("ja")
+      post.set_translation("ja", "こんにちは")
+
+      expect(serialize_post.cooked).to eq(post.cooked)
     end
 
     it "returns translated content based on locale" do
       I18n.locale = "ja"
       post.set_translation("ja", "こんにちは")
       post.set_translation("es", "Hola")
-      expect(serialize_post.translated_cooked).to eq("こんにちは")
+      expect(serialize_post.cooked).to eq("こんにちは")
     end
 
     it "does not return translated_cooked when plugin is disabled" do
       SiteSetting.translator_enabled = false
-      expect(serialize_post.translated_cooked).to eq(nil)
+      expect(serialize_post.cooked).to eq(post.cooked)
     end
   end
 end
