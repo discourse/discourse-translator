@@ -74,7 +74,7 @@ describe Jobs::AutomaticTranslationBackfill do
     describe "with two locales ['de', 'es']" do
       before do
         SiteSetting.automatic_translation_target_languages = "de|es"
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 10
+        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 100
         expect_google_check_language
       end
 
@@ -102,6 +102,31 @@ describe Jobs::AutomaticTranslationBackfill do
 
         expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es hola]])
         expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+      end
+    end
+
+    describe "with just one locale ['de']" do
+      before do
+        SiteSetting.automatic_translation_target_languages = "de"
+        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 5 * 12
+        expect_google_check_language
+      end
+
+      it "backfills all (1) topics and (4) posts as it is within the maximum per job run" do
+        topic = Fabricate(:topic)
+        posts = Fabricate.times(4, :post, topic: topic)
+
+        topic.set_detected_locale("es")
+        posts.each { |p| p.set_detected_locale("es") }
+
+        expect_google_translate("hallo").times(5)
+
+        described_class.new.execute
+
+        expect(topic.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+        expect(posts.map { |p| p.translations.pluck(:locale, :translation).flatten }).to eq(
+          [%w[de hallo]] * 4,
+        )
       end
     end
   end

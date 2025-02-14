@@ -42,12 +42,17 @@ describe Jobs::DetectPostsLanguage do
   end
 
   it "processes a maximum of MAX_QUEUE_SIZE posts per run" do
-    large_number = 2000
-    large_number.times { |i| Discourse.redis.sadd?(redis_key, i + 1) }
+    queue_size = 4
+    described_class.const_set(:MAX_QUEUE_SIZE, queue_size)
+
+    existing_posts = Discourse.redis.scard(redis_key)
+    posts = 5
+    posts.times { |i| Discourse.redis.sadd?(redis_key, i + 1) }
+
     described_class.new.execute({})
 
     remaining = Discourse.redis.scard(redis_key)
-    expect(remaining).to eq(large_number - Jobs::DetectPostsLanguage::MAX_QUEUE_SIZE)
+    expect(remaining).to eq((existing_posts + posts) - queue_size)
   end
 
   it "handles an empty Redis queue gracefully" do

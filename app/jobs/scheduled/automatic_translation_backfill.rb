@@ -93,7 +93,7 @@ module Jobs
       models_translated = [Post, Topic].size
       translations_per_model = [translations_per_run / models_translated, 1].max
       topic_ids = fetch_untranslated_model_ids(Topic, translations_per_model)
-      translations_per_model = translations_per_run if topic_ids.empty?
+      translations_per_model = translations_per_run - topic_ids.size
       post_ids = fetch_untranslated_model_ids(Post, translations_per_model)
       return if topic_ids.empty? && post_ids.empty?
 
