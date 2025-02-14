@@ -177,8 +177,21 @@ This is the scenario we are testing for:
     end
 
     it "returns correct post ids needing translation in descending id" do
-      result = described_class.new.fetch_untranslated_model_ids(Post, 50, %w[de es])
+      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, %w[de es])
       expect(result).to include(post_7.id, post_6.id, post_3.id, post_2.id, post_1.id)
+    end
+
+    it "does not return posts that are deleted" do
+      post_1.trash!
+      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, %w[de es])
+      expect(result).not_to include(post_1.id)
+    end
+
+    it "does not return posts that are empty" do
+      post_1.cooked = ""
+      post_1.save!(validate: false)
+      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, %w[de es])
+      expect(result).not_to include(post_1.id)
     end
   end
 end
