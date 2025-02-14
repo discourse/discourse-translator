@@ -88,7 +88,9 @@ module DiscourseTranslator
     end
 
     def self.save_detected_locale(translatable)
-      detected_locale = yield
+      # sometimes we may have a user post that is just an emoji
+      # in that case, we will just indicate the post is in the default locale
+      detected_locale = yield.presence || SiteSetting.default_locale
       translatable.set_detected_locale(detected_locale)
 
       detected_locale
