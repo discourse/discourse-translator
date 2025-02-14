@@ -15,6 +15,7 @@ describe Jobs::DetectPostsLanguage do
       { translated_text: "大丈夫", source_language_code: "en", target_language_code: "jp" },
     )
     Aws::Translate::Client.stubs(:new).returns(client)
+    Discourse.redis.del(redis_key)
     posts.each { |post| Discourse.redis.sadd?(redis_key, post.id) }
   end
 
@@ -45,14 +46,10 @@ describe Jobs::DetectPostsLanguage do
     queue_size = 4
     described_class.const_set(:MAX_QUEUE_SIZE, queue_size)
 
-    existing_posts = Discourse.redis.scard(redis_key)
-    posts = 5
-    posts.times { |i| Discourse.redis.sadd?(redis_key, i + 1) }
-
     described_class.new.execute({})
 
     remaining = Discourse.redis.scard(redis_key)
-    expect(remaining).to eq((existing_posts + posts) - queue_size)
+    expect(remaining).to eq(posts.size - queue_size)
   end
 
   it "handles an empty Redis queue gracefully" do
@@ -81,6 +78,7 @@ describe Jobs::DetectPostsLanguage do
     described_class.new.execute({})
 
     posts.each do |post|
+      expect(DistributedMutex).to have_received(:synchronize).at_least(:once)
       expect(DistributedMutex).to have_received(:synchronize).with("detect_translation_#{post.id}")
     end
   end
