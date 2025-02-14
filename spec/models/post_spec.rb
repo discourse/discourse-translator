@@ -3,7 +3,10 @@
 require "rails_helper"
 
 RSpec.describe Post do
-  before { SiteSetting.translator_enabled = true }
+  before do
+    SiteSetting.translator_enabled = true
+    SiteSetting.create_topic_allowed_groups = Group::AUTO_GROUPS[:everyone]
+  end
 
   describe "translatable" do
     fab!(:post)
@@ -70,10 +73,7 @@ RSpec.describe Post do
     fab!(:topic)
     fab!(:user) { Fabricate(:user, groups: [group]) }
 
-    before do
-      Jobs.run_immediately!
-      SiteSetting.create_topic_allowed_groups = Group::AUTO_GROUPS[:everyone]
-    end
+    before { Jobs.run_immediately! }
 
     it "queues the post for language detection when user and posts are in the right group" do
       SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
@@ -90,6 +90,19 @@ RSpec.describe Post do
       expect(
         Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id),
       ).to be_truthy
+    end
+
+    it "does not queue bot posts for language detection" do
+      SiteSetting.restrict_translation_by_poster_group = Group::AUTO_GROUPS[:everyone]
+      post =
+        PostCreator.new(
+          Discourse.system_user,
+          { title: "hello world topic", raw: "my name is cat", category: Fabricate(:category).id },
+        ).create
+
+      expect(
+        Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id),
+      ).to be_falsey
     end
 
     context "when user and posts are not in the right group" do
@@ -109,6 +122,40 @@ RSpec.describe Post do
           Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id),
         ).to be_falsey
       end
+    end
+  end
+
+  describe "automatic translation job" do
+    fab!(:user)
+
+    it "enqueues translate_translatable job when post cooked" do
+      SiteSetting.automatic_translation_target_languages = "es"
+      post = Fabricate(:post, user: user)
+      CookedPostProcessor.new(post).post_process
+
+      expect_job_enqueued(
+        job: :translate_translatable,
+        args: {
+          type: "Post",
+          translatable_id: post.id,
+        },
+      )
+    end
+
+    it "does not enqueues translate_translatable job for bot posts" do
+      SiteSetting.automatic_translation_target_languages = "es"
+      post = Fabricate(:post, user: Discourse.system_user)
+      CookedPostProcessor.new(post).post_process
+
+      expect(
+        job_enqueued?(
+          job: :translate_translatable,
+          args: {
+            type: "Post",
+            translatable_id: post.id,
+          },
+        ),
+      ).to eq false
     end
   end
 end
