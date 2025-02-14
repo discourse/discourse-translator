@@ -48,8 +48,7 @@ after_initialize do
          serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
       cooked
     else
-      translation = serializer.object.translation_for(I18n.locale)
-      translation if translation.present?
+      serializer.object.translation_for(I18n.locale).presence
     end
   end
 
@@ -59,8 +58,7 @@ after_initialize do
          serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
       fancy_title
     else
-      translation = serializer.object.translation_for(I18n.locale)
-      translation if translation.present?
+      serializer.object.translation_for(I18n.locale).presence
     end
   end
 
@@ -70,8 +68,7 @@ after_initialize do
          serializer.object.topic.detected_locale == I18n.locale.to_s.gsub("_", "-")
       fancy_title
     else
-      translation = serializer.object.topic.translation_for(I18n.locale)
-      translation if translation.present?
+      serializer.object.topic.translation_for(I18n.locale).presence
     end
   end
 end
