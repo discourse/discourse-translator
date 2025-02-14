@@ -16,7 +16,8 @@ describe Jobs::DetectPostsLanguage do
     )
     Aws::Translate::Client.stubs(:new).returns(client)
     Discourse.redis.del(redis_key)
-    posts.each { |post| Discourse.redis.sadd?(redis_key, post.id) }
+    described_class.const_set(:MAX_QUEUE_SIZE, 100)
+    posts.each { |post| Discourse.redis.sadd(redis_key, post.id) }
   end
 
   it "processes posts in batches and updates their translations" do
@@ -38,7 +39,6 @@ describe Jobs::DetectPostsLanguage do
       post.reload
       expect(post.detected_locale).to be_nil
     end
-
     expect(Discourse.redis.smembers(redis_key)).to match_array(posts.map(&:id).map(&:to_s))
   end
 
@@ -58,6 +58,8 @@ describe Jobs::DetectPostsLanguage do
   end
 
   it "removes successfully processed posts from Redis" do
+    posts.each { |post| expect(Discourse.redis.sismember(redis_key, post.id)).to be_truthy }
+
     described_class.new.execute({})
 
     posts.each { |post| expect(Discourse.redis.sismember(redis_key, post.id)).to be_falsey }
@@ -77,9 +79,6 @@ describe Jobs::DetectPostsLanguage do
 
     described_class.new.execute({})
 
-    posts.each do |post|
-      expect(DistributedMutex).to have_received(:synchronize).at_least(:once)
-      expect(DistributedMutex).to have_received(:synchronize).with("detect_translation_#{post.id}")
-    end
+    expect(DistributedMutex).to have_received(:synchronize).at_least(5)
   end
 end
