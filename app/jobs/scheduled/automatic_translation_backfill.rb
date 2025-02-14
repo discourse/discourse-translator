@@ -18,7 +18,12 @@ module Jobs
       end
     end
 
-    def fetch_untranslated_model_ids(model = Post, limit = 100, target_locales = backfill_locales)
+    def fetch_untranslated_model_ids(
+      model,
+      content_column,
+      limit,
+      target_locales = backfill_locales
+    )
       m = model.name.downcase
       DB.query_single(<<~SQL, target_locales: target_locales, limit: limit)
         SELECT m.id
@@ -39,6 +44,8 @@ module Jobs
               ARRAY[]::text[]
             ))
         )
+        AND m.deleted_at IS NULL
+        AND m.#{content_column} != ''
         ORDER BY m.id DESC
         LIMIT :limit
       SQL
@@ -92,9 +99,9 @@ module Jobs
     def process_batch
       models_translated = [Post, Topic].size
       translations_per_model = [translations_per_run / models_translated, 1].max
-      topic_ids = fetch_untranslated_model_ids(Topic, translations_per_model)
+      topic_ids = fetch_untranslated_model_ids(Topic, "title", translations_per_model)
       translations_per_model = translations_per_run - topic_ids.size
-      post_ids = fetch_untranslated_model_ids(Post, translations_per_model)
+      post_ids = fetch_untranslated_model_ids(Post, "cooked", translations_per_model)
       return if topic_ids.empty? && post_ids.empty?
 
       translate_records(Topic, topic_ids)
