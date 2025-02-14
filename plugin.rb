@@ -33,25 +33,25 @@ after_initialize do
   end
 
   on(:post_process_cooked) do |_, post|
-    if Guardian.new.can_detect_language?(post)
+    if Guardian.new.can_detect_language?(post) && post.user_id > 0
       Discourse.redis.sadd?(DiscourseTranslator::LANG_DETECT_NEEDED, post.id)
     end
   end
 
   on(:post_process_cooked) do |_, post|
-    if SiteSetting.automatic_translation_target_languages.present?
+    if SiteSetting.automatic_translation_target_languages.present? && post.user_id > 0
       Jobs.enqueue(:translate_translatable, type: "Post", translatable_id: post.id)
     end
   end
 
   on(:topic_created) do |topic|
-    if SiteSetting.automatic_translation_target_languages.present?
+    if SiteSetting.automatic_translation_target_languages.present? && topic.user_id > 0
       Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
     end
   end
 
   on(:topic_edited) do |topic|
-    if SiteSetting.automatic_translation_target_languages.present?
+    if SiteSetting.automatic_translation_target_languages.present? && topic.user_id > 0
       Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
     end
   end

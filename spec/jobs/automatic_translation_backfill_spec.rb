@@ -193,5 +193,13 @@ This is the scenario we are testing for:
       result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, %w[de es])
       expect(result).not_to include(post_1.id)
     end
+
+    it "does not return posts by bots" do
+      post_1.update(user: Discourse.system_user)
+
+      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, %w[de es])
+
+      expect(result).not_to include(post_1.id)
+    end
   end
 end
