@@ -21,7 +21,7 @@ module DiscourseTranslator
 
     def self.translate!(translatable, target_locale_sym = I18n.locale)
       return unless required_settings_enabled
-      save_translation(translatable) do
+      save_translation(translatable, target_locale_sym) do
         ::DiscourseAi::Translator.new(
           text_for_translation(translatable),
           target_locale_sym,

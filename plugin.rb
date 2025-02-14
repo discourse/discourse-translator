@@ -38,6 +38,24 @@ after_initialize do
     end
   end
 
+  on(:post_process_cooked) do |_, post|
+    if SiteSetting.automatic_translation_target_languages.present?
+      Jobs.enqueue(:translate_translatable, type: "Post", translatable_id: post.id)
+    end
+  end
+
+  on(:topic_created) do |topic|
+    if SiteSetting.automatic_translation_target_languages.present?
+      Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
+    end
+  end
+
+  on(:topic_edited) do |topic|
+    if SiteSetting.automatic_translation_target_languages.present?
+      Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
+    end
+  end
+
   add_to_serializer :post, :can_translate do
     scope.can_translate?(object)
   end

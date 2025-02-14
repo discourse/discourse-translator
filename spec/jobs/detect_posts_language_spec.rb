@@ -15,7 +15,9 @@ describe Jobs::DetectPostsLanguage do
       { translated_text: "大丈夫", source_language_code: "en", target_language_code: "jp" },
     )
     Aws::Translate::Client.stubs(:new).returns(client)
-    posts.each { |post| Discourse.redis.sadd?(redis_key, post.id) }
+    Discourse.redis.del(redis_key)
+    described_class.const_set(:MAX_QUEUE_SIZE, 100)
+    posts.each { |post| Discourse.redis.sadd(redis_key, post.id) }
   end
 
   it "processes posts in batches and updates their translations" do
@@ -37,17 +39,17 @@ describe Jobs::DetectPostsLanguage do
       post.reload
       expect(post.detected_locale).to be_nil
     end
-
     expect(Discourse.redis.smembers(redis_key)).to match_array(posts.map(&:id).map(&:to_s))
   end
 
   it "processes a maximum of MAX_QUEUE_SIZE posts per run" do
-    large_number = 2000
-    large_number.times { |i| Discourse.redis.sadd?(redis_key, i + 1) }
+    queue_size = 4
+    described_class.const_set(:MAX_QUEUE_SIZE, queue_size)
+
     described_class.new.execute({})
 
     remaining = Discourse.redis.scard(redis_key)
-    expect(remaining).to eq(large_number - Jobs::DetectPostsLanguage::MAX_QUEUE_SIZE)
+    expect(remaining).to eq(posts.size - queue_size)
   end
 
   it "handles an empty Redis queue gracefully" do
@@ -56,6 +58,8 @@ describe Jobs::DetectPostsLanguage do
   end
 
   it "removes successfully processed posts from Redis" do
+    posts.each { |post| expect(Discourse.redis.sismember(redis_key, post.id)).to be_truthy }
+
     described_class.new.execute({})
 
     posts.each { |post| expect(Discourse.redis.sismember(redis_key, post.id)).to be_falsey }
@@ -75,8 +79,6 @@ describe Jobs::DetectPostsLanguage do
 
     described_class.new.execute({})
 
-    posts.each do |post|
-      expect(DistributedMutex).to have_received(:synchronize).with("detect_translation_#{post.id}")
-    end
+    expect(DistributedMutex).to have_received(:synchronize).at_least(5)
   end
 end

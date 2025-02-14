@@ -98,7 +98,7 @@ module DiscourseTranslator
     def self.translate!(translatable, target_locale_sym = I18n.locale)
       detected_lang = detect(translatable)
 
-      save_translation(translatable) do
+      save_translation(translatable, target_locale_sym) do
         res =
           result(
             translate_uri,

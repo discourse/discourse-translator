@@ -109,3 +109,13 @@ discourse_translator:
   experimental_topic_translation:
     default: false
     client: true
+  automatic_translation_target_languages:
+    default: ""
+    type: list
+    list_type: named
+    choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
+    allow_any: false
+  automatic_translation_backfill_maximum_translations_per_hour:
+    default: 0
+    client: false
+    hidden: true

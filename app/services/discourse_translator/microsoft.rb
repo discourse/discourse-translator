@@ -166,7 +166,7 @@ module DiscourseTranslator
       locale =
         SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
 
-      save_translation(translatable) do
+      save_translation(translatable, target_locale_sym) do
         query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
 
         body = [{ "Text" => text_for_translation(translatable) }].to_json
