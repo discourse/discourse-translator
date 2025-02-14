@@ -115,6 +115,14 @@ describe DiscourseTranslator::Base do
       expect(TestTranslator.detect(post)).to eq("en")
     end
 
+    it "saves the site default locale when detection is empty" do
+      SiteSetting.default_locale = "ja"
+
+      TestTranslator.save_detected_locale(post) { "" }
+
+      expect(post.detected_locale).to eq("ja")
+    end
+
     it "performs detection if no cached result" do
       TestTranslator.expects(:detect!).with(post).returns("es")
 
