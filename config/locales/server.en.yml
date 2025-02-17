@@ -27,6 +27,7 @@ en:
     not_supported: "This language is not supported by the translator."
     too_long: "This post is too long to be translated by the translator."
     not_available: "The translator service is currently not available."
+    api_timeout: "The translator service took too long to respond. Please try again later."
     amazon:
       invalid_credentials: "The provided credentials for AWS translate are invalid."
 
