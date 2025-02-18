@@ -12,5 +12,7 @@ zh_CN:
           discourse_translator: "Discourse Translator"
   js:
     translator:
+      view_translation: "查看翻译"
+      hide_translation: "隐藏翻译"
       translated_from: "由 %{translator} 译自%{language}"
       translating: "正在翻译"

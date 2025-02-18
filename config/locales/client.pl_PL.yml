@@ -7,4 +7,6 @@
 pl_PL:
   js:
     translator:
+      view_translation: "Zobacz tłumaczenie"
+      hide_translation: "Ukryj tłumaczenie"
       translated_from: "Przetłumaczone z %{language} przez %{translator}"

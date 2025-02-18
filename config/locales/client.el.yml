@@ -12,4 +12,6 @@ el:
           discourse_translator: "Μεταφραστής Discourse"
   js:
     translator:
+      view_translation: "Προβολή μετάφρασης"
+      hide_translation: "Απόκρυψη μετάφρασης"
       translated_from: "Μεταφρασμένο από %{language} από τον/την %{translator}"

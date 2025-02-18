@@ -12,5 +12,7 @@ de:
           discourse_translator: "Discourse – Übersetzer"
   js:
     translator:
+      view_translation: "Übersetzung anzeigen"
+      hide_translation: "Übersetzung ausblenden"
       translated_from: "Übersetzt aus %{language} von %{translator}"
       translating: "Wird übersetzt"
