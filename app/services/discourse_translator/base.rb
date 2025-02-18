@@ -78,7 +78,11 @@ module DiscourseTranslator
     end
 
     def self.save_translation(translatable, target_locale_sym = I18n.locale)
-      translation = yield
+      begin
+        translation = yield
+      rescue Timeout::Error
+        raise TranslatorError.new(I18n.t("translator.api_timeout"))
+      end
       translatable.set_translation(target_locale_sym, translation)
       translation
     end
