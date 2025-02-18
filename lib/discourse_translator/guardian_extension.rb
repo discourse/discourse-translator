@@ -22,14 +22,13 @@ module DiscourseTranslator::GuardianExtension
   def can_translate?(post)
     return false if !user_group_allow_translate?
 
-    locale = post.detected_locale
-    return false if locale.nil?
-
-    # I18n.locale is a symbol e.g. :en_GB
-    detected_lang = locale.to_s.sub("-", "_")
-    detected_lang != I18n.locale.to_s &&
-      "DiscourseTranslator::#{SiteSetting.translator}".constantize.language_supported?(
-        detected_lang,
-      )
+    if SiteSetting.experimental_topic_translation
+      return false if post.locale_matches?(I18n.locale)
+      return false if post.translation_for(I18n.locale).present?
+      true
+    else
+      return false if post.locale_matches?(I18n.locale)
+      poster_group_allow_translate?(post)
+    end
   end
 end
