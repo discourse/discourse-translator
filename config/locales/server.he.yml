@@ -24,6 +24,7 @@ he:
     restrict_translation_by_group: "רק קבוצות מורשות יכולות לתרגם"
     restrict_translation_by_poster_group: "לאפשר תרגום של פוסטים שנוצרו על ידי משתמשים בקבוצות מורשות בלבד. אם ריק, לאפשר תרגומים של פוסטים מכל המשתמשים."
     experimental_anon_language_switcher: "הפעלת בורר שפות ניסיוני למשתמשים אלמוניים. כך יוכלו משתמשים אלמוניים להחליף בין הגרסה המתורגמת של Discourse לבין התוכן שתרמו המשתמשים לנושאים."
+    translate_posts_to_languages: "תרגום פוסטים לשפות"
     errors:
       set_locale_cookie_requirements: "בורר השפה הניסיוני למשתמשים אלמוניים דורש שהגדרת האתר `set locale from cookie` (הגדרת השפה מעוגייה) תהיה פעילה."
     experimental_topic_translation: "הפעלת יכולת תרגום נושאים ניסיונית. היא מחליפה את התרגום הפנימי של הפוסטים בכפתור שמאפשר למשתמשים לתרגם את הנושא כולו."
