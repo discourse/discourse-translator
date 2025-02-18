@@ -166,7 +166,14 @@ describe DiscourseTranslator::GuardianExtension do
                 expect(guardian.can_translate?(post)).to eq(true)
               end
 
-              it "can translate when post does not have translation" do
+              it "cannot translate when post has translation for user locale" do
+                post.set_detected_locale("jp")
+                post.set_translation("pt", "Olá, mundo!")
+
+                expect(guardian.can_translate?(post)).to eq(false)
+              end
+
+              it "can translate when post does not have translation for user locale" do
                 post.set_detected_locale("jp")
 
                 expect(guardian.can_translate?(post)).to eq(true)
@@ -199,6 +206,18 @@ describe DiscourseTranslator::GuardianExtension do
 
             describe "locale is :pt" do
               before { I18n.stubs(:locale).returns(:pt) }
+
+              it "cannot translate when post detected locale matches i18n locale" do
+                post.set_detected_locale("pt")
+
+                expect(guardian.can_translate?(post)).to eq(false)
+              end
+
+              it "can translate when post's detected locale does not match i18n locale" do
+                post.set_detected_locale("jp")
+
+                expect(guardian.can_translate?(post)).to eq(true)
+              end
 
               it "cannot translate if poster is not in restrict_translation_by_poster_group" do
                 SiteSetting.restrict_translation_by_poster_group = "#{Group::AUTO_GROUPS[:staff]}"

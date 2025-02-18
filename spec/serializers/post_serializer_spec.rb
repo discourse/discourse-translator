@@ -19,19 +19,15 @@ RSpec.describe PostSerializer do
     end
 
     describe "when translator enabled" do
-      before { SiteSetting.translator_enabled = true }
+      before do
+        SiteSetting.translator_enabled = true
+        SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}"
+        SiteSetting.restrict_translation_by_poster_group = ""
+      end
+      let(:serializer) { PostSerializer.new(post, scope: Guardian.new) }
 
-      describe "anon user" do
-        let(:serializer) { PostSerializer.new(post, scope: Guardian.new) }
-
-        before do
-          SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}"
-          SiteSetting.restrict_translation_by_poster_group = ""
-        end
-
-        it "cannot translate" do
-          expect(serializer.can_translate).to eq(false)
-        end
+      it "cannot translate for anon" do
+        expect(serializer.can_translate).to eq(false)
       end
 
       describe "logged in user" do
@@ -44,32 +40,12 @@ RSpec.describe PostSerializer do
         end
 
         describe "user is in restrict_translation_by_group" do
-          before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
-
-          it "cannot translate when post author is not in restrict_translation_by_poster_group" do
-            SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
-
-            expect(serializer.can_translate).to eq(false)
-          end
-
           describe "post author in restrict_translation_by_poster_group and locale is :xx" do
-            before do
+            it "can translate when post detected locale does not match i18n locale" do
+              SiteSetting.restrict_translation_by_group = "#{group.id}"
               SiteSetting.restrict_translation_by_poster_group = "#{post_user_group.id}"
               I18n.stubs(:locale).returns(:pt)
-            end
 
-            it "cannot translate when post does not have detected locale" do
-              expect(post.detected_locale).to eq(nil)
-              expect(serializer.can_translate).to eq(false)
-            end
-
-            it "cannot translate when post detected locale matches i18n locale" do
-              post.set_detected_locale("pt")
-
-              expect(serializer.can_translate).to eq(false)
-            end
-
-            it "can translate when post detected locale does not match i18n locale" do
               post.set_detected_locale("jp")
 
               expect(serializer.can_translate).to eq(true)
