@@ -17,8 +17,14 @@ module DiscourseTranslator
       (content_locale || build_content_locale).update!(detected_locale: locale)
     end
 
+    # This method is used to create a translation for a translatable (Post or Topic) and a specific locale.
+    # If a translation already exists for the locale, it will be updated.
+    # Texts are put through a Sanitizer to clean them up before saving.
+    # @param locale [String] the locale of the translation
+    # @param text [String] the translated text
     def set_translation(locale, text)
       locale = locale.to_s.gsub("_", "-")
+      text = DiscourseTranslator::TranslatedContentSanitizer.sanitize(self.class, text)
       translations.find_or_initialize_by(locale: locale).update!(translation: text)
     end
 
