@@ -42,7 +42,7 @@ describe DiscourseTranslator::DiscourseAi do
 
     it "translates the post and returns [locale, translated_text]" do
       DiscourseAi::Completions::Llm.with_prepared_responses(
-        ["<translation>some translated text</translation>"],
+        ["<output>some translated text</output>"],
       ) do
         locale, translated_text = DiscourseTranslator::DiscourseAi.translate(post)
         expect(locale).to eq "de"
