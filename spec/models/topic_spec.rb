@@ -8,10 +8,10 @@ describe Topic do
 
     before { SiteSetting.translator_enabled = true }
 
-    it "should reset translation data when topic title has been updated" do
+    it "should reset translation data when topic fancy_title has been updated" do
       Fabricate(:topic_translation, topic:)
       Fabricate(:topic_locale, topic:)
-      topic.update!(title: "this is an updated title")
+      topic.update!(fancy_title: "this is an updated title")
 
       expect(DiscourseTranslator::TopicLocale.where(topic:)).to be_empty
       expect(DiscourseTranslator::TopicLocale.find_by(topic:)).to be_nil

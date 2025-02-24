@@ -105,7 +105,7 @@ module DiscourseTranslator
       when "Post"
         translatable.cooked
       when "Topic"
-        translatable.title
+        translatable.fancy_title
       end
     end
 

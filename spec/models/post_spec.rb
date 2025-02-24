@@ -11,7 +11,7 @@ RSpec.describe Post do
   describe "translatable" do
     fab!(:post)
 
-    it "should reset translation data when post title has been updated" do
+    it "should reset translation data when post raw has been updated" do
       Fabricate(:post_translation, post:)
       Fabricate(:post_locale, post:)
       post.update!(raw: "this is an updated title")

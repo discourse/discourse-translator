@@ -5,7 +5,9 @@ RSpec.describe "Full page translation", type: :system do
   fab!(:site_local_user) { Fabricate(:user, locale: "en") }
   fab!(:author) { Fabricate(:user) }
 
-  fab!(:topic) { Fabricate(:topic, title: "Life strategies from The Art of War", user: author) }
+  fab!(:topic) do
+    Fabricate(:topic, title: "Life strategies from The Art of War", user: author)
+  end
   fab!(:post_1) do
     Fabricate(:post, topic: topic, raw: "The masterpiece isn’t just about military strategy")
   end

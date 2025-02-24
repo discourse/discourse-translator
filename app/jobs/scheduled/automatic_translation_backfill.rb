@@ -100,7 +100,7 @@ module Jobs
     def process_batch
       models_translated = [Post, Topic].size
       translations_per_model = [translations_per_run / models_translated, 1].max
-      topic_ids = fetch_untranslated_model_ids(Topic, "title", translations_per_model)
+      topic_ids = fetch_untranslated_model_ids(Topic, "fancy_title", translations_per_model)
       translations_per_model = translations_per_run - topic_ids.size
       post_ids = fetch_untranslated_model_ids(Post, "cooked", translations_per_model)
       return if topic_ids.empty? && post_ids.empty?

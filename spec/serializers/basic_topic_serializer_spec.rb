@@ -17,7 +17,8 @@ describe BasicTopicSerializer do
     let!(:jap_title) { "フス・ロ・ダ・ア" }
 
     before do
-      topic.title = original_title
+      topic.title = "x"
+      topic.fancy_title = original_title
       SiteSetting.experimental_topic_translation = true
       I18n.locale = "ja"
     end

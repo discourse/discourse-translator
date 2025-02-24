@@ -40,7 +40,7 @@ describe TopicViewSerializer do
     let!(:jap_title) { "フス・ロ・ダ・ア" }
 
     before do
-      topic.title = original_title
+      topic.fancy_title = original_title
       SiteSetting.experimental_topic_translation = true
       I18n.locale = "ja"
     end
@@ -76,7 +76,7 @@ describe TopicViewSerializer do
       expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
     end
 
-    it "returns translated title in fancy_title when translation exists for current locale" do
+    it "returns translated fancy title in fancy_title when translation exists for current locale" do
       topic.set_translation("ja", jap_title)
       expect(serialize_topic.fancy_title).to eq(jap_title)
     end
