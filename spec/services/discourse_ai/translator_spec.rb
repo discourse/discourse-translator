@@ -17,13 +17,15 @@ describe DiscourseAi::Translator do
     it "creates the correct prompt" do
       allow(DiscourseAi::Completions::Prompt).to receive(:new).with(
         <<~TEXT,
-          You are a highly skilled linguist and web programmer, with expertise in many languages, and very well versed in HTML.
+          You are a highly skilled linguist of many languages and have expert knowledge in HTML.
           Your task is to identify the language of the text I provide and accurately translate it into this language locale "de" while preserving the meaning, tone, and nuance of the original text.
-          The text will contain html tags, which must absolutely be preserved in the translation.
+          The text may or may not contain html tags. If they do, preserve them.
           Maintain proper grammar, spelling, and punctuation in the translated version.
-          Wrap the translated text in a <translation> tag.
+          You will find the text between <input></input> XML tags.
+          Include your translation between <output></output> XML tags.
+          Do not write explanations.
         TEXT
-        messages: [{ type: :user, content: text_to_translate, id: "user" }],
+        messages: [{ type: :user, content: "<input>cats are great</input>", id: "user" }],
       ).and_call_original
 
       described_class.new(text_to_translate, target_language).translate
@@ -48,7 +50,7 @@ describe DiscourseAi::Translator do
 
     it "returns the translation from the llm's response in the translation tag" do
       DiscourseAi::Completions::Llm.with_prepared_responses(
-        ["<translation>hur dur hur dur!</translation>"],
+        ["<output>hur dur hur dur!</output>"],
       ) do
         expect(
           described_class.new(text_to_translate, target_language).translate,
@@ -56,11 +58,9 @@ describe DiscourseAi::Translator do
       end
     end
 
-    it "returns the raw response if the translation tag is not present" do
+    it "returns the nothing if the translation tag is not present" do
       DiscourseAi::Completions::Llm.with_prepared_responses(["raw response."]) do
-        expect(
-          described_class.new(text_to_translate, target_language).translate,
-        ).to eq "raw response."
+        expect(described_class.new(text_to_translate, target_language).translate).to eq ""
       end
     end
   end
