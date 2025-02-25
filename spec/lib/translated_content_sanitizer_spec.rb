@@ -1,29 +1,12 @@
 # frozen_string_literal: true
 
 describe DiscourseTranslator::TranslatedContentSanitizer do
-  describe "Posts" do
-    it "sanitizes the content" do
-      sanitized =
-        DiscourseTranslator::TranslatedContentSanitizer.sanitize(
-          Post,
-          "<script>alert('test')</script><p> <h1>Testing</h1> This is a test post</p>",
-        )
-
-      expect(sanitized).to eq("<p> </p><h1>Testing</h1> This is a test post<p></p>")
-    end
-  end
-
-  describe "Topics" do
-    it "escapes and prettifies" do
-      sanitized =
-        DiscourseTranslator::TranslatedContentSanitizer.sanitize(
-          Topic,
-          "<script>alert('test')</script><p> <h1>Testing</h1> This is a test post</p>",
-        )
-
-      expect(sanitized).to eq(
-        "&lt;script&gt;alert(&lsquo;test&rsquo;)&lt;/script&gt;&lt;p&gt; &lt;h1&gt;Testing&lt;/h1&gt; This is a test post&lt;/p&gt;",
+  it "sanitizes the content" do
+    sanitized =
+      DiscourseTranslator::TranslatedContentSanitizer.sanitize(
+        "<script>alert('test')</script><p> <h1>Testing</h1> This is a test post</p>",
       )
-    end
+
+    expect(sanitized).to eq("<p> </p><h1>Testing</h1> This is a test post<p></p>")
   end
 end
