@@ -58,7 +58,7 @@ describe DiscourseAi::Translator do
       end
     end
 
-    it "returns the nothing if the translation tag is not present" do
+    it "returns an empty string if the translation tag is not present" do
       DiscourseAi::Completions::Llm.with_prepared_responses(["raw response."]) do
         expect(described_class.new(text_to_translate, target_language).translate).to eq ""
       end
