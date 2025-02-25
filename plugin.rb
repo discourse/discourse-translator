@@ -73,20 +73,25 @@ after_initialize do
   register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
     if !SiteSetting.experimental_topic_translation ||
          serializer.scope.request.params["show"] == "original" ||
-         serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
+         serializer.object.locale_matches?(I18n.locale)
       fancy_title
     else
-      serializer.object.translation_for(I18n.locale).presence
+      serializer.object.translation_for(I18n.locale).presence&.then { |t| Topic.fancy_title(t) }
     end
   end
 
   register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
     if !SiteSetting.experimental_topic_translation ||
          serializer.scope.request.params["show"] == "original" ||
-         serializer.object.topic.detected_locale == I18n.locale.to_s.gsub("_", "-")
+         serializer.object.topic.locale_matches?(I18n.locale)
       fancy_title
     else
-      serializer.object.topic.translation_for(I18n.locale).presence
+      serializer
+        .object
+        .topic
+        .translation_for(I18n.locale)
+        .presence
+        &.then { |t| Topic.fancy_title(t) }
     end
   end
 end

@@ -13,8 +13,8 @@ describe BasicTopicSerializer do
 
   describe "#fancy_title" do
     let!(:guardian) { Guardian.new(user) }
-    let!(:original_title) { "FUS ROH DAAHHH" }
-    let!(:jap_title) { "フス・ロ・ダ・ア" }
+    let!(:original_title) { "<h1>FUS ROH DAAHHH</h1>" }
+    let!(:jap_title) { "<h1>フス・ロ・ダ・ア</h1>" }
 
     before do
       topic.title = original_title
@@ -55,7 +55,7 @@ describe BasicTopicSerializer do
 
     it "returns translated title in fancy_title when translation exists for current locale" do
       topic.set_translation("ja", jap_title)
-      expect(serialize_topic.fancy_title).to eq(jap_title)
+      expect(serialize_topic.fancy_title).to eq("&lt;h1&gt;フス・ロ・ダ・ア&lt;/h1&gt;")
     end
   end
 end
