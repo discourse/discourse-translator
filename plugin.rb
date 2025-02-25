@@ -76,7 +76,7 @@ after_initialize do
          serializer.object.locale_matches?(I18n.locale)
       fancy_title
     else
-      serializer.object.translation_for(I18n.locale).presence&.then { |t| (t) }
+      serializer.object.translation_for(I18n.locale).presence&.then { |t| Topic.fancy_title(t) }
     end
   end
 
