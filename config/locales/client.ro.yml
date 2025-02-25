@@ -14,7 +14,5 @@ ro:
     translator:
       view_translation: "Vezi traducere"
       hide_translation: "Ascunde traducere"
-      content_not_translated: "Conținut netradus. Dă clic pentru a traduce"
-      content_translated: "Conținutul este tradus. Clic pentru a vedea originalul"
       translated_from: "Tradus din %{language} cu %{translator}"
       translating: "Se traduce"

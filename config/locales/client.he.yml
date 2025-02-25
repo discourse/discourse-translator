@@ -14,7 +14,7 @@ he:
     translator:
       view_translation: "הצגת התרגום"
       hide_translation: "הסתרת התרגום"
-      content_not_translated: "התוכן לא מתורגם. לחיצה תתרגם אותו"
-      content_translated: "התוכן מתורגם. לחיצה תציג את המקור"
+      content_not_translated: "העמוד לא מתורגם. לחיצה תתרגם אותו"
+      content_translated: "העמוד תורגם אוטומטית. לחיצה תציג את המקור"
       translated_from: "תורגם מ%{language} ע״י %{translator}"
       translating: "תרגום"
