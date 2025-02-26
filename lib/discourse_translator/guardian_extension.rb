@@ -21,13 +21,11 @@ module DiscourseTranslator::GuardianExtension
 
   def can_translate?(post)
     return false if !user_group_allow_translate?
+    return false if post.locale_matches?(I18n.locale)
 
     if SiteSetting.experimental_topic_translation
-      return false if post.locale_matches?(I18n.locale)
-      return false if post.translation_for(I18n.locale).present?
-      true
+      post.translation_for(I18n.locale).nil?
     else
-      return false if post.locale_matches?(I18n.locale)
       poster_group_allow_translate?(post)
     end
   end
