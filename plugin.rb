@@ -32,66 +32,12 @@ after_initialize do
     TopicViewSerializer.prepend(DiscourseTranslator::TopicViewSerializerExtension)
   end
 
-  on(:post_process_cooked) do |_, post|
-    if Guardian.new.can_detect_language?(post) && post.user_id > 0
-      Discourse.redis.sadd?(DiscourseTranslator::LANG_DETECT_NEEDED, post.id)
-    end
-  end
-
-  on(:post_process_cooked) do |_, post|
-    if SiteSetting.automatic_translation_target_languages.present? && post.user_id > 0
-      Jobs.enqueue(:translate_translatable, type: "Post", translatable_id: post.id)
-    end
-  end
-
-  on(:topic_created) do |topic|
-    if SiteSetting.automatic_translation_target_languages.present? && topic.user_id > 0
-      Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
-    end
-  end
-
-  on(:topic_edited) do |topic|
-    if SiteSetting.automatic_translation_target_languages.present? && topic.user_id > 0
-      Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
-    end
-  end
-
   add_to_serializer :post, :can_translate do
     scope.can_translate?(object)
   end
 
-  register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
-    if !SiteSetting.experimental_topic_translation ||
-         serializer.scope&.request&.params&.[]("show") == "original" ||
-         serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
-      cooked
-    else
-      serializer.object.translation_for(I18n.locale).presence
-    end
-  end
+  DiscourseTranslator::DualTextTranslation.new.inject(self)
+  DiscourseTranslator::InlineTranslation.new.inject(self)
 
-  register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
-    if !SiteSetting.experimental_topic_translation ||
-         serializer.scope&.request&.params&.[]("show") == "original" ||
-         serializer.object.locale_matches?(I18n.locale)
-      fancy_title
-    else
-      serializer.object.translation_for(I18n.locale).presence&.then { |t| Topic.fancy_title(t) }
-    end
-  end
-
-  register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
-    if !SiteSetting.experimental_topic_translation ||
-         serializer.scope&.request&.params&.[]("show") == "original" ||
-         serializer.object.topic.locale_matches?(I18n.locale)
-      fancy_title
-    else
-      serializer
-        .object
-        .topic
-        .translation_for(I18n.locale)
-        .presence
-        &.then { |t| Topic.fancy_title(t) }
-    end
-  end
+  DiscourseTranslator::AutomaticTranslations.new.inject(self)
 end
