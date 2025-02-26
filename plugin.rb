@@ -62,7 +62,7 @@ after_initialize do
 
   register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
     if !SiteSetting.experimental_topic_translation ||
-         serializer.scope.request.params["show"] == "original" ||
+         serializer.scope&.request&.params["show"] == "original" ||
          serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
       cooked
     else
@@ -72,7 +72,7 @@ after_initialize do
 
   register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
     if !SiteSetting.experimental_topic_translation ||
-         serializer.scope.request.params["show"] == "original" ||
+         serializer.scope&.request&.params["show"] == "original" ||
          serializer.object.locale_matches?(I18n.locale)
       fancy_title
     else
@@ -82,7 +82,7 @@ after_initialize do
 
   register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
     if !SiteSetting.experimental_topic_translation ||
-         serializer.scope.request.params["show"] == "original" ||
+         serializer.scope&.request&.params["show"] == "original" ||
          serializer.object.topic.locale_matches?(I18n.locale)
       fancy_title
     else
