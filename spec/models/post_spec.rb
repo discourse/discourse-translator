@@ -73,23 +73,19 @@ RSpec.describe Post do
     fab!(:topic)
     fab!(:user) { Fabricate(:user, groups: [group]) }
 
-    before { Jobs.run_immediately! }
-
     it "queues the post for language detection when user and posts are in the right group" do
       SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
-      post =
-        PostCreator.new(
-          user,
-          {
-            title: "a topic about cats",
-            raw: "tomtom is a cat",
-            category: Fabricate(:category).id,
-          },
-        ).create
 
-      expect(
-        Discourse.redis.sismember(DiscourseTranslator::LANG_DETECT_NEEDED, post.id),
-      ).to be_truthy
+      post = Fabricate(:post, user: user)
+      CookedPostProcessor.new(post).post_process
+
+      expect_job_enqueued(
+        job: :detect_translatable_language,
+        args: {
+          type: "Post",
+          translatable_id: post.id,
+        },
+      )
     end
 
     it "does not queue bot posts for language detection" do
