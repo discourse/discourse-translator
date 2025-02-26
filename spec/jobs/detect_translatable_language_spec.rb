@@ -18,6 +18,14 @@ describe Jobs::DetectTranslatableLanguage do
     Aws::Translate::Client.stubs(:new).returns(client)
   end
 
+  it "does nothing when type is not post or topic" do
+    expect { job.execute(type: "X", translatable_id: 1) }.not_to raise_error
+  end
+
+  it "does nothing when id is not int" do
+    expect { job.execute(type: "Post", translatable_id: "A") }.not_to raise_error
+  end
+
   it "updates detected locale" do
     job.execute(type: "Post", translatable_id: post.id)
     job.execute(type: "Topic", translatable_id: topic.id)
