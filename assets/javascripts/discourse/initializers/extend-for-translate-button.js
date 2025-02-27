@@ -31,9 +31,7 @@ function initializeTranslation(api) {
     api.renderInOutlet("topic-navigation", ShowOriginalContent);
   }
 
-  if (!siteSettings.experimental_topic_translation) {
-    customizePostMenu(api);
-  }
+  customizePostMenu(api);
 }
 
 function customizePostMenu(api, container) {
