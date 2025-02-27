@@ -70,13 +70,20 @@ RSpec.describe Post do
 
   describe "queueing post for language detection" do
     fab!(:group)
-    fab!(:topic)
     fab!(:user) { Fabricate(:user, groups: [group]) }
 
     it "queues the post for language detection when user and posts are in the right group" do
       SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
 
-      post = Fabricate(:post, user: user)
+      post =
+        PostCreator.new(
+          user,
+          {
+            title: "a topic about cats",
+            raw: "tomtom is a cat",
+            category: Fabricate(:category).id,
+          },
+        ).create
       CookedPostProcessor.new(post).post_process
 
       expect_job_enqueued(
@@ -84,6 +91,13 @@ RSpec.describe Post do
         args: {
           type: "Post",
           translatable_id: post.id,
+        },
+      )
+      expect_job_enqueued(
+        job: :detect_translatable_language,
+        args: {
+          type: "Topic",
+          translatable_id: post.topic_id,
         },
       )
     end

@@ -15,7 +15,8 @@ module DiscourseTranslator
       end
 
       plugin.on(:topic_created) do |topic|
-        if SiteSetting.automatic_translation_target_languages.blank? && topic.user_id > 0
+        if SiteSetting.automatic_translation_target_languages.blank? &&
+             Guardian.new.can_detect_language?(topic.first_post) && topic.user_id > 0
           Jobs.enqueue(:detect_translatable_language, type: "Topic", translatable_id: topic.id)
         end
       end

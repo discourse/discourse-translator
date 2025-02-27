@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 module DiscourseTranslator::GuardianExtension
+  POST_DETECTION_BUFFER = 10.seconds
+
   def user_group_allow_translate?
     return false if !current_user
     current_user.in_any_groups?(SiteSetting.restrict_translation_by_group_map)
@@ -23,6 +25,10 @@ module DiscourseTranslator::GuardianExtension
     return false if post.user.bot?
     return false if !user_group_allow_translate?
     return false if post.locale_matches?(I18n.locale)
+
+    # we want to return false if the post is created within a short buffer ago,
+    # this prevents the 🌐from appearing and then disappearing if the lang is same as user's lang
+    return false if post.created_at > POST_DETECTION_BUFFER.ago && post.detected_locale.blank?
 
     if SiteSetting.experimental_topic_translation
       post.translation_for(I18n.locale).nil?
