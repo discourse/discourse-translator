@@ -16,10 +16,12 @@ discourse_translator:
     validator: "DiscourseTranslator::TranslatorSelectionValidator"
   automatic_translation_target_languages:
     default: ""
+    client: true
     type: list
     list_type: named
-    choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
     allow_any: false
+    choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
+    validator: "DiscourseTranslator::TranslatableLanguagesValidator"
   automatic_translation_backfill_maximum_translations_per_hour:
     default: 0
     client: false
