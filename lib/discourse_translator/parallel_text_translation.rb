@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module DiscourseTranslator
-  class DualTextTranslation
+  class ParallelTextTranslation
     def inject(plugin)
-      # in dual-text translations,
+      # in parallel text translations,
       # we don't want to send the post for detection if automatic translation already happens,
       # as automatic translations send content for language detection as a side effect of translating
 

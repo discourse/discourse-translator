@@ -32,7 +32,7 @@ module DiscourseTranslator
     private
 
     def self.required_settings_enabled
-      SiteSetting.translator_enabled && SiteSetting.translator == "DiscourseAi" &&
+      SiteSetting.translator_enabled && SiteSetting.translator_provider == "DiscourseAi" &&
         SiteSetting.discourse_ai_enabled && SiteSetting.ai_helper_enabled
     end
   end

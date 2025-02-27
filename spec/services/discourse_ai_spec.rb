@@ -11,7 +11,7 @@ describe DiscourseTranslator::DiscourseAi do
     end
     SiteSetting.ai_helper_enabled = true
     SiteSetting.translator_enabled = true
-    SiteSetting.translator = "DiscourseAi"
+    SiteSetting.translator_provider = "DiscourseAi"
   end
 
   describe ".language_supported?" do

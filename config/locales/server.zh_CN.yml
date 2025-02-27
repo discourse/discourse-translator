@@ -7,7 +7,7 @@
 zh_CN:
   site_settings:
     translator_enabled: "允许帖子内嵌翻译。"
-    translator: "翻译服务提供商。"
+    translator_provider: "翻译服务提供商。"
     translator_azure_subscription_key: "Azure 订阅密钥"
     translator_azure_region: "Azure 区域"
     translator_google_api_key: "Google API 密钥"

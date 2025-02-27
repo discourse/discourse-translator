@@ -7,7 +7,7 @@
 ru:
   site_settings:
     translator_enabled: "Разрешить встроенный перевод записей."
-    translator: "Поставщик услуг перевода."
+    translator_provider: "Поставщик услуг перевода."
     translator_azure_subscription_key: "Ключ подписки Azure"
     translator_azure_region: "Регион Azure"
     translator_google_api_key: "Ключ API Google"

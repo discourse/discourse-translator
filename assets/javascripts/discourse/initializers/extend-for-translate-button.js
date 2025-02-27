@@ -25,7 +25,7 @@ function initializeTranslation(api) {
   }
 
   if (
-    siteSettings.experimental_topic_translation &&
+    siteSettings.experimental_inline_translation &&
     (currentUser || siteSettings.experimental_anon_language_switcher)
   ) {
     api.renderInOutlet("topic-navigation", ShowOriginalContent);
@@ -83,7 +83,7 @@ function customizeWidgetPostMenu(api) {
     }
 
     const language = dec.attrs.detected_lang;
-    const translator = siteSettings.translator;
+    const translator = siteSettings.translator_provider;
 
     let titleElements = [];
 

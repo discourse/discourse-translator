@@ -30,7 +30,7 @@ module DiscourseTranslator::GuardianExtension
     # this prevents the 🌐from appearing and then disappearing if the lang is same as user's lang
     return false if post.created_at > POST_DETECTION_BUFFER.ago && post.detected_locale.blank?
 
-    if SiteSetting.experimental_topic_translation
+    if SiteSetting.experimental_inline_translation
       post.translation_for(I18n.locale).nil?
     else
       poster_group_allow_translate?(post)

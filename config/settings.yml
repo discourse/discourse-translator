@@ -2,7 +2,7 @@ discourse_translator:
   translator_enabled:
     default: false
     client: true
-  translator:
+  translator_provider:
     default: 'Microsoft'
     client: true
     type: enum
@@ -14,6 +14,16 @@ discourse_translator:
       - Yandex
       - LibreTranslate
     validator: "DiscourseTranslator::TranslatorSelectionValidator"
+  automatic_translation_target_languages:
+    default: ""
+    type: list
+    list_type: named
+    choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
+    allow_any: false
+  automatic_translation_backfill_maximum_translations_per_hour:
+    default: 0
+    client: false
+    hidden: true
   translator_azure_subscription_key:
     default: ''
   translator_azure_region:
@@ -106,16 +116,6 @@ discourse_translator:
     default: false
     client: true
     validator: "LanguageSwitcherSettingValidator"
-  experimental_topic_translation:
+  experimental_inline_translation:
     default: false
     client: true
-  automatic_translation_target_languages:
-    default: ""
-    type: list
-    list_type: named
-    choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
-    allow_any: false
-  automatic_translation_backfill_maximum_translations_per_hour:
-    default: 0
-    client: false
-    hidden: true

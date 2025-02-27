@@ -41,7 +41,7 @@ describe TopicViewSerializer do
 
     before do
       topic.title = original_title
-      SiteSetting.experimental_topic_translation = true
+      SiteSetting.experimental_inline_translation = true
       I18n.locale = "ja"
     end
 
@@ -52,8 +52,8 @@ describe TopicViewSerializer do
       TopicViewSerializer.new(TopicView.new(topic), scope: guardian)
     end
 
-    it "does not replace fancy_title with translation when experimental_topic_translation is disabled" do
-      SiteSetting.experimental_topic_translation = false
+    it "does not replace fancy_title with translation when experimental_inline_translation is disabled" do
+      SiteSetting.experimental_inline_translation = false
       topic.set_translation("ja", jap_title)
 
       expect(serialize_topic.fancy_title).to eq(topic.fancy_title)

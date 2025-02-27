@@ -7,7 +7,7 @@
 ar:
   site_settings:
     translator_enabled: "السماح بالترجمة المضمَّنة للمنشورات."
-    translator: "مقدِّم خدمة الترجمة."
+    translator_provider: "مقدِّم خدمة الترجمة."
     translator_azure_subscription_key: "مفتاح اشتراك Azure"
     translator_azure_region: "منطقة Azure"
     translator_google_api_key: "مفتاح واجهة برمجة تطبيقات Google"

@@ -11,7 +11,7 @@ module ::Jobs
       translatable = args[:type].constantize.find_by(id: args[:translatable_id])
       return if translatable.blank?
       begin
-        translator = "DiscourseTranslator::#{SiteSetting.translator}".constantize
+        translator = "DiscourseTranslator::#{SiteSetting.translator_provider}".constantize
         translator.detect(translatable)
       rescue ::DiscourseTranslator::ProblemCheckedTranslationError
         # problem-checked translation errors gracefully

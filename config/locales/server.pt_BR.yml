@@ -7,7 +7,7 @@
 pt_BR:
   site_settings:
     translator_enabled: "Permitir tradução embutida de postagens."
-    translator: "O provedor do serviço de tradução."
+    translator_provider: "O provedor do serviço de tradução."
     translator_azure_subscription_key: "Chave de Assinatura do Azure"
     translator_azure_region: "Região do Azure"
     translator_google_api_key: "Chave de API do Google"

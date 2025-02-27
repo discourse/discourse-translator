@@ -31,7 +31,7 @@ module("Unit | Service | translator", function (hooks) {
   test("translatePost - with experimental translation for first post", async function (assert) {
     const service = this.owner.lookup("service:translator");
 
-    service.siteSettings.experimental_topic_translation = true;
+    service.siteSettings.experimental_inline_translation = true;
 
     let headerUpdateCalled = false;
     let postStreamRefreshCalled = false;

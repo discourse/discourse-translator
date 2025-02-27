@@ -4,7 +4,7 @@ module DiscourseTranslator
   class InlineTranslation
     def inject(plugin)
       plugin.register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
-        if !SiteSetting.experimental_topic_translation ||
+        if !SiteSetting.experimental_inline_translation ||
              serializer.scope&.request&.params&.[]("show") == "original" ||
              serializer.object.detected_locale == I18n.locale.to_s.gsub("_", "-")
           cooked
@@ -14,7 +14,7 @@ module DiscourseTranslator
       end
 
       plugin.register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
-        if !SiteSetting.experimental_topic_translation ||
+        if !SiteSetting.experimental_inline_translation ||
              serializer.scope&.request&.params&.[]("show") == "original" ||
              serializer.object.locale_matches?(I18n.locale)
           fancy_title
@@ -24,7 +24,7 @@ module DiscourseTranslator
       end
 
       plugin.register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
-        if !SiteSetting.experimental_topic_translation ||
+        if !SiteSetting.experimental_inline_translation ||
              serializer.scope&.request&.params&.[]("show") == "original" ||
              serializer.object.topic.locale_matches?(I18n.locale)
           fancy_title

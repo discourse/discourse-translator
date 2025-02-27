@@ -7,7 +7,7 @@
 de:
   site_settings:
     translator_enabled: "Inline-Übersetzung von Beiträgen erlauben."
-    translator: "Der Anbieter des Übersetzungsdienstes."
+    translator_provider: "Der Anbieter des Übersetzungsdienstes."
     translator_azure_subscription_key: "Azure-Abonnementschlüssel"
     translator_azure_region: "Azure-Region"
     translator_google_api_key: "Google-API-Schlüssel"

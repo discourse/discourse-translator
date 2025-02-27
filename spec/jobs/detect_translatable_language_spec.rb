@@ -9,7 +9,7 @@ describe Jobs::DetectTranslatableLanguage do
 
   before do
     SiteSetting.translator_enabled = true
-    SiteSetting.translator = "Amazon"
+    SiteSetting.translator_provider = "Amazon"
     client = Aws::Translate::Client.new(stub_responses: true)
     client.stub_responses(
       :translate_text,

@@ -15,7 +15,7 @@ export default class TranslatorService extends Service {
     post.detectedLang = response.detected_lang;
     post.translatedText = response.translation;
     post.translatedTitle = response.title_translation;
-    if (this.siteSettings.experimental_topic_translation) {
+    if (this.siteSettings.experimental_inline_translation) {
       if (post.post_number === 1) {
         post.topic.set("fancy_title", response.title_translation);
         this.appEvents.trigger("header:update-topic", post.topic);
