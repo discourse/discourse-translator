@@ -12,6 +12,7 @@ RSpec.describe "Anonymous user language switcher", type: :system do
     SiteSetting.translator_enabled = true
     SiteSetting.allow_user_locale = true
     SiteSetting.set_locale_from_cookie = true
+    SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
     SiteSetting.automatic_translation_target_languages = "es|ja"
     SiteSetting.experimental_anon_language_switcher = true
     visit("/")

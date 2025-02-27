@@ -33,7 +33,6 @@ RSpec.describe "Full page translation", type: :system do
       SiteSetting.allow_user_locale = true
       SiteSetting.set_locale_from_cookie = true
       SiteSetting.set_locale_from_param = true
-      SiteSetting.experimental_anon_language_switcher = true
       SiteSetting.experimental_inline_translation = true
     end
 
