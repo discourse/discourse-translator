@@ -13,14 +13,17 @@ export default class LanguageSwitcher extends Component {
   @service router;
 
   get localeOptions() {
-    return JSON.parse(this.siteSettings.available_locales).map(
-      ({ name, value }) => {
+    const targetLanguages = (
+      this.siteSettings.automatic_translation_target_languages || ""
+    ).split("|");
+    return JSON.parse(this.siteSettings.available_locales)
+      .filter(({ value }) => targetLanguages.includes(value))
+      .map(({ name, value }) => {
         return {
           label: name,
           value,
         };
-      }
-    );
+      });
   }
 
   @action

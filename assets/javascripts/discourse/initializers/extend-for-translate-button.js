@@ -16,7 +16,11 @@ function initializeTranslation(api) {
 
   const currentUser = api.getCurrentUser();
 
-  if (!currentUser && siteSettings.experimental_anon_language_switcher) {
+  if (
+    !currentUser &&
+    siteSettings.experimental_anon_language_switcher &&
+    siteSettings.automatic_translation_target_languages
+  ) {
     api.headerIcons.add(
       "discourse-translator_language-switcher",
       LanguageSwitcher,
