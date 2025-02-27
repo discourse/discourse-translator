@@ -12,6 +12,6 @@ class LanguageSwitcherSettingValidator
   end
 
   def error_message
-    return I18n.t("site_settings.errors.experimental_anon_language_switcher_requirements")
+    I18n.t("site_settings.errors.experimental_anon_language_switcher_requirements")
   end
 end
