@@ -103,6 +103,11 @@ module Jobs
       topic_ids = fetch_untranslated_model_ids(Topic, "title", translations_per_model)
       translations_per_model = translations_per_run - topic_ids.size
       post_ids = fetch_untranslated_model_ids(Post, "cooked", translations_per_model)
+
+      DiscourseTranslator::VerboseLogger.log(
+        "Translating #{topic_ids.size} topics and #{post_ids.size} posts to #{backfill_locales.join(", ")}",
+      )
+
       return if topic_ids.empty? && post_ids.empty?
 
       translate_records(Topic, topic_ids)
