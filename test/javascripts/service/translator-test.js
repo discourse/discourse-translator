@@ -75,7 +75,7 @@ module("Unit | Service | translator", function (hooks) {
     assert.true(postStreamRefreshCalled);
     assert.strictEqual(titleSet, "Surprise!");
     assert.strictEqual(post.cooked, "I am a cat");
-    assert.strictEqual(post.can_translate, false);
+    assert.false(post.can_translate);
     assert.strictEqual(topic.fancy_title, "Surprise!");
   });
 
