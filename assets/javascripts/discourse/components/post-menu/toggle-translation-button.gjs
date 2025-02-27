@@ -12,6 +12,7 @@ export default class ToggleTranslationButton extends Component {
 
   @service modal;
   @service translator;
+  @service siteSettings;
 
   get isTranslating() {
     return this.args.post.isTranslating;
@@ -19,6 +20,10 @@ export default class ToggleTranslationButton extends Component {
 
   get isTranslated() {
     return this.args.post.isTranslated;
+  }
+
+  get showButton() {
+    return this.args.post.can_translate;
   }
 
   get title() {
@@ -63,17 +68,19 @@ export default class ToggleTranslationButton extends Component {
   }
 
   <template>
-    <DButton
-      class={{concatClass
-        "post-action-menu__translate"
-        (if this.isTranslated "translated")
-      }}
-      ...attributes
-      @action={{this.toggleTranslation}}
-      @disabled={{this.isTranslating}}
-      @icon="globe"
-      @label={{if @showLabel this.title}}
-      @title={{this.title}}
-    />
+    {{#if this.showButton}}
+      <DButton
+        class={{concatClass
+          "post-action-menu__translate"
+          (if this.isTranslated "translated")
+        }}
+        ...attributes
+        @action={{this.toggleTranslation}}
+        @disabled={{this.isTranslating}}
+        @icon="globe"
+        @label={{if @showLabel this.title}}
+        @title={{this.title}}
+      />
+    {{/if}}
   </template>
 }
