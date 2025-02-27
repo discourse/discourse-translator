@@ -119,3 +119,7 @@ discourse_translator:
   experimental_inline_translation:
     default: false
     client: true
+  discourse_translator_verbose_logs:
+    default: false
+    client: false
+    hidden: true
