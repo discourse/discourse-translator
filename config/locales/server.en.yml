@@ -1,6 +1,6 @@
 en:
   site_settings:
-    translator_enabled: "Allow inline translation of posts."
+    translator_enabled: "Enable the translator plugin."
     translator_provider: "The provider of the translation service."
     translator_azure_subscription_key: "Azure Subscription Key"
     translator_azure_region: "Azure Region"
@@ -17,10 +17,10 @@ en:
     translator_azure_custom_subdomain: "Required if using a Virtual Network or Firewall for Azure Cognitive Services. Note: Only enter the custom subdomain not the full custom endpoint."
     restrict_translation_by_group: "Only allowed groups can translate"
     restrict_translation_by_poster_group: "Only allow translation of posts made by users in allowed groups. If empty, allow translations of posts from all users."
-    experimental_anon_language_switcher: "Enable experimental language switcher for anonymous users. This will allow anonymous users to switch between translated versions of Discourse and user-contributed content in topics."
+    experimental_anon_language_switcher: "Enable experimental language switcher. This will allow site visitors who are not logged in to switch between translated versions of Discourse and user-contributed content in topics."
     errors:
-      set_locale_cookie_requirements: "The experimental language switcher for anonymous users requires the `set locale from cookie` site setting to be enabled."
       needs_nonzero_backfill: "Automatic language translation requires the 'automatic_translation_backfill_maximum_translations_per_hour' hidden setting to be a non-zero value. Please approach your site administrator to increase this limit."
+      experimental_anon_language_switcher_requirements: "The experimental language switcher requires the `set locale from cookie` site setting to be enabled, and the `automatic translation target languages` to have at least one language."
     experimental_inline_translation: "Enable experimental inline translation feature. This replaces existing parallel translation, allowing site visitors with a non-default locale to view content in their language."
     automatic_translation_target_languages: "The languages to automatically translate user content (posts, topics) to. If empty, no languages will be automatically translated."
   translator:

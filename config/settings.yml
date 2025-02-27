@@ -16,8 +16,8 @@ discourse_translator:
     validator: "DiscourseTranslator::TranslatorSelectionValidator"
   automatic_translation_target_languages:
     default: ""
-    client: true
     type: list
+    client: true
     list_type: named
     allow_any: false
     choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
