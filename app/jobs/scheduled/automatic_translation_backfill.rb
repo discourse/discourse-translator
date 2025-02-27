@@ -47,7 +47,7 @@ module Jobs
         AND m.deleted_at IS NULL
         AND m.#{content_column} != ''
         AND m.user_id > 0
-        ORDER BY m.id DESC
+        ORDER BY m.updated_at DESC
         LIMIT :limit
       SQL
     end

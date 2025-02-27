@@ -176,9 +176,17 @@ This is the scenario we are testing for:
       post_7.set_translation("ja", "こんにちは")
     end
 
-    it "returns correct post ids needing translation in descending id" do
+    it "returns correct post ids needing translation in descending updated_at" do
+      # based on the table above, we will return post_7, post_6, post_3, post_2, post_1
+      # but we will jumble its updated_at to test if it is sorted correctly
+      post_6.update!(updated_at: 1.day.ago)
+      post_3.update!(updated_at: 2.days.ago)
+      post_2.update!(updated_at: 3.days.ago)
+      post_1.update!(updated_at: 4.days.ago)
+      post_7.update!(updated_at: 5.days.ago)
+
       result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, %w[de es])
-      expect(result).to include(post_7.id, post_6.id, post_3.id, post_2.id, post_1.id)
+      expect(result).to include(post_6.id, post_3.id, post_2.id, post_1.id, post_7.id)
     end
 
     it "does not return posts that are deleted" do
