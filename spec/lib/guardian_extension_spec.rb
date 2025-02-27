@@ -133,6 +133,11 @@ describe DiscourseTranslator::GuardianExtension do
         I18n.locale = :pt
       end
 
+      it "cannot translate bot posts" do
+        post.update!(user: Discourse.system_user)
+        expect(Guardian.new.can_translate?(post)).to eq(false)
+      end
+
       describe "anon user" do
         before { SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}" }
 
