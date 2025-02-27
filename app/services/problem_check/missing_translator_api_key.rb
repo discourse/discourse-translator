@@ -16,14 +16,14 @@ class ProblemCheck::MissingTranslatorApiKey < ProblemCheck
 
   def translation_data
     {
-      provider: SiteSetting.translator,
+      provider: SiteSetting.translator_provider,
       key: I18n.t("site_settings.#{api_key_site_setting_name}"),
       key_name: api_key_site_setting_name,
     }
   end
 
   def api_key_site_setting_name
-    case SiteSetting.translator
+    case SiteSetting.translator_provider
     when "Google"
       "translator_google_api_key"
     when "Microsoft"

@@ -7,7 +7,7 @@
 fa_IR:
   site_settings:
     translator_enabled: "اجازه ترجمه درون خطی نوشته‌ها را بدهید."
-    translator: "ارائه دهنده خدمات ترجمه"
+    translator_provider: "ارائه دهنده خدمات ترجمه"
     translator_azure_subscription_key: "کلید اشتراک Azure"
     translator_azure_region: "منطقه Azure"
     translator_google_api_key: "کلید API گوگل"

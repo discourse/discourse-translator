@@ -142,10 +142,10 @@ describe DiscourseTranslator::GuardianExtension do
         before { SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}" }
 
         it "cannot translate" do
-          SiteSetting.experimental_topic_translation = true
+          SiteSetting.experimental_inline_translation = true
           expect(Guardian.new.can_translate?(post)).to eq(false)
 
-          SiteSetting.experimental_topic_translation = false
+          SiteSetting.experimental_inline_translation = false
           expect(Guardian.new.can_translate?(post)).to eq(false)
         end
       end
@@ -153,10 +153,10 @@ describe DiscourseTranslator::GuardianExtension do
       it "cannot translate when post detected locale matches i18n locale" do
         post.set_detected_locale("pt")
 
-        SiteSetting.experimental_topic_translation = true
+        SiteSetting.experimental_inline_translation = true
         expect(guardian.can_translate?(post)).to eq(false)
 
-        SiteSetting.experimental_topic_translation = false
+        SiteSetting.experimental_inline_translation = false
         expect(guardian.can_translate?(post)).to eq(false)
       end
 
@@ -176,8 +176,8 @@ describe DiscourseTranslator::GuardianExtension do
         expect(guardian.can_translate?(post)).to eq(false)
       end
 
-      describe "when experimental_topic_translation enabled" do
-        before { SiteSetting.experimental_topic_translation = true }
+      describe "when experimental_inline_translation enabled" do
+        before { SiteSetting.experimental_inline_translation = true }
 
         describe "logged in user" do
           it "cannot translate when user is not in restrict_translation_by_group" do
@@ -205,8 +205,8 @@ describe DiscourseTranslator::GuardianExtension do
         end
       end
 
-      describe "when experimental topic translation disabled" do
-        before { SiteSetting.experimental_topic_translation = false }
+      describe "when experimental inline translation disabled" do
+        before { SiteSetting.experimental_inline_translation = false }
 
         it "cannot translate when user is not in restrict_translation_by_group" do
           SiteSetting.restrict_translation_by_group = "#{group.id + 1}"

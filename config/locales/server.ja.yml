@@ -7,7 +7,7 @@
 ja:
   site_settings:
     translator_enabled: "投稿のインライン翻訳を許可する。"
-    translator: "翻訳サービスのプロバイダー。"
+    translator_provider: "翻訳サービスのプロバイダー。"
     translator_azure_subscription_key: "Azure サブスクリプションキー"
     translator_azure_region: "Azure リージョン"
     translator_google_api_key: "Google API キー"

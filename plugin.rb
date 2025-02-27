@@ -36,7 +36,7 @@ after_initialize do
     scope.can_translate?(object)
   end
 
-  DiscourseTranslator::DualTextTranslation.new.inject(self)
+  DiscourseTranslator::ParallelTextTranslation.new.inject(self)
   DiscourseTranslator::InlineTranslation.new.inject(self)
 
   DiscourseTranslator::AutomaticTranslations.new.inject(self)

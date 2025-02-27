@@ -7,7 +7,7 @@
 ro:
   site_settings:
     translator_enabled: "Permite traducerea în linie a articolelor."
-    translator: "Furnizorul serviciului de traducere."
+    translator_provider: "Furnizorul serviciului de traducere."
     translator_azure_subscription_key: "Cheie de abonament Azure"
     translator_azure_region: "Regiune Azure"
     translator_google_api_key: "Cheie API Google"
@@ -24,10 +24,9 @@ ro:
     restrict_translation_by_group: "Doar grupurile permise pot traduce"
     restrict_translation_by_poster_group: "Permite traducerea numai a articolelor făcute de utilizatorii din grupurile permise. Dacă este gol, permite traducerea articolelor de la toți utilizatorii."
     experimental_anon_language_switcher: "Activează comutatorul experimental de limbi pentru utilizatorii anonimi. Acest lucru va permite utilizatorilor anonimi să comute între versiunile traduse ale Discourse și conținutul la care au contribuit utilizatorii în subiecte."
-    translate_posts_to_languages: "Tradu postări în limbi"
     errors:
       set_locale_cookie_requirements: "Comutatorul experimental de limbă pentru utilizatori anonimi necesită activarea setării site-ului „Setează locală din cookie”."
-    experimental_topic_translation: "Activează funcționalitatea de traducere experimentală a subiectului. Aceasta înlocuiește traducerea curentă existentă a postării în-linie cu un buton care permite utilizatorilor să traducă întregul subiect."
+    experimental_inline_translation: "Activează funcționalitatea de traducere experimentală a subiectului. Aceasta înlocuiește traducerea curentă existentă a postării în-linie cu un buton care permite utilizatorilor să traducă întregul subiect."
   translator:
     failed: "Traducătorul nu este în măsură să traducă acest conținut (%{source_locale}) în limba implicită a acestui site (%{target_locale})."
     not_supported: "Această limbă nu este acceptată de traducător."

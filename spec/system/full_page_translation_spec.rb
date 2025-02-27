@@ -34,7 +34,7 @@ RSpec.describe "Full page translation", type: :system do
       SiteSetting.set_locale_from_cookie = true
       SiteSetting.set_locale_from_param = true
       SiteSetting.experimental_anon_language_switcher = true
-      SiteSetting.experimental_topic_translation = true
+      SiteSetting.experimental_inline_translation = true
     end
 
     it "shows the correct language based on the selected language and login status" do

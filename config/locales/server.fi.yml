@@ -7,7 +7,7 @@
 fi:
   site_settings:
     translator_enabled: "Salli viestien käännökset niiden yhteydessä."
-    translator: "Käännöspalveluntarjoaja."
+    translator_provider: "Käännöspalveluntarjoaja."
     translator_azure_subscription_key: "Azure Subscription Key -tilaustunniste"
     translator_azure_region: "Azure-alue"
     translator_google_api_key: "Googlen API-avain"

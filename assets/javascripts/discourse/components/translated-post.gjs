@@ -32,7 +32,7 @@ export default class TranslatedPost extends Component {
   }
 
   get showTranslation() {
-    return !this.siteSettings.experimental_topic_translation;
+    return !this.siteSettings.experimental_inline_translation;
   }
 
   <template>
@@ -53,7 +53,7 @@ export default class TranslatedPost extends Component {
             {{i18n
               "translator.translated_from"
               language=this.post.detectedLang
-              translator=this.siteSettings.translator
+              translator=this.siteSettings.translator_provider
             }}
           </div>
           <div class="cooked">

@@ -7,7 +7,7 @@
 hu:
   site_settings:
     translator_enabled: "Bejegyzések szövegközi fordításának engedélyezése."
-    translator: "A fordítási szolgáltatás szolgáltatója."
+    translator_provider: "A fordítási szolgáltatás szolgáltatója."
     translator_azure_subscription_key: "Azure előfizetési kulcs"
     translator_azure_region: "Azure régió"
     translator_google_api_key: "Google API kulcs"

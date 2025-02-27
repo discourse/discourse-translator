@@ -1,7 +1,7 @@
 en:
   site_settings:
     translator_enabled: "Allow inline translation of posts."
-    translator: "The provider of the translation service."
+    translator_provider: "The provider of the translation service."
     translator_azure_subscription_key: "Azure Subscription Key"
     translator_azure_region: "Azure Region"
     translator_google_api_key: "Google API Key"
@@ -18,10 +18,10 @@ en:
     restrict_translation_by_group: "Only allowed groups can translate"
     restrict_translation_by_poster_group: "Only allow translation of posts made by users in allowed groups. If empty, allow translations of posts from all users."
     experimental_anon_language_switcher: "Enable experimental language switcher for anonymous users. This will allow anonymous users to switch between translated versions of Discourse and user-contributed content in topics."
-    translate_posts_to_languages: "Translate posts to languages"
     errors:
       set_locale_cookie_requirements: "The experimental language switcher for anonymous users requires the `set locale from cookie` site setting to be enabled."
-    experimental_topic_translation: "Enable experimental topic translation feature. This replaces existing post in-line translation with a button that allows users to translate the entire topic."
+    experimental_inline_translation: "Enable experimental inline translation feature. This replaces existing parallel translation, allowing site visitors with a non-default locale to view content in their language."
+    automatic_translation_target_languages: "The languages to automatically translate user content (posts, topics) to. If empty, no languages will be automatically translated."
   translator:
     failed: "The translator is unable to translate this content (%{source_locale}) to the default language of this site (%{target_locale})."
     not_supported: "This language is not supported by the translator."

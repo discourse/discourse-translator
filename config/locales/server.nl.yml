@@ -7,7 +7,7 @@
 nl:
   site_settings:
     translator_enabled: "Sta inline vertaling van berichten toe."
-    translator: "De aanbieder van de vertaaldienst."
+    translator_provider: "De aanbieder van de vertaaldienst."
     translator_azure_subscription_key: "Azure-abonnementssleutel"
     translator_azure_region: "Azure-regio"
     translator_google_api_key: "Google API-sleutel"

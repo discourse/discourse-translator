@@ -17,8 +17,8 @@ module("Integration | Component | translated-post", function (hooks) {
       },
     });
 
-    this.siteSettings.experimental_topic_translation = false;
-    this.siteSettings.translator = "Google";
+    this.siteSettings.experimental_inline_translation = false;
+    this.siteSettings.translator_provider = "Google";
 
     await render(hbs`
       <TranslatedPost @outletArgs={{this.outletArgs}} />
@@ -30,7 +30,7 @@ module("Integration | Component | translated-post", function (hooks) {
     assert.dom(".cooked").hasText("こんにちは");
   });
 
-  test("hides translation when experimental_topic_translation is enabled", async function (assert) {
+  test("hides translation when experimental_inline_translation is enabled", async function (assert) {
     this.set("outletArgs", {
       post: {
         isTranslated: true,
@@ -39,7 +39,7 @@ module("Integration | Component | translated-post", function (hooks) {
       },
     });
 
-    this.siteSettings.experimental_topic_translation = true;
+    this.siteSettings.experimental_inline_translation = true;
 
     await render(hbs`
       <TranslatedPost @outletArgs={{this.outletArgs}} />

@@ -3,7 +3,7 @@
 describe Jobs::AutomaticTranslationBackfill do
   before do
     SiteSetting.translator_enabled = true
-    SiteSetting.translator = "Google"
+    SiteSetting.translator_provider = "Google"
     SiteSetting.translator_google_api_key = "api_key"
   end
 

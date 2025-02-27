@@ -7,7 +7,7 @@
 fr:
   site_settings:
     translator_enabled: "Autoriser la traduction en ligne des messages."
-    translator: "Le fournisseur du service de traduction."
+    translator_provider: "Le fournisseur du service de traduction."
     translator_azure_subscription_key: "Clé d'abonnement Azure"
     translator_azure_region: "Région Azure"
     translator_google_api_key: "Clé d'API Google"

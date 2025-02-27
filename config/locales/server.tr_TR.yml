@@ -7,7 +7,7 @@
 tr_TR:
   site_settings:
     translator_enabled: "Gönderilerin satır içi çevirisine izin verin."
-    translator: "Çeviri hizmetinin sağlayıcısı."
+    translator_provider: "Çeviri hizmetinin sağlayıcısı."
     translator_azure_subscription_key: "Azure Abonelik Anahtarı"
     translator_azure_region: "Azure Region"
     translator_google_api_key: "Google API Anahtarı"

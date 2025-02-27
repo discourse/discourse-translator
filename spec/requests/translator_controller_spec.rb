@@ -8,7 +8,7 @@ module DiscourseTranslator
 
     before do
       SiteSetting.translator_enabled = true
-      SiteSetting.translator = "Microsoft"
+      SiteSetting.translator_provider = "Microsoft"
       SiteSetting.restrict_translation_by_group = "#{Group.find_by(name: "trust_level_1").id}"
     end
 

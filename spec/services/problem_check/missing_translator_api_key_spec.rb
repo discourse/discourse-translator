@@ -8,7 +8,7 @@ RSpec.describe ProblemCheck::MissingTranslatorApiKey do
 
     shared_examples "missing key checker" do |provider, key|
       context "when translator is #{provider}" do
-        before { SiteSetting.translator = provider }
+        before { SiteSetting.translator_provider = provider }
 
         it "when #{provider} is not provided" do
           SiteSetting.set(key, "")

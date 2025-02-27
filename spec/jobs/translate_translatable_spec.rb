@@ -7,7 +7,7 @@ describe Jobs::TranslateTranslatable do
 
   before do
     SiteSetting.translator_enabled = true
-    SiteSetting.translator = "Google"
+    SiteSetting.translator_provider = "Google"
     SiteSetting.automatic_translation_target_languages = "es|fr"
     allow(DiscourseTranslator::Google).to receive(:translate)
   end

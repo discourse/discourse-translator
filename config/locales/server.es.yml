@@ -7,7 +7,7 @@
 es:
   site_settings:
     translator_enabled: "Permitir la traducción en línea de las publicaciones."
-    translator: "El proveedor del servicio de traducción."
+    translator_provider: "El proveedor del servicio de traducción."
     translator_azure_subscription_key: "Clave de suscripción de Azure"
     translator_azure_region: "Región de Azure"
     translator_google_api_key: "Clave API de Google"

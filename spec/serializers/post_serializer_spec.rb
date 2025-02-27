@@ -66,11 +66,11 @@ RSpec.describe PostSerializer do
 
     before do
       SiteSetting.translator_enabled = true
-      SiteSetting.experimental_topic_translation = true
+      SiteSetting.experimental_inline_translation = true
     end
 
-    it "does not return translated_cooked when experimental_topic_translation is disabled" do
-      SiteSetting.experimental_topic_translation = false
+    it "does not return translated_cooked when experimental_inline_translation is disabled" do
+      SiteSetting.experimental_inline_translation = false
       expect(serialize_post.cooked).to eq(post.cooked)
     end
 
