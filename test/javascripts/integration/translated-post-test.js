@@ -18,7 +18,7 @@ module("Integration | Component | translated-post", function (hooks) {
     });
 
     this.siteSettings.experimental_inline_translation = false;
-    this.siteSettings.translator = "Google";
+    this.siteSettings.translator_provider = "Google";
 
     await render(hbs`
       <TranslatedPost @outletArgs={{this.outletArgs}} />
