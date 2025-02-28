@@ -22,7 +22,7 @@ module DiscourseTranslator::GuardianExtension
   end
 
   def can_translate?(post)
-    return false if post.user.bot?
+    return false if post.user&.bot?
     return false if !user_group_allow_translate?
     return false if post.locale_matches?(I18n.locale)
 
