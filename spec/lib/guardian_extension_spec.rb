@@ -244,5 +244,11 @@ describe DiscourseTranslator::GuardianExtension do
         end
       end
     end
+
+    it "does not error out when post user is deleted" do
+      post.update(user: nil)
+
+      expect { guardian.can_translate?(post) }.not_to raise_error
+    end
   end
 end
