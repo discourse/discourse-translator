@@ -4,7 +4,7 @@ module DiscourseTranslator
   class VerboseLogger
     def self.log(message)
       if SiteSetting.discourse_translator_verbose_logs
-        Rails.logger.info("DiscourseTranslator: #{message}")
+        Rails.logger.warn("DiscourseTranslator: #{message}")
       end
     end
   end
