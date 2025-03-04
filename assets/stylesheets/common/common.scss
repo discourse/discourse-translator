@@ -7,10 +7,16 @@
   margin-bottom: 0.5em;
 }
 
-.topic-navigation.with-topic-progress
-  .discourse-translator_toggle-original
-  button {
+.topic-navigation.with-topic-progress .discourse-translator_toggle-original {
+}
+
+.topic-navigation.with-topic-progress .discourse-translator_toggle-original {
   height: 100%;
+  aspect-ratio: 1/1;
+  button {
+    height: 100%;
+    width: 100%;
+  }
 }
 
 .discourse-translator_toggle-original {
