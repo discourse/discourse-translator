@@ -30,7 +30,10 @@ module DiscourseTranslator
 
     def translation_for(locale)
       locale = locale.to_s.gsub("_", "-")
-      translations.find_by(locale: locale)&.translation
+      # this is a tricky perf balancing act when loading translations for a topic with many posts.
+      # the topic_view_serializer includes(:translations) for posts in the topic,
+      # the alternative is to do a find_by(locale: locale) which would result in a query per post.
+      translations.to_a.find { |t| t.locale == locale }&.translation
     end
 
     def detected_locale

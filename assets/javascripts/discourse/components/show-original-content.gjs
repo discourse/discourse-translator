@@ -6,6 +6,10 @@ import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
 
 export default class ShowOriginalContent extends Component {
+  static shouldRender(args) {
+    return args.topic.is_translated;
+  }
+
   @service router;
   @tracked isTranslated = true;
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Full page translation", type: :system do
+RSpec.describe "Inline translation", type: :system do
   fab!(:japanese_user) { Fabricate(:user, locale: "ja") }
   fab!(:site_local_user) { Fabricate(:user, locale: "en") }
   fab!(:author) { Fabricate(:user) }
@@ -51,6 +51,14 @@ RSpec.describe "Full page translation", type: :system do
       visit("/")
       visit("/t/#{topic.id}")
       expect(topic_page.has_topic_title?("孫子兵法からの人生戦略")).to eq(true)
+
+      page.find(".discourse-translator_toggle-original button").click
+      expect(page).to have_current_path(/.*show=original.*/)
+
+      expect(topic_page.has_topic_title?("Life strategies from The Art of War")).to eq(true)
+      expect(find(topic_page.post_by_number_selector(1))).to have_content(
+        "The masterpiece isn’t just about military strategy",
+      )
     end
   end
 end

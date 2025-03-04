@@ -37,6 +37,18 @@ module DiscourseTranslator
             &.then { |t| Topic.fancy_title(t) }
         end
       end
+
+      plugin.add_to_serializer(
+        :basic_post,
+        :is_translated,
+        include_condition: -> { SiteSetting.experimental_inline_translation },
+      ) { object.translation_for(I18n.locale).present? }
+
+      plugin.add_to_serializer(
+        :topic_view,
+        :is_translated,
+        include_condition: -> { SiteSetting.experimental_inline_translation },
+      ) { object.topic.translations.present? || object.posts.any? { |p| p.translations.present? } }
     end
   end
 end
