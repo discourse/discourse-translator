@@ -1,12 +1,5 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 sv:
   site_settings:
-    translator_enabled: "Tillåt inbäddad översättning av inlägg."
     translator_provider: "Leverantören av översättningstjänsten."
     translator_azure_subscription_key: "Azure -prenumerationsnyckel"
     translator_azure_region: "Azure-region"

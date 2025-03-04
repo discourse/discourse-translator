@@ -1,12 +1,5 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 nl:
   site_settings:
-    translator_enabled: "Sta inline vertaling van berichten toe."
     translator_provider: "De aanbieder van de vertaaldienst."
     translator_azure_subscription_key: "Azure-abonnementssleutel"
     translator_azure_region: "Azure-regio"
@@ -23,9 +16,6 @@ nl:
     translator_azure_custom_subdomain: "Vereist bij gebruik van een virtueel netwerk of firewall voor Azure Cognitive Services. Opmerking: voer alleen het aangepaste subdomein in, niet het volledige aangepaste eindpunt."
     restrict_translation_by_group: "Alleen toegestane groepen kunnen vertalen"
     restrict_translation_by_poster_group: "Sta alleen vertalingen toe van berichten gemaakt door gebruikers in toegestane groepen. Als dit leeg is, worden vertalingen van berichten van alle gebruikers toegestaan."
-    experimental_anon_language_switcher: "Schakel de experimentele taalswitcher in voor anonieme gebruikers. Hiermee kunnen anonieme gebruikers schakelen tussen vertaalde versies van Discourse en door gebruikers bijgedragen content in topics."
-    errors:
-      set_locale_cookie_requirements: "De experimentele taalswitcher voor anonieme gebruikers vereist dat de site-instelling 'set locale from cookie' is ingeschakeld."
   translator:
     failed: "De vertaler kan deze inhoud (%{source_locale}) niet vertalen naar de standaardtaal van deze site (%{target_locale})."
     not_supported: "Deze taal wordt niet ondersteund door de vertaler."

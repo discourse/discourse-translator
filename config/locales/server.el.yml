@@ -1,12 +1,5 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 el:
   site_settings:
-    translator_enabled: "Αποδοχή ενσωματωμένης μετάφρασης των αναρτήσεων."
     translator_provider: "Ο πάροχος της μεταφραστικής υπηρεσίας."
     translator_azure_subscription_key: "Κλειδί Συνδρομής Azure"
     translator_azure_region: "Περιοχή Azure"

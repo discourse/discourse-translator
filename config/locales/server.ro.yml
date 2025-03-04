@@ -1,12 +1,6 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 ro:
   site_settings:
-    translator_enabled: "Permite traducerea în linie a articolelor."
+    translator_enabled: "Activează modulul pentru traduceri."
     translator_provider: "Furnizorul serviciului de traducere."
     translator_azure_subscription_key: "Cheie de abonament Azure"
     translator_azure_region: "Regiune Azure"
@@ -23,10 +17,10 @@ ro:
     translator_azure_custom_subdomain: "Necesar dacă utilizezi o rețea virtuală sau un firewall pentru Azure Cognitive Services. Notă: introdu numai subdomeniul personalizat, nu punctul-final personalizat complet."
     restrict_translation_by_group: "Doar grupurile permise pot traduce"
     restrict_translation_by_poster_group: "Permite traducerea numai a articolelor făcute de utilizatorii din grupurile permise. Dacă este gol, permite traducerea articolelor de la toți utilizatorii."
-    experimental_anon_language_switcher: "Activează comutatorul experimental de limbi pentru utilizatorii anonimi. Acest lucru va permite utilizatorilor anonimi să comute între versiunile traduse ale Discourse și conținutul la care au contribuit utilizatorii în subiecte."
     errors:
-      set_locale_cookie_requirements: "Comutatorul experimental de limbă pentru utilizatori anonimi necesită activarea setării site-ului „Setează locală din cookie”."
-    experimental_inline_translation: "Activează funcționalitatea de traducere experimentală a subiectului. Aceasta înlocuiește traducerea curentă existentă a postării în-linie cu un buton care permite utilizatorilor să traducă întregul subiect."
+      needs_nonzero_backfill: "Traducerea automată a limbii necesită ca setarea ascunsă „automatic_translation_backfill_maximum_translations_per_hour” să aibă o valoare diferită de zero. Te rugăm să te adresezi administratorului site-ului tău pentru a crește această limită."
+    experimental_inline_translation: "Activează funcția experimentală de traducere în-linie. Aceasta înlocuiește traducerea paralelă existentă, permițând vizitatorilor site-ului cu o locală care nu este implicită să vadă conținutul în limba lor."
+    automatic_translation_target_languages: "Limbile pentru a traduce automat conținutul utilizatorului (postări, subiecte). Dacă este gol, nicio limbă nu va fi tradusă automat."
   translator:
     failed: "Traducătorul nu este în măsură să traducă acest conținut (%{source_locale}) în limba implicită a acestui site (%{target_locale})."
     not_supported: "Această limbă nu este acceptată de traducător."

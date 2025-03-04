@@ -1,12 +1,5 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 ar:
   site_settings:
-    translator_enabled: "السماح بالترجمة المضمَّنة للمنشورات."
     translator_provider: "مقدِّم خدمة الترجمة."
     translator_azure_subscription_key: "مفتاح اشتراك Azure"
     translator_azure_region: "منطقة Azure"
@@ -23,9 +16,6 @@ ar:
     translator_azure_custom_subdomain: "مطلوب في حال استخدام شبكة افتراضية أو جدار حماية لـ Azure Cognitive Services. ملاحظة: أدخل النطاق الفرعي المخصَّص فقط وليس نقطة النهاية المخصَّصة بالكامل."
     restrict_translation_by_group: "لا يمكن الترجمة إلا للمجموعات المُدرَجة في قائمة السماح"
     restrict_translation_by_poster_group: "السماح بترجمة المنشورات التي يُنشئها المستخدمون في المجموعات المسموح بها فقط. إذا كانت فارغة، فاسمح بترجمة المنشورات من جميع المستخدمين."
-    experimental_anon_language_switcher: "يفعِّل أداة تبديل اللغة التجريبية للمستخدمين المجهولين. سيسمح لذلك للمستخدمين المجهولين بالتبديل بين الإصدارات المُترجَمة من Discourse والمحتوى الذي ساهم به المستخدمون في الموضوعات."
-    errors:
-      set_locale_cookie_requirements: "تتطلَّب أداة تبديل اللغة التجريبية للمستخدمين المجهولين تفعيل إعداد الموقع `set locale from cookie`."
   translator:
     failed: "يتعذَّر على المترجم ترجمة هذا المحتوى (%{source_locale}) إلى اللغة الافتراضية لهذا الموقع (%{target_locale})."
     not_supported: "لا يدعم المترجم هذه اللغة."

@@ -1,12 +1,5 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 fi:
   site_settings:
-    translator_enabled: "Salli viestien käännökset niiden yhteydessä."
     translator_provider: "Käännöspalveluntarjoaja."
     translator_azure_subscription_key: "Azure Subscription Key -tilaustunniste"
     translator_azure_region: "Azure-alue"
@@ -23,9 +16,6 @@ fi:
     translator_azure_custom_subdomain: "Vaaditaan, jos käytät Azure Cognitive Services -palveluiden virtuaaliverkkoa tai palomuuria. Huomioi: syötä vain oma aliverkkotunnuksesi päätelaitteesi koko osoitteen sijaan."
     restrict_translation_by_group: "Vain sallitut ryhmät voivat kääntää"
     restrict_translation_by_poster_group: "Salli vain sallittujen ryhmien käyttäjien tekemien viestien kääntäminen. Jos tämä on tyhjä, salli kaikkien käyttäjien viestien käännökset."
-    experimental_anon_language_switcher: "Ota käyttöön kokeellinen kielen vaihtaja anonyymeille käyttäjille. Tällöin anonyymit käyttäjät voivat vaihtaa Discoursen ja käyttäjien lisäämän sisällön käännettyjen versioiden välillä."
-    errors:
-      set_locale_cookie_requirements: "Anonyymien käyttäjien kokeellinen kielen vaihtaja edellyttää, että \"set locale from cookie\" -sivustoasetus on käytössä."
   translator:
     failed: "Kääntäjä ei pysty kääntämään tätä sisältöä (%{source_locale}) tämän sivuston oletuskielelle (%{target_locale})."
     not_supported: "Kääntäjä ei tue tätä kieltä."

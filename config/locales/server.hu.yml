@@ -1,12 +1,5 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 hu:
   site_settings:
-    translator_enabled: "Bejegyzések szövegközi fordításának engedélyezése."
     translator_provider: "A fordítási szolgáltatás szolgáltatója."
     translator_azure_subscription_key: "Azure előfizetési kulcs"
     translator_azure_region: "Azure régió"

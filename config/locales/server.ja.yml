@@ -1,12 +1,5 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 ja:
   site_settings:
-    translator_enabled: "投稿のインライン翻訳を許可する。"
     translator_provider: "翻訳サービスのプロバイダー。"
     translator_azure_subscription_key: "Azure サブスクリプションキー"
     translator_azure_region: "Azure リージョン"
@@ -23,9 +16,6 @@ ja:
     translator_azure_custom_subdomain: "Azure Cognitive Services に仮想ネットワークまたはファイアウォールを使用している場合は必須です。注意: 完全なカスタムエンドポイントではなく、カスタムサブドメインのみを入力します。"
     restrict_translation_by_group: "許可されたグループのみが翻訳できます"
     restrict_translation_by_poster_group: "許可されたグループのユーザーによる投稿の翻訳のみを許可します。空白の場合、すべてのユーザーによる投稿の翻訳を許可します。"
-    experimental_anon_language_switcher: "匿名ユーザー向けの実験的な言語スイッチャーを有効にします。これにより、匿名ユーザーはトピック内で Discourse の翻訳バージョンとユーザー投稿のコンテンツ間を切り替えられるようになります。"
-    errors:
-      set_locale_cookie_requirements: "匿名ユーザー向けの実験的言語スイッチャーを使用するには、`set locale from cookie` サイト設定が有効になっている必要があります。"
   translator:
     failed: "翻訳ツールはこのコンテンツ (%{source_locale}) をこのサイトのデフォルトの言語 (%{target_locale}) に翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
