@@ -14,5 +14,7 @@ de:
     translator:
       view_translation: "Übersetzung anzeigen"
       hide_translation: "Übersetzung ausblenden"
+      content_not_translated: "Seite nicht übersetzt. Klicke zum Übersetzen"
+      content_translated: "Die Seite wurde maschinell übersetzt. Klicke, um das Original zu sehen"
       translated_from: "Übersetzt aus %{language} von %{translator}"
       translating: "Wird übersetzt"

@@ -6,7 +6,6 @@
 
 it:
   site_settings:
-    translator_enabled: "Consenti la traduzione in linea dei messaggi."
     translator_provider: "Il fornitore del servizio di traduzione."
     translator_azure_subscription_key: "Chiave di sottoscrizione Azure"
     translator_azure_region: "Regione Azure"
@@ -23,9 +22,6 @@ it:
     translator_azure_custom_subdomain: "Obbligatorio se si usa una rete virtuale o un firewall per i servizi cognitivi di Azure. Nota: inserisci solo il sottodominio personalizzato, non l'endpoint personalizzato completo."
     restrict_translation_by_group: "Solo i gruppi autorizzati possono tradurre"
     restrict_translation_by_poster_group: "Consenti solo la traduzione dei messaggi scritti dagli utenti nei gruppi consentiti. Se vuoto, consente le traduzioni dei messaggi di tutti gli utenti."
-    experimental_anon_language_switcher: "Abilita il selettore di lingua sperimentale per utenti anonimi. Ciò consentirà agli utenti anonimi di passare tra le versioni tradotte di Discourse e i contenuti forniti dagli utenti negli argomenti."
-    errors:
-      set_locale_cookie_requirements: "Per poter utilizzare il selettore di lingua sperimentale per utenti anonimi, è necessario che sia abilitata l'impostazione del sito `configura impostazioni locali dai cookie`."
   translator:
     failed: "Il traduttore non è in grado di tradurre questo contenuto (%{source_locale}) nella lingua predefinita di questo sito (%{target_locale})."
     not_supported: "Questa lingua non è supportata dal traduttore."

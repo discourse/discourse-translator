@@ -6,7 +6,6 @@
 
 el:
   site_settings:
-    translator_enabled: "Αποδοχή ενσωματωμένης μετάφρασης των αναρτήσεων."
     translator_provider: "Ο πάροχος της μεταφραστικής υπηρεσίας."
     translator_azure_subscription_key: "Κλειδί Συνδρομής Azure"
     translator_azure_region: "Περιοχή Azure"
