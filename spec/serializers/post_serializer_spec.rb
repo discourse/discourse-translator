@@ -78,6 +78,7 @@ RSpec.describe PostSerializer do
       SiteSetting.translator_enabled = true
       SiteSetting.experimental_inline_translation = true
       I18n.locale = "ja"
+      post.set_detected_locale("en")
       post.set_translation("ja", "こんにちは")
       serializer = PostSerializer.new(post, scope: Guardian.new)
 

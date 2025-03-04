@@ -45,27 +45,77 @@ describe TopicViewSerializer do
       expect(topic_view.posts.first.association(:content_locale)).to be_loaded
     end
 
-    it "preloads translations when experimental_inline_translation is enabled" do
-      SiteSetting.experimental_inline_translation = true
+    describe "preloading translations with SiteSetting.experimental_inline_translations" do
+      before do
+        SiteSetting.experimental_inline_translation = true
 
-      en_post.set_translation("es", "Hola")
-      es_post.set_translation("en", "Hello")
+        en_post.set_translation("es", "Hola")
+        es_post.set_translation("en", "Hello")
+      end
 
-      topic_view = TopicView.new(topic)
-      serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
+      it "does not preload translations when user locale matches site default locale" do
+        SiteSetting.default_locale = "en"
+        I18n.locale = "en"
 
-      topic_view.posts.reload
+        topic_view = TopicView.new(topic)
+        serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
 
-      queries =
-        track_sql_queries do
-          json = serializer.as_json
-          json[:post_stream][:posts].each { |p| p[:translations] }
-        end
+        topic_view.posts.reload
 
-      translation_queries =
-        queries.count { |q| q.include?("discourse_translator_post_translations") }
-      expect(translation_queries).to eq(1)
-      expect(topic_view.posts.first.association(:translations)).to be_loaded
+        queries =
+          track_sql_queries do
+            json = serializer.as_json
+            json[:post_stream][:posts].each { |p| p[:translations] }
+          end
+
+        expect(queries.count { |q| q.include?("discourse_translator_post_translations") }).to eq(3)
+      end
+
+      it "does not preload translations when locales are different and not in automatic_translation_target_languages" do
+        SiteSetting.default_locale = "en"
+        I18n.locale = "ja"
+        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_target_languages = "es"
+
+        topic_view = TopicView.new(topic)
+        serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
+
+        topic_view.posts.reload
+
+        queries =
+          track_sql_queries do
+            json = serializer.as_json
+            json[:post_stream][:posts].each { |p| p[:translations] }
+          end
+
+        translation_queries =
+          queries.count { |q| q.include?("discourse_translator_post_translations") }
+        expect(translation_queries).to eq(3)
+        expect(topic_view.posts.first.association(:translations)).to be_loaded
+      end
+
+      it "preloads translations when locales are different and in automatic_translation_target_languages" do
+        SiteSetting.default_locale = "en"
+        I18n.locale = "es"
+        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_target_languages = "es"
+
+        topic_view = TopicView.new(topic)
+        serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
+
+        topic_view.posts.reload
+
+        queries =
+          track_sql_queries do
+            json = serializer.as_json
+            json[:post_stream][:posts].each { |p| p[:translations] }
+          end
+
+        translation_queries =
+          queries.count { |q| q.include?("discourse_translator_post_translations") }
+        expect(translation_queries).to eq(1)
+        expect(topic_view.posts.first.association(:translations)).to be_loaded
+      end
     end
   end
 
