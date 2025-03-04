@@ -104,7 +104,7 @@ module DiscourseTranslator
             translate_uri,
             q: text_for_translation(translatable),
             source: detected_lang,
-            target: SUPPORTED_LANG_MAPPING[target_locale],
+            target: SUPPORTED_LANG_MAPPING[target_locale_sym],
             format: "html",
           )
         res["translatedText"]
