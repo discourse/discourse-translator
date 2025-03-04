@@ -6,7 +6,6 @@
 
 cs:
   site_settings:
-    translator_enabled: "Povolit vložený překlad příspěvků."
     translator_provider: "Poskytovatel překladatelské služby."
     translator_azure_subscription_key: "Klíč předplatného Azure"
     translator_azure_region: "Azure Region"

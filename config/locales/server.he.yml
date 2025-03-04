@@ -6,7 +6,6 @@
 
 he:
   site_settings:
-    translator_enabled: "לאפשר תרגום מוטבע של פוסטים."
     translator_provider: "ספק שירות התרגום."
     translator_azure_subscription_key: "מפתח מינוי ל־Azure"
     translator_azure_region: "אזור ב־Azure"
@@ -23,10 +22,6 @@ he:
     translator_azure_custom_subdomain: "נחוץ אם נעשה שימוש ברשת וירטואלית או בחומת אש לשירותי Azure Cognitive. לתשומת לבך: יש למלא רק את תת־שם התחום, לא את נקודת הגישה המותאמת אישית במלואה."
     restrict_translation_by_group: "רק קבוצות מורשות יכולות לתרגם"
     restrict_translation_by_poster_group: "לאפשר תרגום של פוסטים שנוצרו על ידי משתמשים בקבוצות מורשות בלבד. אם ריק, לאפשר תרגומים של פוסטים מכל המשתמשים."
-    experimental_anon_language_switcher: "הפעלת בורר שפות ניסיוני למשתמשים אלמוניים. כך יוכלו משתמשים אלמוניים להחליף בין הגרסה המתורגמת של Discourse לבין התוכן שתרמו המשתמשים לנושאים."
-    errors:
-      set_locale_cookie_requirements: "בורר השפה הניסיוני למשתמשים אלמוניים דורש שהגדרת האתר `set locale from cookie` (הגדרת השפה מעוגייה) תהיה פעילה."
-    experimental_inline_translation: "הפעלת יכולת תרגום נושאים ניסיונית. היא מחליפה את התרגום הפנימי של הפוסטים בכפתור שמאפשר למשתמשים לתרגם את הנושא כולו."
   translator:
     failed: "המתרגם לא מסוגל לתרגם את התוכן הזה (%{source_locale}) לשפת ברירת המחדל של האתר הזה (%{target_locale})."
     not_supported: "שפה זו אינה נתמכת על ידי המתרגם."

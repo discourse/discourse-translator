@@ -6,7 +6,6 @@
 
 pt_BR:
   site_settings:
-    translator_enabled: "Permitir tradução embutida de postagens."
     translator_provider: "O provedor do serviço de tradução."
     translator_azure_subscription_key: "Chave de Assinatura do Azure"
     translator_azure_region: "Região do Azure"
@@ -23,9 +22,6 @@ pt_BR:
     translator_azure_custom_subdomain: "É necessário se estiver usando uma rede virtual ou firewall para o Azure Cognitive Services. Observação: insira apenas o subdomínio personalizado, não o endpoint completo."
     restrict_translation_by_group: "Apenas os grupos permitidos podem traduzir"
     restrict_translation_by_poster_group: "Permita tradução de postagens realizadas por usuários(as) nos grupos permitidos. Se estiver vazio, permita traduções de postagens de todos(as) usuários(as)."
-    experimental_anon_language_switcher: "Ative o botão experimental de idioma para usuários(as) anônimos(as). Assim, os(as) usuários(as) anônimos(as) poderão alternar entre versões do Discourse traduzidas e conteúdo com contribuição de usuário(a) nos tópicos."
-    errors:
-      set_locale_cookie_requirements: "O botão experimental de idioma para usuários(as) anônimos(as) requer a ativação da configuração do site \"set locale from cookie\"."
   translator:
     failed: "O tradutor não conseguiu traduzir este conteúdo (%{source_locale}) para o idioma padrão deste site (%{target_locale})."
     not_supported: "Este idioma não é compatível com o(a) tradutor(a)."
