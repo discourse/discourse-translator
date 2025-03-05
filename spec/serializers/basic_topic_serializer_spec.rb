@@ -20,6 +20,9 @@ describe BasicTopicSerializer do
       topic.title = original_title
       SiteSetting.experimental_inline_translation = true
       I18n.locale = "ja"
+
+      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_target_languages = "ja"
     end
 
     def serialize_topic(guardian_user: user, params: {})
@@ -49,6 +52,14 @@ describe BasicTopicSerializer do
       I18n.locale = "ja"
       topic.set_detected_locale("ja")
       topic.set_translation("ja", jap_title)
+
+      expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
+    end
+
+    it "does not replace fancy_title when user's locale is not in target languages" do
+      I18n.locale = "es"
+      topic.set_detected_locale("en")
+      topic.set_translation("es", jap_title)
 
       expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
     end
