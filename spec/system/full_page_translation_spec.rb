@@ -34,6 +34,8 @@ RSpec.describe "Inline translation", type: :system do
       SiteSetting.set_locale_from_cookie = true
       SiteSetting.set_locale_from_param = true
       SiteSetting.experimental_inline_translation = true
+      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_target_languages = "ja"
     end
 
     it "shows the correct language based on the selected language and login status" do

@@ -74,9 +74,11 @@ RSpec.describe PostSerializer do
       expect(serializer.is_translated).to eq(false)
     end
 
-    it "returns true when there is a translation for the current locale" do
+    it "returns true when there is a translation for the user's locale in target languages" do
       SiteSetting.translator_enabled = true
       SiteSetting.experimental_inline_translation = true
+      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_target_languages = "ja"
       I18n.locale = "ja"
       post.set_detected_locale("en")
       post.set_translation("ja", "こんにちは")
@@ -85,9 +87,24 @@ RSpec.describe PostSerializer do
       expect(serializer.is_translated).to eq(true)
     end
 
-    it "returns false when there is no translation for the current locale" do
+    it "returns false when there is a translation for the user's locale not in target languages" do
       SiteSetting.translator_enabled = true
       SiteSetting.experimental_inline_translation = true
+      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_target_languages = "es"
+      I18n.locale = "ja"
+      post.set_detected_locale("en")
+      post.set_translation("ja", "こんにちは")
+      serializer = PostSerializer.new(post, scope: Guardian.new)
+
+      expect(serializer.is_translated).to eq(false)
+    end
+
+    it "returns false when there is no translation for the current locale in target languages" do
+      SiteSetting.translator_enabled = true
+      SiteSetting.experimental_inline_translation = true
+      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_target_languages = "ja"
       I18n.locale = "ja"
       post.set_translation("es", "Hola")
       serializer = PostSerializer.new(post, scope: Guardian.new)
@@ -116,6 +133,8 @@ RSpec.describe PostSerializer do
 
     it "does not return translated_cooked when show=original param is present" do
       I18n.locale = "ja"
+      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_target_languages = "ja"
       post.set_translation("ja", "こんにちは")
 
       expect(serialize_post(params: { "show" => "original" }).cooked).to eq(post.cooked)
@@ -130,11 +149,17 @@ RSpec.describe PostSerializer do
       expect(serialize_post.cooked).to eq(post.cooked)
     end
 
-    it "returns translated content based on locale" do
-      I18n.locale = "ja"
+    it "returns translated content based on locale presence in target languages" do
+      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
       post.set_translation("ja", "こんにちは")
       post.set_translation("es", "Hola")
+      I18n.locale = "ja"
+
+      SiteSetting.automatic_translation_target_languages = "ja"
       expect(serialize_post.cooked).to eq("こんにちは")
+
+      SiteSetting.automatic_translation_target_languages = "es"
+      expect(serialize_post.cooked).to eq(post.cooked)
     end
 
     it "does not return translated_cooked when plugin is disabled" do

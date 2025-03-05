@@ -29,15 +29,13 @@ describe TopicViewSerializer do
       post
     end
 
-    it "preloads locale without N+1 queries" do
+    it "always preloads locale without N+1 queries" do
       topic_view = TopicView.new(topic)
       serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
 
-      # ensure translation data is included in the JSON
       json = {}
       queries = track_sql_queries { json = serializer.as_json }
-      posts_json = json[:post_stream][:posts]
-      expect(posts_json.map { |p| p[:can_translate] }).to eq([false, true, true])
+      expect(json[:post_stream][:posts].map { |p| p[:can_translate] }).to eq([false, true, true])
 
       translation_queries = queries.count { |q| q.include?("discourse_translator_post_locales") }
       expect(translation_queries).to eq(1) # would be 3 (posts) if not preloaded
@@ -45,161 +43,166 @@ describe TopicViewSerializer do
       expect(topic_view.posts.first.association(:content_locale)).to be_loaded
     end
 
-    describe "preloading translations with SiteSetting.experimental_inline_translations" do
+    it "never preloads translations if SiteSetting.experimental_inline_translations is false" do
+      SiteSetting.experimental_inline_translation = false
+
+      topic_view = TopicView.new(topic)
+      serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
+
+      queries = track_sql_queries { serializer.as_json }
+      translation_queries =
+        queries.count { |q| q.include?("discourse_translator_post_translations") }
+      expect(translation_queries).to eq(0)
+    end
+
+    describe "SiteSetting.experimental_inline_translations enabled with target language 'es'" do
       before do
         SiteSetting.experimental_inline_translation = true
 
+        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_target_languages = "es"
+
+        SiteSetting.default_locale = "en"
         en_post.set_translation("es", "Hola")
+        en_post.set_translation("ja", "こんにちは")
         es_post.set_translation("en", "Hello")
       end
 
-      it "does not preload translations when user locale matches site default locale" do
+      it "does not preload translations when user locale matches site default locale as we assume most posts are written in default locale" do
         SiteSetting.default_locale = "en"
         I18n.locale = "en"
 
         topic_view = TopicView.new(topic)
         serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
 
-        topic_view.posts.reload
-
-        queries =
-          track_sql_queries do
-            json = serializer.as_json
-            json[:post_stream][:posts].each { |p| p[:translations] }
-          end
-
-        expect(queries.count { |q| q.include?("discourse_translator_post_translations") }).to eq(3)
+        queries = track_sql_queries { serializer.as_json }
+        # has to manually load the es and ja post
+        expect(queries.count { |q| q.include?("discourse_translator_post_translations") }).to eq(2)
       end
 
-      it "does not preload translations when locales are different and not in automatic_translation_target_languages" do
+      it "does not preload translations when user locale is not site default and not in automatic_translation_target_languages" do
         SiteSetting.default_locale = "en"
-        I18n.locale = "ja"
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
-        SiteSetting.automatic_translation_target_languages = "es"
+        I18n.locale = "de"
 
         topic_view = TopicView.new(topic)
         serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
 
-        topic_view.posts.reload
+        queries = track_sql_queries { serializer.as_json }
 
-        queries =
-          track_sql_queries do
-            json = serializer.as_json
-            json[:post_stream][:posts].each { |p| p[:translations] }
-          end
-
-        translation_queries =
-          queries.count { |q| q.include?("discourse_translator_post_translations") }
-        expect(translation_queries).to eq(3)
-        expect(topic_view.posts.first.association(:translations)).to be_loaded
+        # english post is not loaded
+        expect(topic_view.posts.first.user_id).to eq en_post.user_id
+        expect(topic_view.posts.first.association(:translations)).not_to be_loaded
+        expect(queries.count { |q| q.include?("discourse_translator_post_translations") }).to eq(2)
       end
 
       it "preloads translations when locales are different and in automatic_translation_target_languages" do
         SiteSetting.default_locale = "en"
         I18n.locale = "es"
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
-        SiteSetting.automatic_translation_target_languages = "es"
 
         topic_view = TopicView.new(topic)
         serializer = TopicViewSerializer.new(topic_view, scope: Guardian.new(user), root: false)
 
         topic_view.posts.reload
 
-        queries =
-          track_sql_queries do
-            json = serializer.as_json
-            json[:post_stream][:posts].each { |p| p[:translations] }
-          end
+        queries = track_sql_queries { serializer.as_json }
 
-        translation_queries =
-          queries.count { |q| q.include?("discourse_translator_post_translations") }
-        expect(translation_queries).to eq(1)
+        expect(queries.count { |q| q.include?("discourse_translator_post_translations") }).to eq(1)
         expect(topic_view.posts.first.association(:translations)).to be_loaded
       end
     end
   end
 
-  describe "#fancy_title" do
-    fab!(:user) { Fabricate(:user, locale: "ja") }
+  describe "Inline translations" do
+    describe "#fancy_title" do
+      fab!(:user) { Fabricate(:user, locale: "ja") }
 
-    let!(:original_title) { "<h1>FUS ROH DAAHHH</h1>" }
-    let!(:jap_title) { "<h1>フス・ロ・ダ・ア</h1>" }
+      let!(:original_title) { "<h1>FUS ROH DAAHHH</h1>" }
+      let!(:jap_title) { "<h1>フス・ロ・ダ・ア</h1>" }
 
-    before do
-      topic.title = original_title
-      SiteSetting.experimental_inline_translation = true
-      I18n.locale = "ja"
+      before do
+        topic.title = original_title
+        SiteSetting.experimental_inline_translation = true
+        I18n.locale = "ja"
+      end
+
+      def serialize_topic(guardian_user: user, params: {})
+        env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
+        request = ActionDispatch::Request.new(env)
+        guardian = Guardian.new(guardian_user, request)
+        TopicViewSerializer.new(TopicView.new(topic), scope: guardian)
+      end
+
+      it "does not replace fancy_title with translation when experimental_inline_translation is disabled" do
+        SiteSetting.experimental_inline_translation = false
+        topic.set_translation("ja", jap_title)
+
+        expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
+      end
+
+      it "does not replace fancy_title with translation when show_original param is present" do
+        topic.set_translation("ja", jap_title)
+        expect(serialize_topic(params: { "show" => "original" }).fancy_title).to eq(
+          topic.fancy_title,
+        )
+      end
+
+      it "does not replace fancy_title with translation when no translation exists" do
+        expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
+      end
+
+      it "does not replace fancy_title when topic is already in correct locale" do
+        I18n.locale = "ja"
+        topic.set_detected_locale("ja")
+        topic.set_translation("ja", jap_title)
+
+        expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
+      end
+
+      it "returns translated title in fancy_title when translation exists for current locale" do
+        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_target_languages = "ja"
+        topic.set_translation("ja", jap_title)
+        expect(serialize_topic.fancy_title).to eq("&lt;h1&gt;フス・ロ・ダ・ア&lt;/h1&gt;")
+      end
     end
 
-    def serialize_topic(guardian_user: user, params: {})
-      env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
-      request = ActionDispatch::Request.new(env)
-      guardian = Guardian.new(guardian_user, request)
-      TopicViewSerializer.new(TopicView.new(topic), scope: guardian)
-    end
+    describe "#is_translated" do
+      fab!(:user)
 
-    it "does not replace fancy_title with translation when experimental_inline_translation is disabled" do
-      SiteSetting.experimental_inline_translation = false
-      topic.set_translation("ja", jap_title)
+      before do
+        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_target_languages = "ja"
+      end
 
-      expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
-    end
+      def serialize_topic(guardian_user: user)
+        TopicViewSerializer.new(TopicView.new(topic), scope: Guardian.new(guardian_user))
+      end
 
-    it "does not replace fancy_title with translation when show_original param is present" do
-      topic.set_translation("ja", jap_title)
-      expect(serialize_topic(params: { "show" => "original" }).fancy_title).to eq(topic.fancy_title)
-    end
+      it "returns depending on translator disabled or experimental inline translation disabled" do
+        I18n.locale = "ja"
+        topic.set_translation("ja", "こんにちは")
 
-    it "does not replace fancy_title with translation when no translation exists" do
-      expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
-    end
+        SiteSetting.translator_enabled = false
+        SiteSetting.experimental_inline_translation = false
+        expect(serialize_topic.is_translated).to eq(false)
 
-    it "does not replace fancy_title when topic is already in correct locale" do
-      I18n.locale = "ja"
-      topic.set_detected_locale("ja")
-      topic.set_translation("ja", jap_title)
+        SiteSetting.translator_enabled = true
+        SiteSetting.experimental_inline_translation = false
+        expect(serialize_topic.is_translated).to eq(false)
 
-      expect(serialize_topic.fancy_title).to eq(topic.fancy_title)
-    end
+        SiteSetting.translator_enabled = true
+        SiteSetting.experimental_inline_translation = true
+        expect(serialize_topic.is_translated).to eq(true)
+      end
 
-    it "returns translated title in fancy_title when translation exists for current locale" do
-      topic.set_translation("ja", jap_title)
-      expect(serialize_topic.fancy_title).to eq("&lt;h1&gt;フス・ロ・ダ・ア&lt;/h1&gt;")
-    end
-  end
+      it "returns true when there is translation for the topic" do
+        SiteSetting.translator_enabled = true
+        SiteSetting.experimental_inline_translation = true
+        I18n.locale = "ja"
+        topic.set_translation("ja", "こんにちは")
 
-  describe "#is_translated" do
-    fab!(:user)
-
-    def serialize_topic(guardian_user: user)
-      TopicViewSerializer.new(TopicView.new(topic), scope: Guardian.new(guardian_user))
-    end
-
-    it "returns false when translator is disabled or experimental inline translation is disabled" do
-      SiteSetting.translator_enabled = true
-      SiteSetting.experimental_inline_translation = true
-      I18n.locale = "ja"
-      Fabricate(:post, topic: topic)
-
-      expect(serialize_topic.is_translated).to eq(false)
-    end
-
-    it "returns true when there is translation for the topic" do
-      SiteSetting.translator_enabled = true
-      SiteSetting.experimental_inline_translation = true
-      I18n.locale = "ja"
-      topic.set_translation("ja", "こんにちは")
-
-      expect(serialize_topic.is_translated).to eq(true)
-    end
-
-    it "returns true when there is translation for a post in the topic" do
-      SiteSetting.translator_enabled = true
-      SiteSetting.experimental_inline_translation = true
-      I18n.locale = "ja"
-      Fabricate(:post, topic: topic).set_translation("ja", "こんにちは")
-
-      expect(serialize_topic.is_translated).to eq(true)
+        expect(serialize_topic.is_translated).to eq(true)
+      end
     end
   end
 end
