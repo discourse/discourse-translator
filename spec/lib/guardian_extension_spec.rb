@@ -177,7 +177,12 @@ describe DiscourseTranslator::GuardianExtension do
       end
 
       describe "when experimental_inline_translation enabled" do
-        before { SiteSetting.experimental_inline_translation = true }
+        before do
+          SiteSetting.experimental_inline_translation = true
+
+          SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+          SiteSetting.automatic_translation_target_languages = "pt"
+        end
 
         describe "logged in user" do
           it "cannot translate when user is not in restrict_translation_by_group" do
@@ -190,7 +195,7 @@ describe DiscourseTranslator::GuardianExtension do
             before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
 
             it "cannot translate when post has translation for user locale" do
-              post.set_detected_locale("jp")
+              post.set_detected_locale("ja")
               post.set_translation("pt", "Olá, mundo!")
 
               expect(guardian.can_translate?(post)).to eq(false)

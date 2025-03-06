@@ -10,10 +10,6 @@ module DiscourseTranslator
     validates :locale, presence: true
     validates :translation, presence: true
     validates :locale, uniqueness: { scope: :topic_id }
-
-    def self.translation_for(topic_id, locale)
-      find_by(topic_id: topic_id, locale: locale)&.translation
-    end
   end
 end
 
