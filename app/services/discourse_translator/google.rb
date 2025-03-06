@@ -75,13 +75,11 @@ module DiscourseTranslator
     end
 
     def self.detect!(topic_or_post)
-      save_detected_locale(topic_or_post) do
-        result(DETECT_URI, q: text_for_detection(topic_or_post))["detections"][0].max do |a, b|
-          a.confidence <=> b.confidence
-        end[
-          "language"
-        ]
-      end
+      result(DETECT_URI, q: text_for_detection(topic_or_post))["detections"][0].max do |a, b|
+        a.confidence <=> b.confidence
+      end[
+        "language"
+      ]
     end
 
     def self.translate_supported?(source, target)
@@ -91,16 +89,14 @@ module DiscourseTranslator
 
     def self.translate!(translatable, target_locale_sym = I18n.locale)
       detected_locale = detect(translatable)
-      save_translation(translatable, target_locale_sym) do
-        res =
-          result(
-            TRANSLATE_URI,
-            q: text_for_translation(translatable),
-            source: detected_locale,
-            target: SUPPORTED_LANG_MAPPING[target_locale_sym],
-          )
-        res["translations"][0]["translatedText"]
-      end
+      res =
+        result(
+          TRANSLATE_URI,
+          q: text_for_translation(translatable),
+          source: detected_locale,
+          target: SUPPORTED_LANG_MAPPING[target_locale_sym],
+        )
+      res["translations"][0]["translatedText"]
     end
 
     def self.result(url, body)

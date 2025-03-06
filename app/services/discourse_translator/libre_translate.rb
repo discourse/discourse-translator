@@ -79,14 +79,12 @@ module DiscourseTranslator
     end
 
     def self.detect!(topic_or_post)
-      save_detected_locale(topic_or_post) do
-        res =
-          result(
-            detect_uri,
-            q: ActionController::Base.helpers.strip_tags(text_for_detection(topic_or_post)),
-          )
-        !res.empty? ? res[0]["language"] : "en"
-      end
+      res =
+        result(
+          detect_uri,
+          q: ActionController::Base.helpers.strip_tags(text_for_detection(topic_or_post)),
+        )
+      !res.empty? ? res[0]["language"] : "en"
     end
 
     def self.translate_supported?(source, target)
@@ -98,17 +96,15 @@ module DiscourseTranslator
     def self.translate!(translatable, target_locale_sym = I18n.locale)
       detected_lang = detect(translatable)
 
-      save_translation(translatable, target_locale_sym) do
-        res =
-          result(
-            translate_uri,
-            q: text_for_translation(translatable),
-            source: detected_lang,
-            target: SUPPORTED_LANG_MAPPING[target_locale_sym],
-            format: "html",
-          )
-        res["translatedText"]
-      end
+      res =
+        result(
+          translate_uri,
+          q: text_for_translation(translatable),
+          source: detected_lang,
+          target: SUPPORTED_LANG_MAPPING[target_locale_sym],
+          format: "html",
+        )
+      res["translatedText"]
     end
 
     def self.get(url)

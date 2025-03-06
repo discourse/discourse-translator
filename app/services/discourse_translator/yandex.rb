@@ -124,12 +124,10 @@ module DiscourseTranslator
     end
 
     def self.detect!(topic_or_post)
-      save_detected_locale(topic_or_post) do
-        query = default_query.merge("text" => text_for_detection(topic_or_post))
-        uri = URI(DETECT_URI)
-        uri.query = URI.encode_www_form(query)
-        result(uri.to_s, "", default_headers)["lang"]
-      end
+      query = default_query.merge("text" => text_for_detection(topic_or_post))
+      uri = URI(DETECT_URI)
+      uri.query = URI.encode_www_form(query)
+      result(uri.to_s, "", default_headers)["lang"]
     end
 
     def self.translate!(translatable, target_locale_sym = I18n.locale)
@@ -137,20 +135,18 @@ module DiscourseTranslator
       locale =
         SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
 
-      save_translation(translatable, target_locale_sym) do
-        query =
-          default_query.merge(
-            "lang" => "#{detected_lang}-#{locale}",
-            "text" => text_for_translation(translatable),
-            "format" => "html",
-          )
+      query =
+        default_query.merge(
+          "lang" => "#{detected_lang}-#{locale}",
+          "text" => text_for_translation(translatable),
+          "format" => "html",
+        )
 
-        uri = URI(TRANSLATE_URI)
-        uri.query = URI.encode_www_form(query)
+      uri = URI(TRANSLATE_URI)
+      uri.query = URI.encode_www_form(query)
 
-        response_body = result(uri.to_s, "", default_headers)
-        response_body["text"][0]
-      end
+      response_body = result(uri.to_s, "", default_headers)
+      response_body["text"][0]
     end
 
     def self.translate_supported?(detected_lang, target_lang)
