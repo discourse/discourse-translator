@@ -33,7 +33,7 @@ module DiscourseTranslator
       detected_lang = detect(translatable)
 
       if translatable.locale_matches?(target_locale_sym)
-        return detected_lang, get_untranslated(translatable)
+        return detected_lang, get_untranslated_cooked(translatable)
       end
 
       translation = translatable.translation_for(target_locale_sym)
