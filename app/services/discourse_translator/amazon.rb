@@ -108,40 +108,36 @@ module DiscourseTranslator
     end
 
     def self.detect!(topic_or_post)
-      save_detected_locale(topic_or_post) do
-        begin
-          client.translate_text(
-            {
-              text: truncate(text_for_detection(topic_or_post)),
-              source_language_code: "auto",
-              target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
-            },
-          )&.source_language_code
-        rescue Aws::Errors::MissingCredentialsError
-          raise I18n.t("translator.amazon.invalid_credentials")
-        end
+      begin
+        client.translate_text(
+          {
+            text: truncate(text_for_detection(topic_or_post)),
+            source_language_code: "auto",
+            target_language_code: SUPPORTED_LANG_MAPPING[I18n.locale],
+          },
+        )&.source_language_code
+      rescue Aws::Errors::MissingCredentialsError
+        raise I18n.t("translator.amazon.invalid_credentials")
       end
     end
 
     def self.translate!(translatable, target_locale_sym = I18n.locale)
       detected_lang = detect(translatable)
 
-      save_translation(translatable, target_locale_sym) do
-        begin
-          client.translate_text(
-            {
-              text: truncate(text_for_translation(translatable)),
-              source_language_code: "auto",
-              target_language_code: SUPPORTED_LANG_MAPPING[target_locale_sym],
-            },
-          )
-        rescue Aws::Translate::Errors::UnsupportedLanguagePairException
-          raise I18n.t(
-                  "translator.failed",
-                  source_locale: detected_lang,
-                  target_locale: target_locale_sym,
-                )
-        end
+      begin
+        client.translate_text(
+          {
+            text: truncate(text_for_translation(translatable)),
+            source_language_code: "auto",
+            target_language_code: SUPPORTED_LANG_MAPPING[target_locale_sym],
+          },
+        )
+      rescue Aws::Translate::Errors::UnsupportedLanguagePairException
+        raise I18n.t(
+                "translator.failed",
+                source_locale: detected_lang,
+                target_locale: target_locale_sym,
+              )
       end
     end
 

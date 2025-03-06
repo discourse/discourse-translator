@@ -27,13 +27,11 @@ describe DiscourseTranslator::DiscourseAi do
   end
 
   describe ".detect!" do
-    it "stores the detected language" do
+    it "returns the detected language" do
       locale = "de"
       DiscourseAi::Completions::Llm.with_prepared_responses(["<language>de</language>"]) do
-        DiscourseTranslator::DiscourseAi.detect!(post)
+        expect(DiscourseTranslator::DiscourseAi.detect!(post)).to eq locale
       end
-
-      expect(post.detected_locale).to eq locale
     end
   end
 

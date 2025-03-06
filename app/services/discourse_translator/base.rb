@@ -33,7 +33,7 @@ module DiscourseTranslator
       detected_lang = detect(translatable)
 
       if translatable.locale_matches?(target_locale_sym)
-        return detected_lang, get_text(translatable)
+        return detected_lang, get_untranslated_cooked(translatable)
       end
 
       translation = translatable.translation_for(target_locale_sym)
@@ -48,12 +48,18 @@ module DiscourseTranslator
                 ),
               )
       end
-      [detected_lang, translate!(translatable, target_locale_sym)]
+
+      translated = translate!(translatable, target_locale_sym)
+      save_translation(translatable, target_locale_sym) { translated }
+      [detected_lang, translated]
     end
 
-    # Subclasses must implement this method to translate the text of a post or topic
-    # then use the save_translation method to store the translated text.
+    # Subclasses must implement this method to translate the text of a
+    # post or topic and return only the translated text.
+    # Subclasses should use text_for_translation
     # @param translatable [Post|Topic]
+    # @param target_locale_sym [Symbol]
+    # @return [String]
     def self.translate!(translatable, target_locale_sym = I18n.locale)
       raise "Not Implemented"
     end
@@ -63,13 +69,16 @@ module DiscourseTranslator
     # @param translatable [Post|Topic]
     def self.detect(translatable)
       return if text_for_detection(translatable).blank?
-      get_detected_locale(translatable) || detect!(translatable)
+      get_detected_locale(translatable) ||
+        save_detected_locale(translatable) { detect!(translatable) }
     end
 
     # Subclasses must implement this method to detect the text of a post or topic
-    # then use the save_detected_locale method to store the detected locale.
+    # and return only the detected locale.
+    # Subclasses should use text_for_detection
     # @param translatable [Post|Topic]
-    def self.detect!(post)
+    # @return [String]
+    def self.detect!(translatable)
       raise "Not Implemented"
     end
 
@@ -100,15 +109,6 @@ module DiscourseTranslator
       detected_locale
     end
 
-    def self.get_text(translatable)
-      case translatable.class.name
-      when "Post"
-        translatable.cooked
-      when "Topic"
-        translatable.title
-      end
-    end
-
     def self.language_supported?(detected_lang)
       raise NotImplementedError unless self.const_defined?(:SUPPORTED_LANG_MAPPING)
       supported_lang = const_get(:SUPPORTED_LANG_MAPPING)
@@ -129,11 +129,24 @@ module DiscourseTranslator
     end
 
     def self.text_for_detection(translatable)
-      strip_tags_for_detection(get_text(translatable)).truncate(DETECTION_CHAR_LIMIT, omission: nil)
+      strip_tags_for_detection(get_untranslated(translatable)).truncate(
+        DETECTION_CHAR_LIMIT,
+        omission: nil,
+      )
     end
 
     def self.text_for_translation(translatable)
-      get_text(translatable).truncate(SiteSetting.max_characters_per_translation, omission: nil)
+      max_char = SiteSetting.max_characters_per_translation
+      get_untranslated(translatable).truncate(max_char, omission: nil)
+    end
+
+    def self.get_untranslated(translatable)
+      case translatable.class.name
+      when "Post"
+        translatable.cooked
+      when "Topic"
+        translatable.title
+      end
     end
   end
 end

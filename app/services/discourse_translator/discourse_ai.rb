@@ -12,21 +12,28 @@ module DiscourseTranslator
     end
 
     def self.detect!(topic_or_post)
-      return unless required_settings_enabled
-
-      save_detected_locale(topic_or_post) do
-        ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
+      unless required_settings_enabled
+        raise TranslatorError.new(
+                I18n.t(
+                  "translator.discourse_ai.ai_helper_required",
+                  { base_url: Discourse.base_url },
+                ),
+              )
       end
+
+      ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
     end
 
     def self.translate!(translatable, target_locale_sym = I18n.locale)
-      return unless required_settings_enabled
-      save_translation(translatable, target_locale_sym) do
-        ::DiscourseAi::Translator.new(
-          text_for_translation(translatable),
-          target_locale_sym,
-        ).translate
+      unless required_settings_enabled
+        raise TranslatorError.new(
+                I18n.t(
+                  "translator.discourse_ai.ai_helper_required",
+                  { base_url: Discourse.base_url },
+                ),
+              )
       end
+      ::DiscourseAi::Translator.new(text_for_translation(translatable), target_locale_sym).translate
     end
 
     private
