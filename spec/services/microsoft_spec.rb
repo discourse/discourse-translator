@@ -176,7 +176,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
       it "raises an error if the post is too long to be translated" do
         I18n.locale = "ja"
         SiteSetting.max_characters_per_translation = 100_000
-        post.update_columns(cooked: "*" * (DiscourseTranslator::Microsoft::LENGTH_LIMIT + 1))
+        post.update_columns(raw: "*" * (DiscourseTranslator::Microsoft::LENGTH_LIMIT + 1))
 
         expect { described_class.translate(post) }.to raise_error(
           DiscourseTranslator::TranslatorError,
@@ -190,7 +190,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
           :post,
           "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&from=en&textType=html&to=ja",
         ).with(
-          body: "[{\"Text\":\"\\u003cp\\u003eHello world\\u003c/p\\u003e\"}]",
+          body: "[{\"Text\":\"Hello world\"}]",
           headers: {
             "Ocp-Apim-Subscription-Key" => SiteSetting.translator_azure_subscription_key,
             "Content-Type" => "application/json",

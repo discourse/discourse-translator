@@ -20,7 +20,9 @@ module DiscourseTranslator
     def error_message
       return I18n.t("translator.discourse_ai.not_installed") if !defined?(::DiscourseAi)
 
-      I18n.t("translator.discourse_ai.ai_helper_required") if !SiteSetting.ai_helper_enabled
+      if !SiteSetting.ai_helper_enabled
+        I18n.t("translator.discourse_ai.ai_helper_required", { base_url: Discourse.base_url })
+      end
     end
   end
 end

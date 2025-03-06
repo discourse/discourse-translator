@@ -3,11 +3,11 @@
 module DiscourseAi
   class LanguageDetector
     PROMPT_TEXT = <<~TEXT
-      I want you to act as a language expert, determining the locale for a set of text.
-      The locale is a language identifier, such as "en" for English, "de" for German, etc,
-      and can also include a region identifier, such as "en-GB" for British English, or "zh-Hans" for Simplified Chinese.
-      I will provide you with text, and you will determine the locale of the text.
-      Include your locale between <language></language> XML tags.
+      You are a language expert. Determine the locale for a set of text.
+      - the locale is a language identifier, such as "en" for English, "de" for German, etc
+      - it may include a region identifier, such as "en-GB" for British English, or "zh-CN" for Simplified Chinese
+      - only return the locale
+      - do not write explanations
     TEXT
 
     def initialize(text)
@@ -21,14 +21,13 @@ module DiscourseAi
           messages: [{ type: :user, content: @text, id: "user" }],
         )
 
-      response =
+      locale =
         DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
           prompt,
           user: Discourse.system_user,
           feature_name: "translator-language-detect",
         )
-
-      (Nokogiri::HTML5.fragment(response).at("language")&.text || response)
+      locale.strip
     end
   end
 end

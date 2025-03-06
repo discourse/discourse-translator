@@ -24,7 +24,6 @@ module DiscourseTranslator
     # @param text [String] the translated text
     def set_translation(locale, text)
       locale = locale.to_s.gsub("_", "-")
-      text = DiscourseTranslator::TranslatedContentSanitizer.sanitize(text)
       translations.find_or_initialize_by(locale: locale).update!(translation: text)
     end
 

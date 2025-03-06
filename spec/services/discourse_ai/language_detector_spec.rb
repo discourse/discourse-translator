@@ -38,7 +38,7 @@ describe DiscourseAi::LanguageDetector do
     end
 
     it "returns the language from the llm's response in the language tag" do
-      DiscourseAi::Completions::Llm.with_prepared_responses(["<language>de</language>"]) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(["de"]) do
         expect(described_class.new("meow").detect).to eq "de"
       end
     end

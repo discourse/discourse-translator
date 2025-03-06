@@ -19,7 +19,7 @@ RSpec.describe DiscourseTranslator::Amazon do
   describe ".detect" do
     let(:post) { Fabricate(:post) }
     let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
-    let(:text) { described_class.truncate(post.cooked) }
+    let(:text) { described_class.truncate(post.raw) }
     let(:detected_lang) { "en" }
 
     before do
@@ -40,8 +40,8 @@ RSpec.describe DiscourseTranslator::Amazon do
       expect(post.detected_locale).to eq(detected_lang)
     end
 
-    it "should fail graciously when the cooked translated text is blank" do
-      post.cooked = ""
+    it "should fail graciously when the raw translated text is blank" do
+      post.raw = ""
       expect(described_class.detect(post)).to be_nil
     end
   end

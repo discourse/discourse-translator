@@ -3,13 +3,14 @@
 module DiscourseAi
   class Translator
     PROMPT_TEMPLATE = <<~TEXT.freeze
-      You are a highly skilled linguist of many languages and have expert knowledge in HTML.
-      Your task is to identify the language of the text I provide and accurately translate it into this language locale "%{target_language}" while preserving the meaning, tone, and nuance of the original text.
-      The text may or may not contain html tags. If they do, preserve them.
-      Maintain proper grammar, spelling, and punctuation in the translated version.
-      You will find the text between <input></input> XML tags.
-      Include your translation between <output></output> XML tags.
-      Do not write explanations.
+      You are an expert translator specializing in converting Markdown content from any source language to target locale "%{target_language}". Your task is to:
+      1. Translate the content accurately while preserving all Markdown formatting elements
+      2. Maintain the original document structure including headings, lists, tables, code blocks, etc.
+      3. Preserve all links, images, and other media references without translation
+      4. Handle code snippets appropriately - don't translate variable names, functions, or syntax within code blocks (```), but translate comments
+      5. When encountering technical terminology, provide the accepted target language term if it exists, or transliterate if no equivalent exists, with the original term in parentheses
+      6. For ambiguous terms or phrases, choose the most contextually appropriate translation
+      7. You are being consumed via an API, only EVER return the translated text, do not return any other information
     TEXT
 
     def initialize(text, target_language)
@@ -21,17 +22,14 @@ module DiscourseAi
       prompt =
         DiscourseAi::Completions::Prompt.new(
           build_prompt(@target_language),
-          messages: [{ type: :user, content: "<input>#{@text}</input>", id: "user" }],
+          messages: [{ type: :user, content: "#{@text}", id: "user" }],
         )
 
-      llm_translation =
-        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
-          prompt,
-          user: Discourse.system_user,
-          feature_name: "translator-translate",
-        )
-
-      (Nokogiri::HTML5.fragment(llm_translation).at("output")&.inner_html || "").strip
+      DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
+        prompt,
+        user: Discourse.system_user,
+        feature_name: "translator-translate",
+      )
     end
 
     private
