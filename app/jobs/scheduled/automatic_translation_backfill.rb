@@ -111,7 +111,7 @@ module Jobs
         next if topic_ids.empty? && post_ids.empty?
 
         DiscourseTranslator::VerboseLogger.log(
-          "Translating #{topic_ids.size} topics and #{post_ids.size} posts to #{backfill_locales.join(", ")}",
+          "Translating #{topic_ids.size} topics and #{post_ids.size} posts to #{target_locale}",
         )
 
         translate_records(Topic, topic_ids, target_locale)
