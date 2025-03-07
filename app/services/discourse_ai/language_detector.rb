@@ -28,7 +28,7 @@ module DiscourseAi
           user: Discourse.system_user,
           feature_name: "translator-language-detect",
         )
-      locale.strip
+      locale&.strip
     end
   end
 end
