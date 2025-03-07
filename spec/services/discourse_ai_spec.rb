@@ -29,7 +29,7 @@ describe DiscourseTranslator::DiscourseAi do
   describe ".detect!" do
     it "returns the detected language" do
       locale = "de"
-      DiscourseAi::Completions::Llm.with_prepared_responses(["<language>de</language>"]) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(["de"]) do
         expect(DiscourseTranslator::DiscourseAi.detect!(post)).to eq locale
       end
     end
@@ -39,9 +39,7 @@ describe DiscourseTranslator::DiscourseAi do
     before { post.set_detected_locale("de") }
 
     it "translates the post and returns [locale, translated_text]" do
-      DiscourseAi::Completions::Llm.with_prepared_responses(
-        ["<output>some translated text</output>"],
-      ) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
         locale, translated_text = DiscourseTranslator::DiscourseAi.translate(post)
         expect(locale).to eq "de"
         expect(translated_text).to eq "some translated text"

@@ -102,7 +102,7 @@ describe Jobs::AutomaticTranslationBackfill do
         described_class.new.execute
 
         expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es hola]])
-        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de <p>hallo</p>]])
       end
     end
 
@@ -126,7 +126,7 @@ describe Jobs::AutomaticTranslationBackfill do
 
         expect(topic.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
         expect(posts.map { |p| p.translations.pluck(:locale, :translation).flatten }).to eq(
-          [%w[de hallo]] * 4,
+          [%w[de <p>hallo</p>]] * 4,
         )
       end
     end
@@ -176,27 +176,27 @@ This is the scenario we are testing for:
       post_1.update!(updated_at: 2.days.ago)
       post_2.update!(updated_at: 3.days.ago)
 
-      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, "de")
+      result = described_class.new.fetch_untranslated_model_ids(Post, "raw", 50, "de")
       expect(result).to include(post_6.id, post_1.id, post_2.id)
     end
 
     it "does not return posts that are deleted" do
       post_1.trash!
-      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, "de")
+      result = described_class.new.fetch_untranslated_model_ids(Post, "raw", 50, "de")
       expect(result).not_to include(post_1.id)
     end
 
     it "does not return posts that are empty" do
-      post_1.cooked = ""
+      post_1.raw = ""
       post_1.save!(validate: false)
-      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, "de")
+      result = described_class.new.fetch_untranslated_model_ids(Post, "raw", 50, "de")
       expect(result).not_to include(post_1.id)
     end
 
     it "does not return posts by bots" do
       post_1.update(user: Discourse.system_user)
 
-      result = described_class.new.fetch_untranslated_model_ids(Post, "cooked", 50, "de")
+      result = described_class.new.fetch_untranslated_model_ids(Post, "raw", 50, "de")
 
       expect(result).not_to include(post_1.id)
     end

@@ -101,7 +101,7 @@ module Jobs
       backfill_locales.each_with_index do |target_locale, i|
         topic_ids =
           fetch_untranslated_model_ids(Topic, "title", records_to_translate, target_locale)
-        post_ids = fetch_untranslated_model_ids(Post, "cooked", records_to_translate, target_locale)
+        post_ids = fetch_untranslated_model_ids(Post, "raw", records_to_translate, target_locale)
 
         # if we end up translating fewer records than records_to_translate,
         # add to the value so that the next locales can have more quota

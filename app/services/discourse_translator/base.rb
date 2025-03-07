@@ -33,7 +33,7 @@ module DiscourseTranslator
       detected_lang = detect(translatable)
 
       if translatable.locale_matches?(target_locale_sym)
-        return detected_lang, get_untranslated(translatable)
+        return detected_lang, get_untranslated_cooked(translatable)
       end
 
       translation = translatable.translation_for(target_locale_sym)
@@ -50,7 +50,9 @@ module DiscourseTranslator
       end
 
       translated = translate!(translatable, target_locale_sym)
-      save_translation(translatable, target_locale_sym) { translated }
+      save_translation(translatable, target_locale_sym) do
+        TranslatedContentNormalizer.normalize(translatable, translated)
+      end
       [detected_lang, translated]
     end
 
@@ -122,25 +124,25 @@ module DiscourseTranslator
 
     private
 
-    def self.strip_tags_for_detection(detection_text)
-      html_doc = Nokogiri::HTML::DocumentFragment.parse(detection_text)
-      html_doc.css("img", "aside.quote", "div.lightbox-wrapper", "a.mention,a.lightbox").remove
-      html_doc.to_html
-    end
-
     def self.text_for_detection(translatable)
-      strip_tags_for_detection(get_untranslated(translatable)).truncate(
-        DETECTION_CHAR_LIMIT,
-        omission: nil,
-      )
+      get_untranslated_raw(translatable).truncate(DETECTION_CHAR_LIMIT, omission: nil)
     end
 
     def self.text_for_translation(translatable)
       max_char = SiteSetting.max_characters_per_translation
-      get_untranslated(translatable).truncate(max_char, omission: nil)
+      get_untranslated_raw(translatable).truncate(max_char, omission: nil)
     end
 
-    def self.get_untranslated(translatable)
+    def self.get_untranslated_raw(translatable)
+      case translatable.class.name
+      when "Post"
+        translatable.raw
+      when "Topic"
+        translatable.title
+      end
+    end
+
+    def self.get_untranslated_cooked(translatable)
       case translatable.class.name
       when "Post"
         translatable.cooked

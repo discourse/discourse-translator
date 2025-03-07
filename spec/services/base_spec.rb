@@ -36,56 +36,15 @@ describe DiscourseTranslator::Base do
   describe ".text_for_detection" do
     fab!(:post)
 
-    it "strips img tags" do
-      post.cooked = "<img src='http://example.com/image.png' />"
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
-    end
-
-    it "strips @ mention anchor tags" do
-      post.cooked = "<a class='mention' href='/u/cat' >cat</a>"
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
-    end
-
-    it "strips lightbox anchor tags" do
-      post.cooked = "<a class='lightbox' href='http://cloudfront.net/image.png' />"
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
-    end
-
-    it "strips lightboxes" do
-      post.cooked = "<div class='lightbox-wrapper' />"
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
-    end
-
-    it "strips quotes" do
-      post.cooked = "<aside class='quote'>多言語トピック</aside>"
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("")
-    end
-
-    it "leaves other anchor tags alone" do
-      cooked = <<~HTML
-        <p>
-          <a href="http://cat.com/image.png"></a>
-          <a class="derp" href="http://cat.com/image.png"></a>
-        </p>
-      HTML
-      post.cooked = cooked
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(cooked)
-    end
-
     it "truncates to DETECTION_CHAR_LIMIT of 1000" do
-      post.cooked = "a" * 1001
+      post.raw = "a" * 1001
       expect(DiscourseTranslator::Base.text_for_detection(post).length).to eq(1000)
     end
 
     it "returns the text if it's less than DETECTION_CHAR_LIMIT" do
       text = "a" * 999
-      post.cooked = text
+      post.raw = text
       expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(text)
-    end
-
-    it "strips text before truncation" do
-      post.cooked = "<img src='http://example.com/image.png' />" + "a" * 1000
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq("a" * 1000)
     end
   end
 
@@ -93,7 +52,7 @@ describe DiscourseTranslator::Base do
     fab!(:post)
 
     it "truncates to max_characters_per_translation" do
-      post.cooked = "a" * (SiteSetting.max_characters_per_translation + 1)
+      post.raw = "a" * (SiteSetting.max_characters_per_translation + 1)
       expect(DiscourseTranslator::Base.text_for_translation(post).length).to eq(
         SiteSetting.max_characters_per_translation,
       )
@@ -104,7 +63,7 @@ describe DiscourseTranslator::Base do
     fab!(:post)
 
     it "returns nil when text is blank" do
-      post.cooked = ""
+      post.raw = ""
       expect(TestTranslator.detect(post)).to be_nil
     end
 
@@ -134,15 +93,15 @@ describe DiscourseTranslator::Base do
     fab!(:post)
 
     it "returns nil when text is blank" do
-      post.cooked = ""
+      post.raw = ""
       expect(TestTranslator.translate(post)).to be_nil
     end
 
     it "returns original text when detected language matches current locale" do
       TestTranslator.save_detected_locale(post) { I18n.locale.to_s }
-      post.cooked = "hello"
+      post.update(raw: "hello")
 
-      expect(TestTranslator.translate(post)).to eq(%w[en hello])
+      expect(TestTranslator.translate(post)).to eq(%w[en <p>hello</p>])
     end
 
     it "returns cached translation if available" do

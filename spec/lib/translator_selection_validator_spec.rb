@@ -61,7 +61,7 @@ describe ::DiscourseTranslator::TranslatorSelectionValidator do
       it "returns the ai_helper_required error message" do
         SiteSetting.ai_helper_enabled = false
         expect(described_class.new.error_message).to eq(
-          I18n.t("translator.discourse_ai.ai_helper_required"),
+          I18n.t("translator.discourse_ai.ai_helper_required", { base_url: Discourse.base_url }),
         )
       end
     end
