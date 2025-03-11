@@ -35,14 +35,19 @@ describe DiscourseTranslator::DiscourseAi do
     end
   end
 
-  describe ".translate" do
+  describe ".translate!" do
     before { post.set_detected_locale("de") }
 
-    it "translates the post and returns [locale, translated_text]" do
+    it "returns the translated text from the llm" do
       DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
-        locale, translated_text = DiscourseTranslator::DiscourseAi.translate(post)
-        expect(locale).to eq "de"
-        expect(translated_text).to eq "some translated text"
+        expect(DiscourseTranslator::DiscourseAi.translate!(post)).to eq "some translated text"
+      end
+    end
+
+    it "sends the content for splitting and the split content for translation" do
+      post.update(raw: "#{"a" * 3000} #{"b" * 3000}")
+      DiscourseAi::Completions::Llm.with_prepared_responses(%w[lol wut]) do
+        expect(DiscourseTranslator::DiscourseAi.translate!(post)).to eq "lolwut"
       end
     end
   end
