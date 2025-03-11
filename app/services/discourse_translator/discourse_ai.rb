@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "base"
-require "json"
-
 module DiscourseTranslator
   class DiscourseAi < Base
     MAX_DETECT_LOCALE_TEXT_LENGTH = 1000
@@ -33,7 +30,12 @@ module DiscourseTranslator
                 ),
               )
       end
-      ::DiscourseAi::Translator.new(text_for_translation(translatable), target_locale_sym).translate
+
+      text = text_for_translation(translatable)
+      chunks = DiscourseTranslator::ContentSplitter.split(text)
+      chunks
+        .map { |chunk| ::DiscourseAi::Translator.new(chunk, target_locale_sym).translate }
+        .join("")
     end
 
     private

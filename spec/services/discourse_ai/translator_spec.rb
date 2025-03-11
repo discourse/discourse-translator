@@ -18,13 +18,14 @@ describe DiscourseAi::Translator do
       allow(DiscourseAi::Completions::Prompt).to receive(:new).with(
         <<~TEXT,
       You are an expert translator specializing in converting Markdown content from any source language to target locale "de". Your task is to:
-      1. Translate the content accurately while preserving all Markdown formatting elements
-      2. Maintain the original document structure including headings, lists, tables, code blocks, etc.
-      3. Preserve all links, images, and other media references without translation
-      4. Handle code snippets appropriately - don't translate variable names, functions, or syntax within code blocks (```), but translate comments
-      5. When encountering technical terminology, provide the accepted target language term if it exists, or transliterate if no equivalent exists, with the original term in parentheses
-      6. For ambiguous terms or phrases, choose the most contextually appropriate translation
-      7. You are being consumed via an API, only EVER return the translated text, do not return any other information
+      1. Accurately translate text only
+      2. Preserve all Markdown formatting elements, including incomplete ones
+      3. Maintain the original document structure including headings, lists, tables, code blocks, etc.
+      4. Preserve all links, images, and other media references without translation
+      5. Handle code snippets appropriately - don't translate variable names, functions, or syntax within code blocks (```), but translate comments
+      6. When encountering technical terminology, provide the accepted target language term if it exists, or transliterate if no equivalent exists, with the original term in parentheses
+      7. For ambiguous terms or phrases, choose the most contextually appropriate translation
+      8. You are being consumed via an API, only EVER return the translated text, do not return any other information
         TEXT
         messages: [{ type: :user, content: "cats are great", id: "user" }],
       ).and_call_original
