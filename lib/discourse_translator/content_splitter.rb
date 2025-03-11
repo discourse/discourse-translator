@@ -59,10 +59,10 @@ module DiscourseTranslator
     end
 
     def self.find_nearest_html_end_index(text, target_pos)
-      return nil unless text.include?("<")
+      return nil if !text.include?("<")
 
       begin
-        doc = Nokogiri::HTML.fragment(text)
+        doc = Nokogiri::HTML5.fragment(text)
         current_length = 0
 
         doc.children.each do |node|
