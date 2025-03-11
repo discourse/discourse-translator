@@ -13,7 +13,7 @@ discourse_translator:
       - Amazon
       - Yandex
       - LibreTranslate
-    validator: "DiscourseTranslator::TranslatorSelectionValidator"
+    validator: "DiscourseTranslator::Validators::TranslatorSelectionValidator"
   automatic_translation_target_languages:
     default: ""
     type: list
@@ -21,7 +21,7 @@ discourse_translator:
     list_type: named
     allow_any: false
     choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
-    validator: "DiscourseTranslator::TranslatableLanguagesValidator"
+    validator: "DiscourseTranslator::Validators::TranslatableLanguagesValidator"
   automatic_translation_backfill_maximum_translations_per_hour:
     default: 0
     client: false
@@ -117,7 +117,7 @@ discourse_translator:
   experimental_anon_language_switcher:
     default: false
     client: true
-    validator: "LanguageSwitcherSettingValidator"
+    validator: "DiscourseTranslator::Validators::LanguageSwitcherSettingValidator"
   experimental_inline_translation:
     default: false
     client: true

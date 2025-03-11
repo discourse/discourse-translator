@@ -26,10 +26,10 @@ after_initialize do
   register_problem_check ProblemCheck::TranslatorError
 
   reloadable_patch do
-    Guardian.prepend(DiscourseTranslator::GuardianExtension)
-    Post.prepend(DiscourseTranslator::PostExtension)
-    Topic.prepend(DiscourseTranslator::TopicExtension)
-    TopicViewSerializer.prepend(DiscourseTranslator::TopicViewSerializerExtension)
+    Guardian.prepend(DiscourseTranslator::Extensions::GuardianExtension)
+    Post.prepend(DiscourseTranslator::Extensions::PostExtension)
+    Topic.prepend(DiscourseTranslator::Extensions::TopicExtension)
+    TopicViewSerializer.prepend(DiscourseTranslator::Extensions::TopicViewSerializerExtension)
   end
 
   add_to_serializer :post, :can_translate do

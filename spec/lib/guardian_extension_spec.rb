@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DiscourseTranslator::GuardianExtension do
+describe DiscourseTranslator::Extensions::GuardianExtension do
   describe "anon user" do
     let!(:guardian) { Guardian.new }
     fab!(:post)

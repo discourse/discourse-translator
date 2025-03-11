@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ::DiscourseTranslator::TranslatorSelectionValidator do
+describe ::DiscourseTranslator::Validators::TranslatorSelectionValidator do
   fab!(:llm_model)
 
   describe "#valid_value?" do
