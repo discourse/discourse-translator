@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "base"
-require "json"
-
 module DiscourseTranslator
   class DiscourseAi < Base
     MAX_DETECT_LOCALE_TEXT_LENGTH = 1000
@@ -38,10 +35,11 @@ module DiscourseTranslator
       translated =
         case translatable.class.name
         when "Post"
-          ::DiscourseAi::PostTranslator.new(
-            text_for_translation(translatable, raw: true),
-            language,
-          ).translate
+          text = text_for_translation(translatable, raw: true)
+          chunks = DiscourseTranslator::ContentSplitter.split(text)
+          chunks
+            .map { |chunk| ::DiscourseAi::PostTranslator.new(chunk, target_locale_sym).translate }
+            .join("")
         when "Topic"
           ::DiscourseAi::TopicTranslator.new(text_for_translation(translatable), language).translate
         end
