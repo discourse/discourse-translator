@@ -15,6 +15,11 @@ describe DiscourseTranslator::ContentSplitter do
     expect(described_class.split("")).to eq([""])
   end
 
+  it "handles content with only spaces" do
+    expect(described_class.split(" ")).to eq([" "])
+    expect(described_class.split("  ")).to eq(["  "])
+  end
+
   it "handles nil input" do
     expect(described_class.split(nil)).to eq([])
   end
