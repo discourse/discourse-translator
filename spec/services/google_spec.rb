@@ -40,42 +40,14 @@ RSpec.describe DiscourseTranslator::Google do
 
     it "should truncate string to 1000 characters" do
       length = 2000
-      post.cooked = rand(36**length).to_s(36)
+      post.raw = rand(36**length).to_s(36)
       detected_lang = "en"
 
       request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
       body = {
-        q: post.cooked.truncate(DiscourseTranslator::Google::DETECTION_CHAR_LIMIT, omission: nil),
+        q: post.raw.truncate(DiscourseTranslator::Google::DETECTION_CHAR_LIMIT, omission: nil),
         key: api_key,
       }
-
-      Excon
-        .expects(:post)
-        .with(
-          request_url,
-          body: URI.encode_www_form(body),
-          headers: {
-            "Content-Type" => "application/x-www-form-urlencoded",
-            "Referer" => "http://test.localhost",
-          },
-        )
-        .returns(
-          mock_response.new(
-            200,
-            %{ { "data": { "detections": [ [ { "language": "#{detected_lang}", "isReliable": false, "confidence": 0.18397073 } ] ] } } },
-          ),
-        )
-        .once
-
-      expect(described_class.detect(post)).to eq(detected_lang)
-    end
-
-    it "strips img tags from detection text" do
-      post.cooked = "there are some words <img src='http://example.com/image.jpg'> to be said"
-      detected_lang = "en"
-
-      request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
-      body = { q: "there are some words  to be said", key: api_key }
 
       Excon
         .expects(:post)

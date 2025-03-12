@@ -41,7 +41,7 @@ RSpec.describe DiscourseTranslator::Amazon do
     end
 
     it "should fail graciously when the cooked translated text is blank" do
-      post.cooked = ""
+      post.raw = ""
       expect(described_class.detect(post)).to be_nil
     end
   end

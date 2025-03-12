@@ -102,7 +102,7 @@ describe Jobs::AutomaticTranslationBackfill do
         described_class.new.execute
 
         expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es hola]])
-        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de <p>hallo</p>]])
+        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
       end
     end
 
@@ -126,7 +126,7 @@ describe Jobs::AutomaticTranslationBackfill do
 
         expect(topic.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
         expect(posts.map { |p| p.translations.pluck(:locale, :translation).flatten }).to eq(
-          [%w[de <p>hallo</p>]] * 4,
+          [%w[de hallo]] * 4,
         )
       end
     end

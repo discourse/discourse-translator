@@ -42,7 +42,7 @@ describe DiscourseTranslator::DiscourseAi do
       DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
         locale, translated_text = DiscourseTranslator::DiscourseAi.translate(post)
         expect(locale).to eq "de"
-        expect(translated_text).to eq "some translated text"
+        expect(translated_text).to eq "<p>some translated text</p>"
       end
     end
   end
