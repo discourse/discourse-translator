@@ -149,10 +149,10 @@ RSpec.describe DiscourseTranslator::Google do
 
     it "truncates text for translation to max_characters_per_translation setting" do
       SiteSetting.max_characters_per_translation = 50
-      post.raw = "a" * 100
+      post.cooked = "a" * 100
       post.set_detected_locale("de")
       body = {
-        q: post.raw.truncate(SiteSetting.max_characters_per_translation, omission: nil),
+        q: post.cooked.truncate(SiteSetting.max_characters_per_translation, omission: nil),
         source: "de",
         target: "en",
         key: api_key,

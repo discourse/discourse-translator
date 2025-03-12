@@ -33,7 +33,7 @@ module DiscourseTranslator
       detected_lang = detect(translatable)
 
       if translatable.locale_matches?(target_locale_sym)
-        return detected_lang, get_untranslated_cooked(translatable)
+        return detected_lang, get_untranslated(translatable)
       end
 
       translation = translatable.translation_for(target_locale_sym)
@@ -50,9 +50,7 @@ module DiscourseTranslator
       end
 
       translated = translate!(translatable, target_locale_sym)
-      save_translation(translatable, target_locale_sym) do
-        TranslatedContentNormalizer.normalize(translatable, translated)
-      end
+      save_translation(translatable, target_locale_sym) { translated }
       [detected_lang, translated]
     end
 
@@ -125,27 +123,18 @@ module DiscourseTranslator
     private
 
     def self.text_for_detection(translatable)
-      get_untranslated_raw(translatable).truncate(DETECTION_CHAR_LIMIT, omission: nil)
+      get_untranslated(translatable, raw: true).truncate(DETECTION_CHAR_LIMIT, omission: nil)
     end
 
-    def self.text_for_translation(translatable)
+    def self.text_for_translation(translatable, raw: false)
       max_char = SiteSetting.max_characters_per_translation
-      get_untranslated_raw(translatable).truncate(max_char, omission: nil)
+      get_untranslated(translatable, raw:).truncate(max_char, omission: nil)
     end
 
-    def self.get_untranslated_raw(translatable)
+    def self.get_untranslated(translatable, raw: false)
       case translatable.class.name
       when "Post"
-        translatable.raw
-      when "Topic"
-        translatable.title
-      end
-    end
-
-    def self.get_untranslated_cooked(translatable)
-      case translatable.class.name
-      when "Post"
-        translatable.cooked
+        raw ? translatable.raw : translatable.cooked
       when "Topic"
         translatable.title
       end
