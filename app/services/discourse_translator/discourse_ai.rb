@@ -33,7 +33,12 @@ module DiscourseTranslator
                 ),
               )
       end
-      ::DiscourseAi::Translator.new(text_for_translation(translatable), target_locale_sym).translate
+      translated =
+        ::DiscourseAi::Translator.new(
+          text_for_translation(translatable, raw: true),
+          target_locale_sym,
+        ).translate
+      DiscourseTranslator::TranslatedContentNormalizer.normalize(translatable, translated)
     end
 
     private

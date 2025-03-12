@@ -52,8 +52,15 @@ describe DiscourseTranslator::Base do
     fab!(:post)
 
     it "truncates to max_characters_per_translation" do
-      post.raw = "a" * (SiteSetting.max_characters_per_translation + 1)
+      post.cooked = "a" * (SiteSetting.max_characters_per_translation + 1)
       expect(DiscourseTranslator::Base.text_for_translation(post).length).to eq(
+        SiteSetting.max_characters_per_translation,
+      )
+    end
+
+    it "uses raw if required" do
+      post.raw = "a" * (SiteSetting.max_characters_per_translation + 1)
+      expect(DiscourseTranslator::Base.text_for_translation(post, raw: true).length).to eq(
         SiteSetting.max_characters_per_translation,
       )
     end
@@ -93,15 +100,15 @@ describe DiscourseTranslator::Base do
     fab!(:post)
 
     it "returns nil when text is blank" do
-      post.raw = ""
+      post.cooked = ""
       expect(TestTranslator.translate(post)).to be_nil
     end
 
     it "returns original text when detected language matches current locale" do
       TestTranslator.save_detected_locale(post) { I18n.locale.to_s }
-      post.update(raw: "hello")
+      post.cooked = "hello"
 
-      expect(TestTranslator.translate(post)).to eq(%w[en <p>hello</p>])
+      expect(TestTranslator.translate(post)).to eq(%w[en hello])
     end
 
     it "returns cached translation if available" do

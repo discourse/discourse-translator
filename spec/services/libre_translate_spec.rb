@@ -44,7 +44,7 @@ RSpec.describe DiscourseTranslator::LibreTranslate do
     it "truncates text for translation to max_characters_per_translation setting" do
       SiteSetting.max_characters_per_translation = 50
       post.set_detected_locale("de")
-      body = { q: post.raw, source: "de", target: "en", format: "html", api_key: api_key }
+      body = { q: post.cooked, source: "de", target: "en", format: "html", api_key: api_key }
 
       translated_text = "hur dur hur dur"
       # https://publicapi.dev/libre-translate-api
