@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe DiscourseTranslator::DiscourseAi do
   fab!(:post)
+  fab!(:topic)
 
   before do
     Fabricate(:fake_model).tap do |fake_llm|
@@ -36,13 +35,25 @@ describe DiscourseTranslator::DiscourseAi do
   end
 
   describe ".translate" do
-    before { post.set_detected_locale("de") }
+    before do
+      post.set_detected_locale("de")
+      topic.set_detected_locale("de")
+    end
 
     it "translates the post and returns [locale, translated_text]" do
       DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
         locale, translated_text = DiscourseTranslator::DiscourseAi.translate(post)
         expect(locale).to eq "de"
         expect(translated_text).to eq "<p>some translated text</p>"
+      end
+    end
+
+    it "translates the topic" do
+      allow(::DiscourseAi::TopicTranslator).to receive(:new).and_call_original
+      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
+        locale, translated_text = DiscourseTranslator::DiscourseAi.translate(topic)
+        expect(locale).to eq "de"
+        expect(translated_text).to eq "some translated text"
       end
     end
   end

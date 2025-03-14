@@ -33,11 +33,19 @@ module DiscourseTranslator
                 ),
               )
       end
+
+      language = get_language_name(target_locale_sym)
       translated =
-        ::DiscourseAi::Translator.new(
-          text_for_translation(translatable, raw: true),
-          target_locale_sym,
-        ).translate
+        case translatable.class.name
+        when "Post"
+          ::DiscourseAi::PostTranslator.new(
+            text_for_translation(translatable, raw: true),
+            language,
+          ).translate
+        when "Topic"
+          ::DiscourseAi::TopicTranslator.new(text_for_translation(translatable), language).translate
+        end
+
       DiscourseTranslator::TranslatedContentNormalizer.normalize(translatable, translated)
     end
 
@@ -46,6 +54,11 @@ module DiscourseTranslator
     def self.required_settings_enabled
       SiteSetting.translator_enabled && SiteSetting.translator_provider == "DiscourseAi" &&
         SiteSetting.discourse_ai_enabled && SiteSetting.ai_helper_enabled
+    end
+
+    def self.get_language_name(target_locale_sym)
+      LocaleSiteSetting.language_names.dig(target_locale_sym.to_s, "name") ||
+        "locale \"#{target_locale_sym}\""
     end
   end
 end
