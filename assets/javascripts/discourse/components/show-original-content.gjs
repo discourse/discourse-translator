@@ -14,6 +14,7 @@ export default class ShowOriginalContent extends Component {
   }
 
   @service router;
+
   @tracked isTranslated = true;
 
   constructor() {
