@@ -3,19 +3,13 @@
 module Jobs
   class AutomaticTranslationBackfill < ::Jobs::Scheduled
     every 5.minutes
-
-    BACKFILL_LOCK_KEY = "discourse_translator_backfill_lock"
+    cluster_concurrency 1
 
     def execute(args = nil)
       return unless SiteSetting.translator_enabled
       return unless should_backfill?
-      return unless secure_backfill_lock
 
-      begin
-        process_batch
-      ensure
-        Discourse.redis.del(BACKFILL_LOCK_KEY)
-      end
+      process_batch
     end
 
     def fetch_untranslated_model_ids(model, content_column, limit, target_locale)
@@ -56,10 +50,6 @@ module Jobs
       return false if SiteSetting.automatic_translation_target_languages.blank?
       return false if SiteSetting.automatic_translation_backfill_maximum_translations_per_hour == 0
       true
-    end
-
-    def secure_backfill_lock
-      Discourse.redis.set(BACKFILL_LOCK_KEY, "1", ex: 5.minutes.to_i, nx: true)
     end
 
     def translations_per_run
