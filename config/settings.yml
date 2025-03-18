@@ -26,6 +26,14 @@ discourse_translator:
     default: 0
     client: false
     hidden: true
+  automatic_translation_backfill_limit_to_public_content:
+    default: false
+    client: false
+    hidden: true
+  automatic_translation_backfill_max_age_days:
+    default: 0
+    client: false
+    hidden: true
   translator_azure_subscription_key:
     default: ''
   translator_azure_region:
