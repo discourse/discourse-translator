@@ -65,17 +65,12 @@ describe Jobs::AutomaticTranslationBackfill do
       expect_any_instance_of(Jobs::AutomaticTranslationBackfill).not_to receive(:process_batch)
     end
 
-    it "does not backfill if backfill lock is not secure" do
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
-      SiteSetting.automatic_translation_target_languages = "de"
-      Discourse.redis.set("discourse_translator_backfill_lock", "1")
-      expect_any_instance_of(Jobs::AutomaticTranslationBackfill).not_to receive(:translate_records)
-    end
-
     describe "with two locales ['de', 'es']" do
       before do
         SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 100
         SiteSetting.automatic_translation_target_languages = "de|es"
+        SiteSetting.automatic_translation_backfill_limit_to_public_content = true
+        SiteSetting.automatic_translation_backfill_max_age_days = 5
         expect_google_check_language
       end
 
@@ -103,6 +98,62 @@ describe Jobs::AutomaticTranslationBackfill do
 
         expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es hola]])
         expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+      end
+
+      it "backfills only public content when limit_to_public_content is true" do
+        post = Fabricate(:post)
+        topic = post.topic
+
+        private_category = Fabricate(:private_category, name: "Staff", group: Group[:staff])
+        private_topic = Fabricate(:topic, category: private_category)
+        private_post = Fabricate(:post, topic: private_topic)
+
+        topic.set_detected_locale("de")
+        post.set_detected_locale("es")
+        private_topic.set_detected_locale("de")
+        private_post.set_detected_locale("es")
+
+        expect_google_translate("hola")
+        expect_google_translate("hallo")
+
+        SiteSetting.automatic_translation_backfill_limit_to_public_content = true
+        described_class.new.execute
+
+        expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es hola]])
+        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+
+        expect(private_topic.translations).to eq([])
+        expect(private_post.translations).to eq([])
+      end
+
+      it "translate only content newer than automatic_translation_backfill_max_age_days" do
+        old_post = Fabricate(:post)
+        old_topic = old_post.topic
+        new_post = Fabricate(:post)
+        new_topic = new_post.topic
+
+        old_topic.set_detected_locale("de")
+        new_topic.set_detected_locale("de")
+        old_post.set_detected_locale("es")
+        new_post.set_detected_locale("es")
+
+        old_topic.created_at = 5.days.ago
+        old_topic.save!
+        old_post.created_at = 5.days.ago
+        old_post.save!
+        new_topic.created_at = 1.days.ago
+        new_topic.save!
+        new_post.created_at = 1.days.ago
+        new_post.save!
+
+        expect_google_translate("hola")
+        expect_google_translate("hallo")
+
+        SiteSetting.automatic_translation_backfill_max_age_days = 3
+        described_class.new.execute
+
+        expect(old_post.translations).to eq([])
+        expect(new_post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
       end
     end
 

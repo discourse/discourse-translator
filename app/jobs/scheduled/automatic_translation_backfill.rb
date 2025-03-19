@@ -3,19 +3,13 @@
 module Jobs
   class AutomaticTranslationBackfill < ::Jobs::Scheduled
     every 5.minutes
-
-    BACKFILL_LOCK_KEY = "discourse_translator_backfill_lock"
+    cluster_concurrency 1
 
     def execute(args = nil)
       return unless SiteSetting.translator_enabled
       return unless should_backfill?
-      return unless secure_backfill_lock
 
-      begin
-        process_batch
-      ensure
-        Discourse.redis.del(BACKFILL_LOCK_KEY)
-      end
+      process_batch
     end
 
     def fetch_untranslated_model_ids(model, content_column, limit, target_locale)
@@ -23,9 +17,11 @@ module Jobs
       DB.query_single(<<~SQL, target_locale: target_locale, limit: limit)
         SELECT m.id
         FROM #{model.table_name} m
+        #{limit_to_public_clause(model)}
         WHERE m.deleted_at IS NULL
           AND m.#{content_column} != ''
           AND m.user_id > 0
+          #{max_age_clause}
           AND (
             NOT EXISTS (
               SELECT 1
@@ -56,10 +52,6 @@ module Jobs
       return false if SiteSetting.automatic_translation_target_languages.blank?
       return false if SiteSetting.automatic_translation_backfill_maximum_translations_per_hour == 0
       true
-    end
-
-    def secure_backfill_lock
-      Discourse.redis.set(BACKFILL_LOCK_KEY, "1", ex: 5.minutes.to_i, nx: true)
     end
 
     def translations_per_run
@@ -117,6 +109,34 @@ module Jobs
         translate_records(Topic, topic_ids, target_locale)
         translate_records(Post, post_ids, target_locale)
       end
+    end
+
+    def max_age_clause
+      return "" if SiteSetting.automatic_translation_backfill_max_age_days <= 0
+
+      "AND m.created_at > NOW() - INTERVAL '#{SiteSetting.automatic_translation_backfill_max_age_days} days'"
+    end
+
+    def limit_to_public_clause(model)
+      return "" if !SiteSetting.automatic_translation_backfill_limit_to_public_content
+
+      public_categories = Category.where(read_restricted: false).pluck(:id).join(", ")
+      if model == Post
+        limit_to_public_clause = <<~SQL
+          INNER JOIN topics t
+          ON m.topic_id = t.id
+          AND t.archetype = 'regular'
+          AND t.category_id IN (#{public_categories})
+        SQL
+      elsif model == Topic
+        limit_to_public_clause = <<~SQL
+          INNER JOIN categories c
+          ON m.category_id = c.id
+          AND c.id IN (#{public_categories})
+        SQL
+      end
+
+      limit_to_public_clause
     end
   end
 end
