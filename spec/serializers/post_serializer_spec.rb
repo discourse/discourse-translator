@@ -77,7 +77,7 @@ RSpec.describe PostSerializer do
     it "returns true when there is a translation for the user's locale in target languages" do
       SiteSetting.translator_enabled = true
       SiteSetting.experimental_inline_translation = true
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "ja"
       I18n.locale = "ja"
       post.set_detected_locale("en")
@@ -90,7 +90,7 @@ RSpec.describe PostSerializer do
     it "returns false when there is a translation for the user's locale not in target languages" do
       SiteSetting.translator_enabled = true
       SiteSetting.experimental_inline_translation = true
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "es"
       I18n.locale = "ja"
       post.set_detected_locale("en")
@@ -103,7 +103,7 @@ RSpec.describe PostSerializer do
     it "returns false when there is no translation for the current locale in target languages" do
       SiteSetting.translator_enabled = true
       SiteSetting.experimental_inline_translation = true
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "ja"
       I18n.locale = "ja"
       post.set_translation("es", "Hola")
@@ -133,7 +133,7 @@ RSpec.describe PostSerializer do
 
     it "does not return translated_cooked when show=original param is present" do
       I18n.locale = "ja"
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "ja"
       post.set_translation("ja", "こんにちは")
 
@@ -150,7 +150,7 @@ RSpec.describe PostSerializer do
     end
 
     it "returns translated content based on locale presence in target languages" do
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       post.set_translation("ja", "こんにちは")
       post.set_translation("es", "Hola")
       I18n.locale = "ja"

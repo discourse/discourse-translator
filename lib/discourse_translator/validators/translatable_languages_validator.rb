@@ -10,7 +10,7 @@ module DiscourseTranslator
       def valid_value?(val)
         return true if val.blank?
 
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour > 0
+        SiteSetting.automatic_translation_backfill_rate > 0
       end
 
       def error_message

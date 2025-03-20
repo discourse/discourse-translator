@@ -8,7 +8,7 @@ describe Jobs::TranslateTranslatable do
   before do
     SiteSetting.translator_enabled = true
     SiteSetting.translator_provider = "Google"
-    SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 100
+    SiteSetting.automatic_translation_backfill_rate = 100
     SiteSetting.automatic_translation_target_languages = "es|fr"
     allow(DiscourseTranslator::Google).to receive(:translate)
   end

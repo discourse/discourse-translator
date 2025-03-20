@@ -14,34 +14,41 @@ module Jobs
 
     def fetch_untranslated_model_ids(model, content_column, limit, target_locale)
       m = model.name.downcase
+
+      # Query selects every model (post/topic) *except* those who are **both**
+      # already locale detected and translated
       DB.query_single(<<~SQL, target_locale: target_locale, limit: limit)
-        SELECT m.id
-        FROM #{model.table_name} m
-        #{limit_to_public_clause(model)}
-        WHERE m.deleted_at IS NULL
-          AND m.#{content_column} != ''
-          AND m.user_id > 0
-          #{max_age_clause}
-          AND (
-            NOT EXISTS (
-              SELECT 1
-              FROM discourse_translator_#{m}_locales
-              WHERE #{m}_id = m.id
+        SELECT * FROM
+        (
+          ( -- every post / topic
+            SELECT m.id
+            FROM #{model.table_name} m
+            #{limit_to_public_clause(model)}
+            WHERE m.deleted_at IS NULL
+              AND m.#{content_column} != ''
+              AND m.user_id > 0
+              #{max_age_clause}
+            ORDER BY m.updated_at DESC
+          )
+          EXCEPT
+          (
+            ( -- locale detected
+              SELECT
+                #{m}_id
+              FROM
+                discourse_translator_#{m}_locales
+              WHERE
+                detected_locale = :target_locale
             )
-            OR EXISTS (
-              SELECT 1
-              FROM discourse_translator_#{m}_locales
-              WHERE #{m}_id = m.id
-              AND detected_locale != :target_locale
+            INTERSECT
+            ( -- translated
+              SELECT #{m}_id
+              FROM discourse_translator_#{m}_translations
+              WHERE
+                locale = :target_locale
             )
           )
-          AND NOT EXISTS (
-            SELECT 1
-            FROM discourse_translator_#{m}_translations
-            WHERE #{m}_id = m.id
-            AND locale = :target_locale
-          )
-        ORDER BY m.updated_at DESC
+        ) AS subquery
         LIMIT :limit
       SQL
     end
@@ -50,12 +57,8 @@ module Jobs
 
     def should_backfill?
       return false if SiteSetting.automatic_translation_target_languages.blank?
-      return false if SiteSetting.automatic_translation_backfill_maximum_translations_per_hour == 0
+      return false if SiteSetting.automatic_translation_backfill_rate == 0
       true
-    end
-
-    def translations_per_run
-      [(SiteSetting.automatic_translation_backfill_maximum_translations_per_hour / 12), 1].max
     end
 
     def backfill_locales
@@ -83,23 +86,12 @@ module Jobs
     end
 
     def process_batch
-      models_translated = [Post, Topic].size
-      avg_translations_per_model_per_language = [
-        translations_per_run / models_translated / backfill_locales.size,
-        1,
-      ].max
-
-      records_to_translate = avg_translations_per_model_per_language
+      records_to_translate = SiteSetting.automatic_translation_backfill_rate
       backfill_locales.each_with_index do |target_locale, i|
         topic_ids =
           fetch_untranslated_model_ids(Topic, "title", records_to_translate, target_locale)
         post_ids = fetch_untranslated_model_ids(Post, "raw", records_to_translate, target_locale)
 
-        # if we end up translating fewer records than records_to_translate,
-        # add to the value so that the next locales can have more quota
-        records_to_translate =
-          avg_translations_per_model_per_language +
-            ((records_to_translate - topic_ids.size - post_ids.size) / backfill_locales.size - i)
         next if topic_ids.empty? && post_ids.empty?
 
         DiscourseTranslator::VerboseLogger.log(

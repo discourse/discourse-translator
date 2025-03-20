@@ -180,7 +180,7 @@ describe DiscourseTranslator::Extensions::GuardianExtension do
         before do
           SiteSetting.experimental_inline_translation = true
 
-          SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+          SiteSetting.automatic_translation_backfill_rate = 1
           SiteSetting.automatic_translation_target_languages = "pt"
         end
 

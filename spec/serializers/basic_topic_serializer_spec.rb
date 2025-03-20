@@ -21,7 +21,7 @@ describe BasicTopicSerializer do
       SiteSetting.experimental_inline_translation = true
       I18n.locale = "ja"
 
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "ja"
     end
 

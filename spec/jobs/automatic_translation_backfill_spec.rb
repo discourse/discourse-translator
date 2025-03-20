@@ -59,15 +59,15 @@ describe Jobs::AutomaticTranslationBackfill do
     end
 
     it "does not backfill if backfill limit is set to 0" do
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "de"
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 0
+      SiteSetting.automatic_translation_backfill_rate = 0
       expect_any_instance_of(Jobs::AutomaticTranslationBackfill).not_to receive(:process_batch)
     end
 
     describe "with two locales ['de', 'es']" do
       before do
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 100
+        SiteSetting.automatic_translation_backfill_rate = 100
         SiteSetting.automatic_translation_target_languages = "de|es"
         SiteSetting.automatic_translation_backfill_limit_to_public_content = true
         SiteSetting.automatic_translation_backfill_max_age_days = 5
@@ -159,7 +159,7 @@ describe Jobs::AutomaticTranslationBackfill do
 
     describe "with just one locale ['de']" do
       before do
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 100
+        SiteSetting.automatic_translation_backfill_rate = 100
         SiteSetting.automatic_translation_target_languages = "de"
         expect_google_check_language
       end

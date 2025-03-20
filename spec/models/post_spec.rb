@@ -139,7 +139,7 @@ RSpec.describe Post do
     fab!(:user)
 
     it "enqueues translate_translatable job when post cooked" do
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 100
+      SiteSetting.automatic_translation_backfill_rate = 100
       SiteSetting.automatic_translation_target_languages = "es"
       post = Fabricate(:post, user: user)
       CookedPostProcessor.new(post).post_process
@@ -154,7 +154,7 @@ RSpec.describe Post do
     end
 
     it "does not enqueue translate_translatable job for bot posts" do
-      SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "es"
       post = Fabricate(:post, user: Discourse.system_user)
       CookedPostProcessor.new(post).post_process
