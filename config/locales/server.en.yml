@@ -19,7 +19,7 @@ en:
     restrict_translation_by_poster_group: "Only allow translation of posts made by users in allowed groups. If empty, allow translations of posts from all users."
     experimental_anon_language_switcher: "Enable experimental language switcher. This will allow site visitors who are not logged in to switch between translated versions of Discourse and user-contributed content in topics."
     errors:
-      needs_nonzero_backfill: "Automatic language translation requires the 'automatic_translation_backfill_maximum_translations_per_hour' hidden setting to be a non-zero value. Please approach your site administrator to increase this limit."
+      needs_nonzero_backfill: "Automatic language translation requires the 'automatic_translation_backfill_rate' hidden setting to be a non-zero value. Please approach your site administrator to increase this limit."
       experimental_anon_language_switcher_requirements: "The experimental language switcher requires the `set locale from cookie` site setting to be enabled, and the `automatic translation target languages` to have at least one language."
     experimental_inline_translation: "Enable experimental inline translation feature. This replaces existing parallel translation, allowing site visitors with a non-default locale to view content in their language."
     automatic_translation_target_languages: "The languages to automatically translate user content (posts, topics) to. If empty, no languages will be automatically translated."

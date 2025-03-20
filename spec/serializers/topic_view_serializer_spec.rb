@@ -59,7 +59,7 @@ describe TopicViewSerializer do
       before do
         SiteSetting.experimental_inline_translation = true
 
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_backfill_rate = 1
         SiteSetting.automatic_translation_target_languages = "es"
 
         SiteSetting.default_locale = "en"
@@ -159,7 +159,7 @@ describe TopicViewSerializer do
       end
 
       it "returns translated title in fancy_title when translation exists for current locale" do
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_backfill_rate = 1
         SiteSetting.automatic_translation_target_languages = "ja"
         topic.set_translation("ja", jap_title)
         expect(serialize_topic.fancy_title).to eq("&lt;h1&gt;フス・ロ・ダ・ア&lt;/h1&gt;")
@@ -170,7 +170,7 @@ describe TopicViewSerializer do
       fab!(:user)
 
       before do
-        SiteSetting.automatic_translation_backfill_maximum_translations_per_hour = 1
+        SiteSetting.automatic_translation_backfill_rate = 1
         SiteSetting.automatic_translation_target_languages = "ja"
       end
 

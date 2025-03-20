@@ -22,7 +22,7 @@ discourse_translator:
     allow_any: false
     choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
     validator: "DiscourseTranslator::Validators::TranslatableLanguagesValidator"
-  automatic_translation_backfill_maximum_translations_per_hour:
+  automatic_translation_backfill_rate:
     default: 0
     client: false
     hidden: true
