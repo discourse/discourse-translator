@@ -38,15 +38,14 @@ module Jobs
               FROM
                 discourse_translator_#{m}_locales
               WHERE
-                #{m}_id = m.id AND
                 detected_locale = :target_locale
             )
             INTERSECT
             ( -- translated
               SELECT #{m}_id
               FROM discourse_translator_#{m}_translations
-              WHERE #{m}_id = m.id
-              AND locale = :target_locale
+              WHERE
+                locale = :target_locale
             )
           )
         ) AS subquery
