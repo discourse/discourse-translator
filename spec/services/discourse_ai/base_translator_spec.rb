@@ -13,30 +13,24 @@ describe DiscourseAi::BaseTranslator do
   describe ".translate" do
     let(:text_to_translate) { "cats are great" }
     let(:target_language) { "de" }
+    let(:llm_response) { "{\"translation\":\"hur dur hur dur!\"}" }
 
     it "creates the correct prompt" do
+      post_translator = DiscourseAi::PostTranslator.new(text_to_translate, target_language)
       allow(DiscourseAi::Completions::Prompt).to receive(:new).with(
-        <<~TEXT,
-      Translate this content to "de". You must:
-      1. Translate the content accurately while preserving any Markdown, HTML elements, or newlines
-      2. Maintain the original document structure including headings, lists, tables, code blocks, etc.
-      3. Preserve all links, images, and other media references without translation
-      4. Handle code snippets appropriately - don't translate variable names, functions, or syntax within code blocks (```), but translate comments
-      5. When encountering technical terminology, provide the accepted target language term if it exists, or transliterate if no equivalent exists, with the original term in parentheses
-      6. For ambiguous terms or phrases, choose the most contextually appropriate translation
-      7. Do not add any content besides the translation
-      8. The translation must not have other languages other than the original and the target language
-      9. You are being consumed via an API, only EVER return the translated text, do not return any other information
-        TEXT
-        messages: [{ type: :user, content: "cats are great", id: "user" }],
+        DiscourseAi::PostTranslator::PROMPT_TEMPLATE,
+        messages: [{ type: :user, content: post_translator.formatted_content, id: "user" }],
       ).and_call_original
 
-      DiscourseAi::PostTranslator.new(text_to_translate, target_language).translate
+      DiscourseAi::Completions::Llm.with_prepared_responses([llm_response]) do
+        post_translator.translate
+      end
     end
 
     it "sends the translation prompt to the selected ai helper model" do
       mock_prompt = instance_double(DiscourseAi::Completions::Prompt)
       mock_llm = instance_double(DiscourseAi::Completions::Llm)
+      post_translator = DiscourseAi::PostTranslator.new(text_to_translate, target_language)
 
       allow(DiscourseAi::Completions::Prompt).to receive(:new).and_return(mock_prompt)
       allow(DiscourseAi::Completions::Llm).to receive(:proxy).with(
@@ -46,13 +40,14 @@ describe DiscourseAi::BaseTranslator do
         mock_prompt,
         user: Discourse.system_user,
         feature_name: "translator-translate",
-      )
+        extra_model_params: post_translator.response_format,
+      ).and_return(llm_response)
 
-      DiscourseAi::PostTranslator.new(text_to_translate, target_language).translate
+      post_translator.translate
     end
 
     it "returns the translation from the llm's response" do
-      DiscourseAi::Completions::Llm.with_prepared_responses(["hur dur hur dur!"]) do
+      DiscourseAi::Completions::Llm.with_prepared_responses([llm_response]) do
         expect(
           DiscourseAi::PostTranslator.new(text_to_translate, target_language).translate,
         ).to eq "hur dur hur dur!"
