@@ -11,13 +11,18 @@ describe DiscourseAi::LanguageDetector do
   end
 
   describe ".detect" do
+    let(:locale_detector) { described_class.new("meow") }
+    let(:llm_response) { "{\"translation\":\"hur dur hur dur!\"}" }
+
     it "creates the correct prompt" do
       allow(DiscourseAi::Completions::Prompt).to receive(:new).with(
         DiscourseAi::LanguageDetector::PROMPT_TEXT,
         messages: [{ type: :user, content: "meow", id: "user" }],
       ).and_call_original
 
-      described_class.new("meow").detect
+      DiscourseAi::Completions::Llm.with_prepared_responses([llm_response]) do
+        locale_detector.detect
+      end
     end
 
     it "sends the language detection prompt to the ai helper model" do
@@ -32,16 +37,15 @@ describe DiscourseAi::LanguageDetector do
         mock_prompt,
         user: Discourse.system_user,
         feature_name: "translator-language-detect",
-      ).and_return("hi")
+        extra_model_params: locale_detector.response_format,
+      ).and_return(llm_response)
 
-      DiscourseAi::Completions::Llm.with_prepared_responses(["de"]) do
-        described_class.new("meow").detect
-      end
+      locale_detector.detect
     end
 
     it "returns the language from the llm's response in the language tag" do
-      DiscourseAi::Completions::Llm.with_prepared_responses(["de"]) do
-        expect(described_class.new("meow").detect).to eq "de"
+      DiscourseAi::Completions::Llm.with_prepared_responses([llm_response]) do
+        locale_detector.detect
       end
     end
   end
