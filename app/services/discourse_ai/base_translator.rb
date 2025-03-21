@@ -14,11 +14,35 @@ module DiscourseAi
           messages: [{ type: :user, content: "#{@text}", id: "user" }],
         )
 
-      DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
-        prompt,
-        user: Discourse.system_user,
-        feature_name: "translator-translate",
-      )
+      response_format = {
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "reply",
+            schema: {
+              type: "object",
+              properties: {
+                translation: {
+                  type: "string",
+                },
+              },
+              required: ["translation"],
+              additionalProperties: false,
+            },
+            strict: true,
+          },
+        },
+      }
+
+      response =
+        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
+          prompt,
+          user: Discourse.system_user,
+          feature_name: "translator-translate",
+          extra_model_params: response_format,
+        )
+
+      JSON.parse(response)&.dig("translation")
     end
 
     private
