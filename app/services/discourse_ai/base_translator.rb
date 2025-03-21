@@ -10,11 +10,27 @@ module DiscourseAi
     def translate
       prompt =
         DiscourseAi::Completions::Prompt.new(
-          build_prompt(@target_language),
-          messages: [{ type: :user, content: "#{@text}", id: "user" }],
+          prompt_template,
+          messages: [{ type: :user, content: formatted_content, id: "user" }],
         )
 
-      response_format = {
+      response =
+        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
+          prompt,
+          user: Discourse.system_user,
+          feature_name: "translator-translate",
+          extra_model_params: response_format,
+        )
+
+      JSON.parse(response)&.dig("translation")
+    end
+
+    def formatted_content
+      { content: @text, target_language: @target_language }.to_json
+    end
+
+    def response_format
+      {
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -33,23 +49,9 @@ module DiscourseAi
           },
         },
       }
-
-      response =
-        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
-          prompt,
-          user: Discourse.system_user,
-          feature_name: "translator-translate",
-          extra_model_params: response_format,
-        )
-
-      JSON.parse(response)&.dig("translation")
     end
 
     private
-
-    def build_prompt(target_language)
-      prompt_template % { target_language: target_language }
-    end
 
     def prompt_template
       raise NotImplementedError

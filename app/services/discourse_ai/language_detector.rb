@@ -49,7 +49,19 @@ module DiscourseAi
           messages: [{ type: :user, content: @text, id: "user" }],
         )
 
-      response_format = {
+      response =
+        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
+          prompt,
+          user: Discourse.system_user,
+          feature_name: "translator-language-detect",
+          extra_model_params: response_format,
+        )
+
+      locale = JSON.parse(response)&.dig("locale")
+    end
+
+    def response_format
+      {
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -68,16 +80,6 @@ module DiscourseAi
           },
         },
       }
-
-      response =
-        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
-          prompt,
-          user: Discourse.system_user,
-          feature_name: "translator-language-detect",
-          extra_model_params: response_format,
-        )
-
-      locale = JSON.parse(response)&.dig("locale")
     end
   end
 end
