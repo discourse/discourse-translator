@@ -4,19 +4,19 @@ module DiscourseTranslator
   class AutomaticTranslations
     def inject(plugin)
       plugin.on(:post_process_cooked) do |_, post|
-        if translatable?(content)
+        if translatable?(post)
           Jobs.enqueue(:translate_translatable, type: "Post", translatable_id: post.id)
         end
       end
 
       plugin.on(:topic_created) do |topic|
-        if translatable?(content)
+        if translatable?(topic)
           Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
         end
       end
 
       plugin.on(:topic_edited) do |topic|
-        if translatable?(content)
+        if translatable?(topic)
           Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
         end
       end
