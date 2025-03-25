@@ -34,7 +34,6 @@ describe DiscourseTranslator::DiscourseAi do
     end
   end
 
-<<<<<<< HEAD
   describe ".translate" do
     before do
       post.set_detected_locale("de")
@@ -59,13 +58,6 @@ describe DiscourseTranslator::DiscourseAi do
         locale, translated_text = DiscourseTranslator::DiscourseAi.translate(topic)
         expect(locale).to eq "de"
         expect(translated_text).to eq "some translated text"
-=======
-  describe ".translate!" do
-    before { post.set_detected_locale("de") }
-
-    it "returns the translated text from the llm" do
-      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
-        expect(DiscourseTranslator::DiscourseAi.translate!(post)).to eq "some translated text"
       end
     end
 
@@ -73,7 +65,6 @@ describe DiscourseTranslator::DiscourseAi do
       post.update(raw: "#{"a" * 3000} #{"b" * 3000}")
       DiscourseAi::Completions::Llm.with_prepared_responses(%w[lol wut]) do
         expect(DiscourseTranslator::DiscourseAi.translate!(post)).to eq "lolwut"
->>>>>>> 9dd4245 (FIX: Split raw content to prevent job from timing out)
       end
     end
   end
