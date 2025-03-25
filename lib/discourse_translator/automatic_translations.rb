@@ -30,9 +30,9 @@ module DiscourseTranslator
 
       public_categories = Category.where(read_restricted: false).pluck(:id)
 
-      if content.is_a(Post)
+      if content.is_a?(Post)
         public_categories.include?(content.topic.category_id)
-      elsif content.is_a(Topic)
+      elsif content.is_a?(Topic)
         public_categories.include?(content.category_id)
       else
         false
