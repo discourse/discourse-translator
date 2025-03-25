@@ -60,6 +60,13 @@ describe DiscourseTranslator::DiscourseAi do
         expect(translated_text).to eq "some translated text"
       end
     end
+
+    it "sends the content for splitting and the split content for translation" do
+      post.update(raw: "#{"a" * 3000} #{"b" * 3000}")
+      DiscourseAi::Completions::Llm.with_prepared_responses(
+        %w[lol wut].map { |content| translation_json(content) },
+      ) { expect(DiscourseTranslator::DiscourseAi.translate!(post)).to eq "<p>lolwut</p>" }
+    end
   end
 
   def locale_json(content)
