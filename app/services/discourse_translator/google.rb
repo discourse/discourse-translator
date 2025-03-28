@@ -64,6 +64,7 @@ module DiscourseTranslator
       nb_NO: "no",
       fa_IR: "fa",
     }
+    CHINESE_LOCALE = "zh"
 
     def self.access_token_key
       "google-translator"
@@ -84,16 +85,22 @@ module DiscourseTranslator
 
     def self.translate_supported?(source, target)
       res = result(SUPPORT_URI, target: SUPPORTED_LANG_MAPPING[target])
-      res["languages"].any? { |obj| obj["language"] == source }
+      supported = res["languages"].any? { |obj| obj["language"] == source }
+      return true if supported
+
+      normalized_source = source.split("-").first
+      if (source.include?("-") && normalized_source != CHINESE_LOCALE)
+        res["languages"].any? { |obj| obj["language"] == normalized_source }
+      else
+        false
+      end
     end
 
     def self.translate!(translatable, target_locale_sym = I18n.locale)
-      detected_locale = detect(translatable)
       res =
         result(
           TRANSLATE_URI,
           q: text_for_translation(translatable),
-          source: detected_locale,
           target: SUPPORTED_LANG_MAPPING[target_locale_sym],
         )
       res["translations"][0]["translatedText"]

@@ -73,39 +73,44 @@ RSpec.describe DiscourseTranslator::Google do
 
   describe ".translate_supported?" do
     let(:topic) { Fabricate(:topic, title: "This title is in english") }
-    it "should equate source language to target" do
+
+    it "equates source language to target" do
       source = "en"
       target = "fr"
-      Excon.expects(:post).returns(
-        mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{source}" }] } } }),
+      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+        status: 200,
+        body: %{ { "data": { "languages": [ { "language": "#{source}" }] } } },
       )
       expect(described_class.translate_supported?(source, target)).to be true
     end
 
-    it "should pass through strings already in target language" do
-      lang = I18n.locale
-      topic.set_detected_locale(lang)
-      expect(described_class.translate(topic)).to eq(["en", "This title is in english"])
+    it "checks again without -* when the source language is not supported" do
+      source = "en"
+      target = "fr"
+      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+        status: 200,
+        body: %{ { "data": { "languages": [ { "language": "#{source}" }] } } },
+      )
+
+      expect(described_class.translate_supported?("en-GB", target)).to be true
     end
   end
 
-  describe ".translate" do
+  describe ".translate!" do
     let(:post) { Fabricate(:post) }
 
-    it "raise an error and warns admin on failure" do
+    it "raises an error and warns admin on failure" do
       described_class.expects(:access_token).returns(api_key)
       described_class.expects(:detect).returns("__")
 
-      Excon.expects(:post).returns(
-        mock_response.new(
-          400,
-          {
-            error: {
-              code: "400",
-              message: "API key not valid. Please pass a valid API key.",
-            },
-          }.to_json,
-        ),
+      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+        status: 400,
+        body: {
+          error: {
+            code: "400",
+            message: "API key not valid. Please pass a valid API key.",
+          },
+        }.to_json,
       )
 
       ProblemCheckTracker[:translator_error].no_problem!
@@ -153,34 +158,27 @@ RSpec.describe DiscourseTranslator::Google do
       post.set_detected_locale("de")
       body = {
         q: post.cooked.truncate(SiteSetting.max_characters_per_translation, omission: nil),
-        source: "de",
         target: "en",
         key: api_key,
       }
 
       translated_text = "hur dur hur dur"
-      Excon
-        .expects(:post)
-        .with(
-          DiscourseTranslator::Google::TRANSLATE_URI,
-          body: URI.encode_www_form(body),
-          headers: {
-            "Content-Type" => "application/x-www-form-urlencoded",
-            "Referer" => "http://test.localhost",
-          },
-        )
-        .returns(
-          mock_response.new(
-            200,
-            %{ { "data": { "translations": [ { "translatedText": "#{translated_text}" } ] } } },
-          ),
-        )
-        .once
-      Excon.expects(:post).returns(
-        mock_response.new(200, %{ { "data": { "languages": [ { "language": "de" }] } } }),
+      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+        status: 200,
+        body: %{ { "data": { "languages": [ { "language": "de" }] } } },
+      )
+      stub_request(:post, DiscourseTranslator::Google::TRANSLATE_URI).with(
+        body: URI.encode_www_form(body),
+        headers: {
+          "Content-Type" => "application/x-www-form-urlencoded",
+          "Referer" => "http://test.localhost",
+        },
+      ).to_return(
+        status: 200,
+        body: %{ { "data": { "translations": [ { "translatedText": "#{translated_text}" } ] } } },
       )
 
-      expect(described_class.translate(post)).to eq(["de", translated_text])
+      expect(described_class.translate!(post)).to eq(translated_text)
     end
   end
 end
