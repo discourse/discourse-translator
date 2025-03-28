@@ -143,7 +143,7 @@ RSpec.describe DiscourseTranslator::Google do
       )
 
       expect { described_class.translate(post) }.to raise_error(
-        I18n.t("translator.failed", source_locale: "cat", target_locale: "dog"),
+        I18n.t("translator.failed.post", source_locale: "cat", target_locale: "dog"),
       )
     end
 
