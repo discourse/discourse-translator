@@ -69,8 +69,8 @@ RSpec.describe DiscourseTranslator::Amazon do
       expect { described_class.translate(post) }.to raise_error(
         I18n.t(
           "translator.failed.post",
-          source_locale: detected_lang,
-          target_locale: target_locale_sym,
+          source_locale: "en",
+          target_locale: "es",
         ),
       )
     end
