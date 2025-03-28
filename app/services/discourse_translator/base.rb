@@ -42,9 +42,7 @@ module DiscourseTranslator
       unless translate_supported?(detected_lang, target_locale_sym)
         raise TranslatorError.new(
                 I18n.t(
-                  "translator.failed",
-                  content_type:
-                    I18n.t("translator.type_of_content.#{translatable.class.name.downcase}"),
+                  "translator.failed.#{translatable.class.name.downcase}",
                   source_locale: detected_lang,
                   target_locale: target_locale_sym,
                 ),

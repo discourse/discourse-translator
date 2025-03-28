@@ -68,10 +68,9 @@ RSpec.describe DiscourseTranslator::Amazon do
     it "raises an error when trying to translate an unsupported language" do
       expect { described_class.translate(post) }.to raise_error(
         I18n.t(
-          "translator.failed",
-          content_type: I18n.t("translator.type_of_content.post"),
-          source_locale: "en",
-          target_locale: "es",
+          "translator.failed.post",
+          source_locale: detected_lang,
+          target_locale: target_locale_sym,
         ),
       )
     end

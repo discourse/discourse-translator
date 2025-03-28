@@ -24,14 +24,13 @@ en:
     experimental_inline_translation: "Enable experimental inline translation feature. This replaces existing parallel translation, allowing site visitors with a non-default locale to view content in their language."
     automatic_translation_target_languages: "The languages to automatically translate user content (posts, topics) to. If empty, no languages will be automatically translated."
   translator:
-    failed: "The translator is unable to translate this %{content_type} (%{source_locale}) to your language (%{target_locale})."
+    failed:
+      topic: "The translator is unable to translate this topic's title (%{source_locale}) to your language (%{target_locale})."
+      post: "The translator is unable to translate this post's content (%{source_locale}) to your language (%{target_locale})."
     not_supported: "This language is not supported by the translator."
     too_long: "This post is too long to be translated by the translator."
     not_available: "The translator service is currently not available."
     api_timeout: "The translator service took too long to respond. Please try again later."
-    type_of_content:
-      topic: "topic's title"
-      post: "post's content"
 
     amazon:
       invalid_credentials: "The provided credentials for AWS translate are invalid."
