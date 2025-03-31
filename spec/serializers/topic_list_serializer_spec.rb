@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe TopicListSerializer do
   fab!(:topic1) { Fabricate(:topic) }
   fab!(:topic2) { Fabricate(:topic) }
@@ -27,7 +25,8 @@ describe TopicListSerializer do
       locale_queries = queries.count { |q| q.include?("discourse_translator_topic_locales") }
       expect(locale_queries).to eq(1) # would be 3 if not preloaded
 
-      translation_queries = queries.count { |q| q.include?("discourse_translator_topic_translations") }
+      translation_queries =
+        queries.count { |q| q.include?("discourse_translator_topic_translations") }
       expect(translation_queries).to eq(1) # would be 3 if not preloaded
 
       expect(topic_list.topics.first.association(:content_locale)).to be_loaded
@@ -39,8 +38,7 @@ describe TopicListSerializer do
       serializer = described_class.new(topic_list, scope: Guardian.new(user))
       queries = track_sql_queries { serializer.as_json }
 
-      locale_queries =
-        queries.count { |q| q.include?("discourse_translator_topic_locales") }
+      locale_queries = queries.count { |q| q.include?("discourse_translator_topic_locales") }
       expect(locale_queries).to eq(0)
       translation_queries =
         queries.count { |q| q.include?("discourse_translator_topic_translations") }
