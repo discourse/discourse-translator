@@ -32,6 +32,11 @@ after_initialize do
     TopicViewSerializer.prepend(DiscourseTranslator::Extensions::TopicViewSerializerExtension)
   end
 
+  if SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
+    register_topic_preloader_associations(:content_locale)
+    register_topic_preloader_associations(:translations)
+  end
+
   add_to_serializer :post, :can_translate do
     scope.can_translate?(object)
   end
