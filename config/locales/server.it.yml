@@ -23,7 +23,6 @@ it:
     restrict_translation_by_group: "Solo i gruppi autorizzati possono tradurre"
     restrict_translation_by_poster_group: "Consenti solo la traduzione dei messaggi scritti dagli utenti nei gruppi consentiti. Se vuoto, consente le traduzioni dei messaggi di tutti gli utenti."
   translator:
-    failed: "Il traduttore non è in grado di tradurre questo contenuto (%{source_locale}) nella lingua predefinita di questo sito (%{target_locale})."
     not_supported: "Questa lingua non è supportata dal traduttore."
     too_long: "Questo messaggio è troppo lungo per essere tradotto dal traduttore."
     not_available: "Il servizio di traduzione non è attualmente disponibile."

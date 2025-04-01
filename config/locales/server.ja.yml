@@ -23,7 +23,6 @@ ja:
     restrict_translation_by_group: "許可されたグループのみが翻訳できます"
     restrict_translation_by_poster_group: "許可されたグループのユーザーによる投稿の翻訳のみを許可します。空白の場合、すべてのユーザーによる投稿の翻訳を許可します。"
   translator:
-    failed: "翻訳ツールはこのコンテンツ (%{source_locale}) をこのサイトのデフォルトの言語 (%{target_locale}) に翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
     too_long: "この投稿は翻訳ツールで翻訳するには長すぎます。"
     not_available: "現在、翻訳ツールサービスは使用できません。"

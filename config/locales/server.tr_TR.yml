@@ -23,7 +23,6 @@ tr_TR:
     restrict_translation_by_group: "Yalnızca izin verilen gruplar çeviri yapabilir"
     restrict_translation_by_poster_group: "Yalnızca izin verilen gruplardaki kullanıcılar tarafından oluşturulan gönderilerin çevirisine izin verin. Boşsa tüm kullanıcıların gönderilerinin çevrilmesine izin verin."
   translator:
-    failed: "Çevirmen bu içeriği (%{source_locale}) bu sitenin varsayılan diline (%{target_locale}) çeviremiyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
     too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
     not_available: "Çevirmen hizmeti şu anda kullanılamıyor."

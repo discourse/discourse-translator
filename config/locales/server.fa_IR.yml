@@ -16,7 +16,5 @@ fa_IR:
     translator_aws_secret_access: "کلید دسترسی امن AWS"
     translator_aws_iam_role: "نقش AWS IAM"
     restrict_translation_by_group: "فقط گروه‌های مجاز می‌توانند، ترجمه کنند"
-  translator:
-    failed: "مترجم قادر به ترجمه این محتوا (%{source_locale}) به زبان پیش‌فرض این وبگاه (%{target_locale}) نمی‌باشد."
   not_in_group:
     user_not_in_group: "شما به گروه‌ی تعلق ندارید که مجاز به ترجمه هستند."
