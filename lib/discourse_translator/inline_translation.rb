@@ -66,22 +66,12 @@ module DiscourseTranslator
           object.topic.translation_for(InlineTranslation.effective_locale).present?
       end
 
-      plugin.register_topic_preloader_associations(
-        {
-          association: :content_locale,
-          condition: -> do
-            SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
-          end,
-        },
-      )
-      plugin.register_topic_preloader_associations(
-        {
-          association: :translations,
-          condition: -> do
-            SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
-          end,
-        },
-      )
+      plugin.register_topic_preloader_associations(:content_locale) do
+        SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
+      end
+      plugin.register_topic_preloader_associations(:translations) do
+        SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
+      end
     end
   end
 end
