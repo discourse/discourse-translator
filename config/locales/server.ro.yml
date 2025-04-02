@@ -28,7 +28,9 @@ ro:
     experimental_inline_translation: "Activează funcția experimentală de traducere în-linie. Aceasta înlocuiește traducerea paralelă existentă, permițând vizitatorilor site-ului cu o locală care nu este implicită să vadă conținutul în limba lor."
     automatic_translation_target_languages: "Limbile pentru a traduce automat conținutul utilizatorului (postări, subiecte). Dacă este gol, nicio limbă nu va fi tradusă automat."
   translator:
-    failed: "Traducătorul nu este în măsură să traducă acest conținut (%{source_locale}) în limba implicită a acestui site (%{target_locale})."
+    failed:
+      topic: "Traducătorul nu poate traduce titlul acestui subiect (%{source_locale}) în limba ta (%{target_locale})."
+      post: "Traducătorul nu poate traduce conținutul acestei postări (%{source_locale}) în limba ta (%{target_locale})."
     not_supported: "Această limbă nu este acceptată de traducător."
     too_long: "Acest articol este prea lung pentru a fi tradusă de către traducător."
     not_available: "Momentan serviciul de traducere nu este disponibil."

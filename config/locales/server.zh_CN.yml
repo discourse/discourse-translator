@@ -23,7 +23,6 @@ zh_CN:
     restrict_translation_by_group: "只有允许的群组才能翻译"
     restrict_translation_by_poster_group: "仅允许翻译允许的群组中用户发布的帖子。如果为空，则允许翻译所有用户的帖子。"
   translator:
-    failed: "翻译器无法将此内容 (%{source_locale}) 翻译成此网站的默认语言 (%{target_locale})。"
     not_supported: "翻译器不支持此语言。"
     too_long: "帖子过长，翻译器无法翻译。"
     not_available: "该翻译服务目前不可用。"

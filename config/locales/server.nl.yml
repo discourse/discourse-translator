@@ -23,7 +23,6 @@ nl:
     restrict_translation_by_group: "Alleen toegestane groepen kunnen vertalen"
     restrict_translation_by_poster_group: "Sta alleen vertalingen toe van berichten gemaakt door gebruikers in toegestane groepen. Als dit leeg is, worden vertalingen van berichten van alle gebruikers toegestaan."
   translator:
-    failed: "De vertaler kan deze inhoud (%{source_locale}) niet vertalen naar de standaardtaal van deze site (%{target_locale})."
     not_supported: "Deze taal wordt niet ondersteund door de vertaler."
     too_long: "Dit bericht is te lang om door de vertaler te worden vertaald."
     not_available: "De vertaalservice is momenteel niet beschikbaar."

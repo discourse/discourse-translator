@@ -23,7 +23,6 @@ fi:
     restrict_translation_by_group: "Vain sallitut ryhmät voivat kääntää"
     restrict_translation_by_poster_group: "Salli vain sallittujen ryhmien käyttäjien tekemien viestien kääntäminen. Jos tämä on tyhjä, salli kaikkien käyttäjien viestien käännökset."
   translator:
-    failed: "Kääntäjä ei pysty kääntämään tätä sisältöä (%{source_locale}) tämän sivuston oletuskielelle (%{target_locale})."
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
     not_available: "Kääntäjäpalvelu ei ole tällä hetkellä käytettävissä."
