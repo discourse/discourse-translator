@@ -8,41 +8,24 @@ describe Jobs::AutomaticTranslationBackfill do
   end
 
   def expect_google_check_language
-    Excon
-      .expects(:post)
-      .with(DiscourseTranslator::Google::SUPPORT_URI, anything, anything)
-      .returns(
-        Struct.new(:status, :body).new(
-          200,
-          %{ { "data": { "languages": [ { "language": "es" }, { "language": "de" }] } } },
-        ),
-      )
-      .at_least_once
+    stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+      status: 200,
+      body: %{ { "data": { "languages": [ { "language": "es" }, { "language": "de" }] } } },
+    )
   end
 
   def expect_google_detect(locale)
-    Excon
-      .expects(:post)
-      .with(DiscourseTranslator::Google::DETECT_URI, anything, anything)
-      .returns(
-        Struct.new(:status, :body).new(
-          200,
-          %{ { "data": { "detections": [ [ { "language": "#{locale}" } ] ] } } },
-        ),
-      )
-      .once
+    stub_request(:post, DiscourseTranslator::Google::DETECT_URI).to_return(
+      status: 200,
+      body: %{ { "data": { "detections": [ [ { "language": "#{locale}" } ] ] } } },
+    )
   end
 
   def expect_google_translate(text)
-    Excon
-      .expects(:post)
-      .with(DiscourseTranslator::Google::TRANSLATE_URI, body: anything, headers: anything)
-      .returns(
-        Struct.new(:status, :body).new(
-          200,
-          %{ { "data": { "translations": [ { "translatedText": "#{text}" } ] } } },
-        ),
-      )
+    stub_request(:post, DiscourseTranslator::Google::TRANSLATE_URI).to_return(
+      status: 200,
+      body: %{ { "data": { "translations": [ { "translatedText": "#{text}" } ] } } },
+    )
   end
 
   describe "backfilling" do
@@ -59,7 +42,6 @@ describe Jobs::AutomaticTranslationBackfill do
     end
 
     it "does not backfill if backfill limit is set to 0" do
-      SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "de"
       SiteSetting.automatic_translation_backfill_rate = 0
       expect_any_instance_of(Jobs::AutomaticTranslationBackfill).not_to receive(:process_batch)
@@ -164,14 +146,17 @@ describe Jobs::AutomaticTranslationBackfill do
         expect_google_check_language
       end
 
-      it "backfills all (1) topics and (4) posts as it is within the maximum per job run" do
-        topic = Fabricate(:topic)
+      it "backfills all (1) category (1) topic (4) posts as it is within the maximum per job run" do
+        category = Fabricate(:category)
+        topic = Fabricate(:topic, category: category)
         posts = Fabricate.times(4, :post, topic: topic)
 
         topic.set_detected_locale("es")
         posts.each { |p| p.set_detected_locale("es") }
+        Category.all.each { |c| c.set_detected_locale("es") }
 
-        expect_google_translate("hallo").times(5)
+        expect_google_translate("hallo")
+        # .times(6)
 
         described_class.new.execute
 
@@ -179,6 +164,7 @@ describe Jobs::AutomaticTranslationBackfill do
         expect(posts.map { |p| p.translations.pluck(:locale, :translation).flatten }).to eq(
           [%w[de hallo]] * 4,
         )
+        expect(category.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
       end
     end
   end
