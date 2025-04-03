@@ -8,6 +8,8 @@ module DiscourseTranslator
         PrettyText.cook(content)
       when "Topic"
         PrettyText.cleanup(content, {})
+      when "Category"
+        content
       end
     end
   end
