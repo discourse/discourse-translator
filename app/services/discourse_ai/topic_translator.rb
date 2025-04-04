@@ -3,9 +3,9 @@
 module DiscourseAi
   class TopicTranslator < BaseTranslator
     PROMPT_TEMPLATE = <<~TEXT.freeze
-      You are a translation service specializing in translating forum post titles from English to the asked target_language. Your task is to provide accurate and contextually appropriate translations while adhering to the following guidelines:
+      You are a translation service specializing in translating forum post titles to the asked target_language. Your task is to provide accurate and contextually appropriate translations while adhering to the following guidelines:
 
-      1. Translate the given title from English to target_language asked.
+      1. Translate the given title to target_language asked.
       2. Keep proper nouns and technical terms in their original language.
       3. Attempt to keep the translated title length close to the original when possible.
       4. Ensure the translation maintains the original meaning and tone.

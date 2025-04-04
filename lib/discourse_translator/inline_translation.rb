@@ -89,6 +89,18 @@ module DiscourseTranslator
       plugin.register_topic_preloader_associations(:translations) do
         SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
       end
+
+      # categories
+
+      plugin.register_modifier(:site_category_serializer_name) do |name, serializer|
+        if !SiteSetting.experimental_inline_translation ||
+             serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
+             serializer.scope&.request&.params&.[]("show") == "original"
+          name
+        else
+          serializer.object.translation_for(InlineTranslation.effective_locale).presence
+        end
+      end
     end
 
     def show_translation?(translatable, scope)
