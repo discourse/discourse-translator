@@ -42,6 +42,11 @@ module DiscourseTranslator
             .join("")
         when "Topic"
           ::DiscourseAi::TopicTranslator.new(text_for_translation(translatable), language).translate
+        when "Category"
+          ::DiscourseAi::CategoryTranslator.new(
+            text_for_translation(translatable),
+            language,
+          ).translate
         end
 
       DiscourseTranslator::TranslatedContentNormalizer.normalize(translatable, translated)
