@@ -29,6 +29,7 @@ after_initialize do
     Guardian.prepend(DiscourseTranslator::Extensions::GuardianExtension)
     Post.prepend(DiscourseTranslator::Extensions::PostExtension)
     Topic.prepend(DiscourseTranslator::Extensions::TopicExtension)
+    Category.prepend(DiscourseTranslator::Extensions::CategoryExtension)
     TopicViewSerializer.prepend(DiscourseTranslator::Extensions::TopicViewSerializerExtension)
   end
 

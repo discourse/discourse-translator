@@ -137,6 +137,8 @@ module DiscourseTranslator
         raw ? translatable.raw : translatable.cooked
       when "Topic"
         translatable.title
+      when "Category"
+        translatable.name
       end
     end
   end
