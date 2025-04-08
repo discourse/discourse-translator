@@ -42,6 +42,7 @@ describe Jobs::AutomaticTranslationBackfill do
     end
 
     it "does not backfill if backfill limit is set to 0" do
+      SiteSetting.automatic_translation_backfill_rate = 100
       SiteSetting.automatic_translation_target_languages = "de"
       SiteSetting.automatic_translation_backfill_rate = 0
       expect_any_instance_of(Jobs::AutomaticTranslationBackfill).not_to receive(:process_batch)
@@ -67,19 +68,22 @@ describe Jobs::AutomaticTranslationBackfill do
       end
 
       it "backfills both topics and posts" do
+        (Category.all.each + Tag.all.each).each do |c|
+          c.set_detected_locale("de")
+          c.set_translation("es", "hola")
+        end
         post = Fabricate(:post)
         topic = post.topic
 
         topic.set_detected_locale("de")
         post.set_detected_locale("es")
 
-        expect_google_translate("hola")
-        expect_google_translate("hallo")
+        expect_google_translate("xx")
 
         described_class.new.execute
 
-        expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es hola]])
-        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+        expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es xx]])
+        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de xx]])
       end
 
       it "backfills only public content when limit_to_public_content is true" do
@@ -95,20 +99,27 @@ describe Jobs::AutomaticTranslationBackfill do
         private_topic.set_detected_locale("de")
         private_post.set_detected_locale("es")
 
+        (Category.all.each + Tag.all.each).each do |c|
+          c.set_detected_locale("de")
+          c.set_translation("es", "hola")
+        end
         expect_google_translate("hola")
-        expect_google_translate("hallo")
 
         SiteSetting.automatic_translation_backfill_limit_to_public_content = true
         described_class.new.execute
 
         expect(topic.translations.pluck(:locale, :translation)).to eq([%w[es hola]])
-        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+        expect(post.translations.pluck(:locale, :translation)).to eq([%w[de hola]])
 
         expect(private_topic.translations).to eq([])
         expect(private_post.translations).to eq([])
       end
 
       it "translate only content newer than automatic_translation_backfill_max_age_days" do
+        (Category.all.each + Tag.all.each).each do |c|
+          c.set_detected_locale("de")
+          c.set_translation("es", "hola")
+        end
         old_post = Fabricate(:post)
         old_topic = old_post.topic
         new_post = Fabricate(:post)
@@ -146,14 +157,16 @@ describe Jobs::AutomaticTranslationBackfill do
         expect_google_check_language
       end
 
-      it "backfills all (1) category (1) topic (4) posts as it is within the maximum per job run" do
+      it "backfills all (1) topic (4) posts (1) category (1) tag as it is within the maximum per job run" do
         category = Fabricate(:category)
+        tag = Fabricate(:tag)
         topic = Fabricate(:topic, category: category)
         posts = Fabricate.times(4, :post, topic: topic)
 
         topic.set_detected_locale("es")
         posts.each { |p| p.set_detected_locale("es") }
         Category.all.each { |c| c.set_detected_locale("es") }
+        tag.set_detected_locale("es")
 
         expect_google_translate("hallo")
 
@@ -164,6 +177,7 @@ describe Jobs::AutomaticTranslationBackfill do
           [%w[de hallo]] * 4,
         )
         expect(category.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
+        expect(tag.translations.pluck(:locale, :translation)).to eq([%w[de hallo]])
       end
     end
   end
