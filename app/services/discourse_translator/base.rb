@@ -148,6 +148,8 @@ module DiscourseTranslator
         translatable.title
       when "Category"
         translatable.name
+      when "Tag"
+        translatable.name
       end
     end
   end
