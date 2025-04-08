@@ -156,7 +156,6 @@ describe Jobs::AutomaticTranslationBackfill do
         Category.all.each { |c| c.set_detected_locale("es") }
 
         expect_google_translate("hallo")
-        # .times(6)
 
         described_class.new.execute
 
