@@ -87,22 +87,24 @@ module Jobs
 
     def process_batch
       records_to_translate = SiteSetting.automatic_translation_backfill_rate
-      backfill_locales.each_with_index do |target_locale, i|
-        topic_ids =
-          fetch_untranslated_model_ids(Topic, "title", records_to_translate, target_locale)
-        post_ids = fetch_untranslated_model_ids(Post, "raw", records_to_translate, target_locale)
-        category_ids =
-          fetch_untranslated_model_ids(Category, "name", records_to_translate, target_locale)
+      backfill_locales.each do |target_locale|
+        [
+          [Topic, "title"],
+          [Post, "raw"],
+          [Category, "name"],
+          [Tag, "name"],
+        ].each do |model, content_column|
+          ids =
+            fetch_untranslated_model_ids(model, content_column, records_to_translate, target_locale)
 
-        next if topic_ids.empty? && post_ids.empty? && category_ids.empty?
+          next if ids.empty?
 
-        DiscourseTranslator::VerboseLogger.log(
-          "Translating #{topic_ids.size} topics, #{post_ids.size} posts, #{category_ids.size} categories, to #{target_locale}",
-        )
+          DiscourseTranslator::VerboseLogger.log(
+            "Translating #{ids.size} #{model.name} to #{target_locale}",
+          )
 
-        translate_records(Topic, topic_ids, target_locale)
-        translate_records(Post, post_ids, target_locale)
-        translate_records(Category, category_ids, target_locale)
+          translate_records(model, ids, target_locale)
+        end
       end
     end
 

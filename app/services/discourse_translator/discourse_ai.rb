@@ -47,6 +47,8 @@ module DiscourseTranslator
             text_for_translation(translatable),
             language,
           ).translate
+        when "Tag"
+          ::DiscourseAi::TagTranslator.new(text_for_translation(translatable), language).translate
         end
 
       DiscourseTranslator::TranslatedContentNormalizer.normalize(translatable, translated)
