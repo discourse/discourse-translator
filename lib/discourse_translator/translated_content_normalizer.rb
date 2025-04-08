@@ -10,6 +10,8 @@ module DiscourseTranslator
         PrettyText.cleanup(content, {})
       when "Category"
         content
+      when "Tag"
+        content
       end
     end
   end

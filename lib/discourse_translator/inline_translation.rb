@@ -88,6 +88,24 @@ module DiscourseTranslator
           serializer.object.translation_for(InlineTranslation.effective_locale).presence
         end
       end
+
+      # tags
+
+      plugin.register_modifier(:topic_tags_serializer_name) do |tags, serializer|
+        # %w[topics tags serializer name]
+      end
+
+      plugin.register_modifier(:sidebar_tag_serializer_name) do |name, serializer|
+        if !SiteSetting.experimental_inline_translation ||
+             serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
+             serializer.scope&.request&.params&.[]("show") == "original"
+          name
+        else
+          serializer.object.translation_for(InlineTranslation.effective_locale).presence
+        end
+      end
+
+      # plugin.register_modifier(:tag_serializer_name) { |name, serializer| "tag_serializer_name" }
     end
   end
 end
