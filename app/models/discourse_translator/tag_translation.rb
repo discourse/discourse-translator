@@ -12,3 +12,19 @@ module DiscourseTranslator
     validates :locale, uniqueness: { scope: :tag_id }
   end
 end
+
+# == Schema Information
+#
+# Table name: discourse_translator_tag_translations
+#
+#  id          :bigint           not null, primary key
+#  tag_id      :integer          not null
+#  locale      :string           not null
+#  translation :text             not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  idx_tag_translations_on_tag_id_and_locale  (tag_id,locale) UNIQUE
+#
