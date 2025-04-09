@@ -29,6 +29,18 @@ function initializeTranslation(api) {
     (currentUser || siteSettings.experimental_anon_language_switcher)
   ) {
     api.renderInOutlet("topic-navigation", ShowOriginalContent);
+
+    api.registerCustomPostMessageCallback("translated_post", (topicController, data) => {
+      if (new URLSearchParams(window.location.search).get("show") === "original") {
+        return;
+      }
+      const postStream = topicController.get("model.postStream");
+      postStream
+        .triggerChangedPost(data.id, data.updated_at)
+        .then(() => {
+          topicController.appEvents.trigger("post-stream:refresh", { id: data.id });
+        });
+    });
   }
 
   customizePostMenu(api);

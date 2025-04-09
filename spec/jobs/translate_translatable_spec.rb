@@ -31,7 +31,10 @@ describe Jobs::TranslateTranslatable do
     end
 
     it "translates posts to configured target languages" do
-      MessageBus.expects(:publish).with("/topic/#{post.topic.id}", type: :revised, id: post.id).once
+      MessageBus
+        .expects(:publish)
+        .with("/topic/#{post.topic.id}", type: :translated_post, id: post.id)
+        .once
 
       job.execute(type: "Post", translatable_id: post.id)
 
@@ -40,7 +43,7 @@ describe Jobs::TranslateTranslatable do
     end
 
     it "translates topics to configured target languages" do
-      MessageBus.expects(:publish).with("/topic/#{topic.id}", type: :revised, id: 1).once
+      MessageBus.expects(:publish).with("/topic/#{topic.id}", type: :translated_post, id: 1).once
 
       job.execute(type: "Topic", translatable_id: topic.id)
 
