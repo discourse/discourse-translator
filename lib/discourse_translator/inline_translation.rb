@@ -89,6 +89,113 @@ module DiscourseTranslator
       plugin.register_topic_preloader_associations(:translations) do
         SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
       end
+
+      # categories
+
+      # this hunk works
+      plugin.register_modifier(:site_category_serializer_name) do |name, serializer|
+        if !SiteSetting.experimental_inline_translation ||
+             serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
+             serializer.scope&.request&.params&.[]("show") == "original"
+          name
+        else
+          serializer.object.translation_for(InlineTranslation.effective_locale).presence
+        end
+      end
+
+      # unsure about this one which should essentially be the "same" as site_category_serializer_name
+      # but it makes use of an existing modifier
+      # plugin.register_modifier(:site_all_categories_cache_query) do |query, site|
+      #   current_locale = InlineTranslation.effective_locale.to_s.gsub("_", "-")
+      #
+      #   query =
+      #     query.joins(
+      #       "LEFT JOIN discourse_translator_category_translations translations ON
+      # translations.category_id = categories.id AND translations.locale = '#{current_locale}'",
+      #     )
+      #
+      #   # a new select that keeps all existing columns but overrides the name
+      #   # and remove any explicit selection of categories.name if it exists
+      #   # very brittle
+      #   original_select =
+      #     query.select_values.empty? ? ["categories.*", "t.slug topic_slug"] : query.select_values
+      #   filtered_select = original_select.reject { |s| s.include?("categories.name") }
+      #
+      #   query =
+      #     query.unscope(:select).select(
+      #       *filtered_select,
+      #       "COALESCE(translations.translation, categories.name) AS name",
+      #     )
+      #
+      #   query
+      # end
+
+      # tags
+
+      plugin.register_modifier(:topic_tags_all_tags) do |tags|
+        tags = tags.includes(:content_locale) if SiteSetting.experimental_inline_translation
+
+        if SiteSetting.experimental_inline_translation &&
+             LocaleMatcher.user_locale_in_target_languages?
+          locale = InlineTranslation.effective_locale.to_s.gsub("_", "-")
+          tags =
+            tags
+              .includes(:translations)
+              .references(:translations)
+              .where(translations: { locale: [nil, locale] })
+        end
+        tags
+      end
+
+      plugin.register_modifier(:topic_tags_serializer_name) do |tags|
+        tags.map do |tag|
+          if !SiteSetting.experimental_inline_translation ||
+               !LocaleMatcher.user_locale_in_target_languages?
+            tag.name
+          else
+            tag.translation_for(InlineTranslation.effective_locale) || tag.name
+          end
+        end
+      end
+
+      plugin.register_modifier(:sidebar_tag_serializer_name) do |name, serializer|
+        if !SiteSetting.experimental_inline_translation ||
+             serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
+             serializer.scope&.request&.params&.[]("show") == "original"
+          name
+        else
+          serializer.object.translation_for(InlineTranslation.effective_locale).presence
+        end
+      end
+
+      # this implementation is an alternative to the `top_tags_query` below
+      # but likely not as performant
+      plugin.register_modifier(:topic_list_tags) do |tag_names|
+        # loop through each tag name and search for the tag
+        # then get the translation for the tag
+      end
+
+      plugin.register_modifier(:top_tags_query) do |scope_category_ids, filter_sql, limit|
+        current_locale = I18n.locale.to_s.sub("_", "-")
+
+        query = <<~SQL
+          SELECT COALESCE(translations.translation, tags.name) AS tag_name,
+                 SUM(stats.topic_count) AS sum_topic_count
+          FROM category_tag_stats stats
+          JOIN tags ON stats.tag_id = tags.id AND stats.topic_count > 0
+          LEFT JOIN discourse_translator_tag_translations translations
+            ON translations.tag_id = tags.id AND translations.locale = '#{current_locale}'
+          WHERE stats.category_id in (#{scope_category_ids.join(",")})
+          #{filter_sql}
+          GROUP BY COALESCE(translations.translation, tags.name)
+          ORDER BY sum_topic_count DESC, tag_name ASC
+          LIMIT #{limit}
+        SQL
+
+        DB.query(query)
+      end
+
+      # plugin.register_modifier(:tag_serializer_name) { |name, serializer| "tag_serializer_name" }
     end
 
     def show_translation?(translatable, scope)

@@ -2,6 +2,8 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 import RenderGlimmer from "discourse/widgets/render-glimmer";
 import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
+import PostTranslatedIndicator
+  from "../components/post-translated-indicator";
 import ShowOriginalContent from "../components/show-original-content";
 import TranslatedPost from "../components/translated-post";
 import TranslatedPostIndicator from "../components/translated-post-indicator";
@@ -61,6 +63,9 @@ function initializeTranslation(api) {
       }
     });
   }
+
+  api.renderInOutlet("post-meta-data-poster-name-user-link", PostTranslatedIndicator);
+  // api.renderInOutlet("admin-plugin-list-name-badge-after", PostTranslatedIndicator);
 
   customizePostMenu(api);
 }
