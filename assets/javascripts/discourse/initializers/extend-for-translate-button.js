@@ -1,6 +1,8 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
+import PostTranslatedIndicator
+  from "../components/post-translated-indicator";
 import ShowOriginalContent from "../components/show-original-content";
 import TranslatedPost from "../components/translated-post";
 
@@ -30,6 +32,9 @@ function initializeTranslation(api) {
   ) {
     api.renderInOutlet("topic-navigation", ShowOriginalContent);
   }
+
+  api.renderInOutlet("post-meta-data-poster-name-user-link", PostTranslatedIndicator);
+  // api.renderInOutlet("admin-plugin-list-name-badge-after", PostTranslatedIndicator);
 
   customizePostMenu(api);
 }
