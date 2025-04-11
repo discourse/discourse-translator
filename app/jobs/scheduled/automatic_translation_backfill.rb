@@ -24,10 +24,10 @@ module Jobs
             SELECT m.id
             FROM #{model.table_name} m
             #{limit_to_public_clause(model)}
-            WHERE m.deleted_at IS NULL
-              AND m.#{content_column} != ''
-              AND m.user_id > 0
-              #{max_age_clause}
+            WHERE m.#{content_column} != ''
+              #{not_deleted_clause(model)}
+              #{non_bot_clause(model)}
+              #{max_age_clause(model)}
             ORDER BY m.updated_at DESC
           )
           EXCEPT
@@ -87,26 +87,35 @@ module Jobs
 
     def process_batch
       records_to_translate = SiteSetting.automatic_translation_backfill_rate
-      backfill_locales.each_with_index do |target_locale, i|
-        topic_ids =
-          fetch_untranslated_model_ids(Topic, "title", records_to_translate, target_locale)
-        post_ids = fetch_untranslated_model_ids(Post, "raw", records_to_translate, target_locale)
+      backfill_locales.each do |target_locale|
+        [
+          [Topic, "title"],
+          [Post, "raw"],
+          [Category, "name"],
+          [Tag, "name"],
+        ].each do |model, content_column|
+          ids =
+            fetch_untranslated_model_ids(model, content_column, records_to_translate, target_locale)
 
-        next if topic_ids.empty? && post_ids.empty?
+          next if ids.empty?
 
-        DiscourseTranslator::VerboseLogger.log(
-          "Translating #{topic_ids.size} topics and #{post_ids.size} posts to #{target_locale}",
-        )
+          DiscourseTranslator::VerboseLogger.log(
+            "Translating #{ids.size} #{model.name} to #{target_locale}",
+          )
 
-        translate_records(Topic, topic_ids, target_locale)
-        translate_records(Post, post_ids, target_locale)
+          translate_records(model, ids, target_locale)
+        end
       end
     end
 
-    def max_age_clause
+    def max_age_clause(model)
       return "" if SiteSetting.automatic_translation_backfill_max_age_days <= 0
 
-      "AND m.created_at > NOW() - INTERVAL '#{SiteSetting.automatic_translation_backfill_max_age_days} days'"
+      if model == Post || model == Topic
+        "AND m.created_at > NOW() - INTERVAL '#{SiteSetting.automatic_translation_backfill_max_age_days} days'"
+      else
+        ""
+      end
     end
 
     def limit_to_public_clause(model)
@@ -129,6 +138,16 @@ module Jobs
       end
 
       limit_to_public_clause
+    end
+
+    def non_bot_clause(model)
+      return "AND m.user_id > 0" if model == Post || model == Topic
+      ""
+    end
+
+    def not_deleted_clause(model)
+      return "AND m.deleted_at IS NULL" if model == Post || model == Topic
+      ""
     end
   end
 end
