@@ -25,8 +25,8 @@ describe BasicTopicSerializer do
       SiteSetting.automatic_translation_target_languages = "ja"
     end
 
-    def serialize_topic(guardian_user: user, params: {})
-      env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
+    def serialize_topic(guardian_user: user, cookie: "")
+      env = create_request_env.merge("HTTP_COOKIE" => cookie)
       request = ActionDispatch::Request.new(env)
       guardian = Guardian.new(guardian_user, request)
       BasicTopicSerializer.new(topic, scope: guardian)
@@ -41,7 +41,11 @@ describe BasicTopicSerializer do
 
     it "does not replace fancy_title with translation when show_original param is present" do
       topic.set_translation("ja", jap_title)
-      expect(serialize_topic(params: { "show" => "original" }).fancy_title).to eq(topic.fancy_title)
+      expect(
+        serialize_topic(
+          cookie: DiscourseTranslator::InlineTranslation::SHOW_ORIGINAL_COOKIE,
+        ).fancy_title,
+      ).to eq(topic.fancy_title)
     end
 
     it "does not replace fancy_title with translation when no translation exists" do

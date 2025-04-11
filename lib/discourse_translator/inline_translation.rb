@@ -10,6 +10,8 @@ module DiscourseTranslator
       end
     end
 
+    SHOW_ORIGINAL_COOKIE = "discourse-translator-show-original"
+
     def inject(plugin)
       # since locales are eager loaded but translations may not,
       # always return early if topic and posts are in the user's effective_locale.
@@ -18,7 +20,7 @@ module DiscourseTranslator
       plugin.register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
         if !SiteSetting.experimental_inline_translation ||
              serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
-             serializer.scope&.request&.params&.[]("show") == "original"
+             serializer.scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE)
           cooked
         else
           serializer.object.translation_for(InlineTranslation.effective_locale).presence
@@ -28,7 +30,7 @@ module DiscourseTranslator
       plugin.register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
         if !SiteSetting.experimental_inline_translation ||
              serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
-             serializer.scope&.request&.params&.[]("show") == "original"
+             serializer.scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE)
           fancy_title
         else
           serializer
@@ -42,7 +44,7 @@ module DiscourseTranslator
       plugin.register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
         if !SiteSetting.experimental_inline_translation ||
              serializer.object.topic.locale_matches?(InlineTranslation.effective_locale) ||
-             serializer.scope&.request&.params&.[]("show") == "original"
+             serializer.scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE)
           fancy_title
         else
           serializer
