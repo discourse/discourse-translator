@@ -21,6 +21,8 @@ module DiscourseTranslator
       # always return early if topic and posts are in the user's effective_locale.
       # this prevents the need to load translations.
 
+      # posts
+
       plugin.register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
         if !SiteSetting.experimental_inline_translation ||
              serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
@@ -30,6 +32,14 @@ module DiscourseTranslator
           serializer.object.translation_for(InlineTranslation.effective_locale).presence
         end
       end
+
+      plugin.add_to_serializer(:basic_post, :is_translated) do
+        SiteSetting.experimental_inline_translation &&
+          !object.locale_matches?(InlineTranslation.effective_locale) &&
+          object.translation_for(InlineTranslation.effective_locale).present?
+      end
+
+      # topics
 
       plugin.register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
         if !SiteSetting.experimental_inline_translation ||
@@ -58,12 +68,6 @@ module DiscourseTranslator
             .presence
             &.then { |t| Topic.fancy_title(t) }
         end
-      end
-
-      plugin.add_to_serializer(:basic_post, :is_translated) do
-        SiteSetting.experimental_inline_translation &&
-          !object.locale_matches?(InlineTranslation.effective_locale) &&
-          object.translation_for(InlineTranslation.effective_locale).present?
       end
 
       plugin.add_to_serializer(:topic_view, :is_translated) do
