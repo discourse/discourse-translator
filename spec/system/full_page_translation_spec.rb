@@ -12,6 +12,7 @@ RSpec.describe "Inline translation", type: :system do
   fab!(:post_2) do
     Fabricate(:post, topic: topic, raw: "The greatest victory is that which requires no battle")
   end
+  fab!(:post_3) { Fabricate(:post, topic: topic, raw: "将とは、智・信・仁・勇・厳なり。") }
 
   let(:topic_page) { PageObjects::Pages::Topic.new }
   let(:topic_list) { PageObjects::Components::TopicList.new }
@@ -21,11 +22,13 @@ RSpec.describe "Inline translation", type: :system do
     topic.set_detected_locale("en")
     post_1.set_detected_locale("en")
     post_2.set_detected_locale("en")
+    post_3.set_detected_locale("ja")
 
     topic.set_translation("ja", "孫子兵法からの人生戦略")
     topic.set_translation("es", "Estrategias de vida de El arte de la guerra")
     post_1.set_translation("ja", "傑作は単なる軍事戦略についてではありません")
     post_2.set_translation("ja", "最大の勝利は戦いを必要としないものです")
+    post_3.set_translation("en", "A general is one who possesses wisdom, sincerity...")
   end
 
   context "when the feature is enabled" do
@@ -37,6 +40,7 @@ RSpec.describe "Inline translation", type: :system do
       SiteSetting.experimental_inline_translation = true
       SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "ja"
+      SiteSetting.experimental_anon_language_switcher = true
     end
 
     it "shows the correct language based on the selected language and login status" do
@@ -49,6 +53,13 @@ RSpec.describe "Inline translation", type: :system do
       expect(find(topic_page.post_by_number_selector(1))).to have_content(
         "The masterpiece isn’t just about military strategy",
       )
+      expect(find(topic_page.post_by_number_selector(3))).to have_css(
+        "div.post-translated-indicator",
+      )
+      find("#{topic_page.post_by_number_selector(3)} .post-translated-indicator").hover
+      expect(
+        PageObjects::Components::Tooltips.new("discourse-translator_translated-post-indicator"),
+      ).to be_present(text: "This post was originally written in 日本語")
 
       sign_in(japanese_user)
       visit("/")

@@ -1,8 +1,10 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
+import RenderGlimmer from "discourse/widgets/render-glimmer";
 import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
 import ShowOriginalContent from "../components/show-original-content";
 import TranslatedPost from "../components/translated-post";
+import TranslatedPostIndicator from "../components/translated-post-indicator";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
@@ -46,6 +48,18 @@ function initializeTranslation(api) {
         });
       }
     );
+
+    api.includePostAttributes("is_translated", "detected_language");
+    api.decorateWidget("post-date:before", (dec) => {
+      if (dec.attrs.is_translated && dec.attrs.detected_language) {
+        return new RenderGlimmer(
+          dec.widget,
+          "div.post-info.post-translated-indicator",
+          TranslatedPostIndicator,
+          { detectedLanguage: dec.attrs.detected_language }
+        );
+      }
+    });
   }
 
   customizePostMenu(api);

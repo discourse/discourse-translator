@@ -63,7 +63,14 @@ module DiscourseTranslator
       plugin.add_to_serializer(:basic_post, :is_translated) do
         SiteSetting.experimental_inline_translation &&
           !object.locale_matches?(InlineTranslation.effective_locale) &&
+          !scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE) &&
           object.translation_for(InlineTranslation.effective_locale).present?
+      end
+
+      plugin.add_to_serializer(:basic_post, :detected_language) do
+        if SiteSetting.experimental_inline_translation && object.detected_locale.present?
+          LocaleToLanguage.get_language(object.detected_locale)
+        end
       end
 
       plugin.add_to_serializer(:topic_view, :is_translated) do
