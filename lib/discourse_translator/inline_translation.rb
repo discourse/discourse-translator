@@ -13,12 +13,8 @@ module DiscourseTranslator
     SHOW_ORIGINAL_COOKIE = "discourse-translator-show-original"
 
     def inject(plugin)
-      plugin.register_anonymous_cache_key(SHOW_ORIGINAL_COOKIE) do
-        if @request.cookies[DiscourseTranslator::InlineTranslation::SHOW_ORIGINAL_COOKIE].present?
-          "1"
-        else
-          "0"
-        end
+      plugin.register_anonymous_cache_key :showoriginal do
+        @request.cookies[SHOW_ORIGINAL_COOKIE].present? ? "1" : "0"
       end
 
       # since locales are eager loaded but translations may not,

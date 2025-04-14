@@ -37,7 +37,7 @@ export default class ShowOriginalContent extends Component {
       });
     }
 
-    window.location.reload();
+    this.router.refresh();
   }
 
   get title() {
