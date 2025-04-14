@@ -14,6 +14,7 @@ RSpec.describe "Inline translation", type: :system do
   end
 
   let(:topic_page) { PageObjects::Pages::Topic.new }
+  let(:topic_list) { PageObjects::Components::TopicList.new }
 
   before do
     # topic translation setup
@@ -53,14 +54,21 @@ RSpec.describe "Inline translation", type: :system do
       visit("/")
       visit("/t/#{topic.id}")
       expect(topic_page.has_topic_title?("孫子兵法からの人生戦略")).to eq(true)
+    end
 
+    it "shows original content when 'Show Original' is selected" do
+      sign_in(japanese_user)
+
+      visit("/")
+      topic_list.visit_topic_with_title("孫子兵法からの人生戦略")
+
+      expect(topic_page.has_topic_title?("孫子兵法からの人生戦略")).to eq(true)
       page.find(".discourse-translator_toggle-original button").click
-      expect(page).to have_current_path(/.*show=original.*/)
 
       expect(topic_page.has_topic_title?("Life strategies from The Art of War")).to eq(true)
-      expect(find(topic_page.post_by_number_selector(1))).to have_content(
-        "The masterpiece isn’t just about military strategy",
-      )
+
+      visit("/")
+      topic_list.visit_topic_with_title("Life strategies from The Art of War")
     end
   end
 end

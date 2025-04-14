@@ -4,6 +4,10 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
+import cookie, { removeCookie } from "discourse/lib/cookie";
+
+const SHOW_ORIGINAL_COOKIE = "discourse-translator-show-original";
+const SHOW_ORIGINAL_COOKIE_EXPIRY = 30;
 
 export default class ShowOriginalContent extends Component {
   static shouldRender(args) {
@@ -15,30 +19,31 @@ export default class ShowOriginalContent extends Component {
 
   @service router;
 
-  @tracked isTranslated = true;
+  @tracked showingOriginal = false;
 
   constructor() {
     super(...arguments);
-    this.isTranslated = !new URLSearchParams(window.location.search).has(
-      "show"
-    );
+    this.showingOriginal = cookie(SHOW_ORIGINAL_COOKIE);
   }
 
   @action
   async showOriginal() {
-    const params = new URLSearchParams(window.location.search);
-    if (this.isTranslated) {
-      params.append("show", "original");
+    if (this.showingOriginal) {
+      removeCookie(SHOW_ORIGINAL_COOKIE, { path: "/" });
     } else {
-      params.delete("show");
+      cookie(SHOW_ORIGINAL_COOKIE, true, {
+        path: "/",
+        expires: SHOW_ORIGINAL_COOKIE_EXPIRY,
+      });
     }
-    window.location.search = params.toString();
+
+    this.router.refresh();
   }
 
   get title() {
-    return this.isTranslated
-      ? "translator.content_translated"
-      : "translator.content_not_translated";
+    return this.showingOriginal
+      ? "translator.content_not_translated"
+      : "translator.content_translated";
   }
 
   <template>
@@ -46,7 +51,10 @@ export default class ShowOriginalContent extends Component {
       <DButton
         @icon="language"
         @title={{this.title}}
-        class={{concatClass "btn btn-default" (if this.isTranslated "active")}}
+        class={{concatClass
+          "btn btn-default"
+          (unless this.showingOriginal "active")
+        }}
         @action={{this.showOriginal}}
       />
     </div>

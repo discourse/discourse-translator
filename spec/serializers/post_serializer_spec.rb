@@ -114,8 +114,8 @@ RSpec.describe PostSerializer do
   end
 
   describe "#cooked" do
-    def serialize_post(guardian_user: user, params: {})
-      env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
+    def serialize_post(guardian_user: user, cookie: "")
+      env = create_request_env.merge("HTTP_COOKIE" => cookie)
       request = ActionDispatch::Request.new(env)
       guardian = Guardian.new(guardian_user, request)
       PostSerializer.new(post, scope: guardian)
@@ -131,14 +131,16 @@ RSpec.describe PostSerializer do
       expect(serialize_post.cooked).to eq(post.cooked)
     end
 
-    it "does not return translated_cooked when show=original param is present" do
+    it "does not return translated_cooked when show original translation cookie is present" do
       I18n.locale = "ja"
       SiteSetting.automatic_translation_backfill_rate = 1
       SiteSetting.automatic_translation_target_languages = "ja"
       post.set_translation("ja", "こんにちは")
 
-      expect(serialize_post(params: { "show" => "original" }).cooked).to eq(post.cooked)
-      expect(serialize_post(params: { "show" => "derp" }).cooked).to eq("こんにちは")
+      expect(
+        serialize_post(cookie: DiscourseTranslator::InlineTranslation::SHOW_ORIGINAL_COOKIE).cooked,
+      ).to eq(post.cooked)
+      expect(serialize_post(cookie: "derp").cooked).to eq("こんにちは")
     end
 
     it "does not return translated_cooked when post is already in correct locale" do
