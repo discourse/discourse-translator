@@ -16,3 +16,4 @@ ro:
       hide_translation: "Ascunde traducere"
       translated_from: "Tradus din %{language} cu %{translator}"
       translating: "Se traduce"
+      originally_written_in: "Această postare a fost scrisă inițial în %{language}"
