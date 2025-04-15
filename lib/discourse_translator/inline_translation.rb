@@ -22,41 +22,35 @@ module DiscourseTranslator
       # this prevents the need to load translations.
 
       plugin.register_modifier(:basic_post_serializer_cooked) do |cooked, serializer|
-        if !SiteSetting.experimental_inline_translation ||
-             serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
-             serializer.scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE)
-          cooked
-        else
+        if show_translation?(serializer.object, serializer.scope)
           serializer.object.translation_for(InlineTranslation.effective_locale).presence
+        else
+          cooked
         end
       end
 
       plugin.register_modifier(:topic_serializer_fancy_title) do |fancy_title, serializer|
-        if !SiteSetting.experimental_inline_translation ||
-             serializer.object.locale_matches?(InlineTranslation.effective_locale) ||
-             serializer.scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE)
-          fancy_title
-        else
+        if show_translation?(serializer.object, serializer.scope)
           serializer
             .object
             .translation_for(InlineTranslation.effective_locale)
             .presence
             &.then { |t| Topic.fancy_title(t) }
+        else
+          fancy_title
         end
       end
 
       plugin.register_modifier(:topic_view_serializer_fancy_title) do |fancy_title, serializer|
-        if !SiteSetting.experimental_inline_translation ||
-             serializer.object.topic.locale_matches?(InlineTranslation.effective_locale) ||
-             serializer.scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE)
-          fancy_title
-        else
+        if show_translation?(serializer.object.topic, serializer.scope)
           serializer
             .object
             .topic
             .translation_for(InlineTranslation.effective_locale)
             .presence
             &.then { |t| Topic.fancy_title(t) }
+        else
+          fancy_title
         end
       end
 
@@ -73,10 +67,20 @@ module DiscourseTranslator
         end
       end
 
-      plugin.add_to_serializer(:topic_view, :is_translated) do
-        SiteSetting.experimental_inline_translation &&
+      plugin.add_to_serializer(:topic_view, :show_translation_toggle) do
+        return false if !SiteSetting.experimental_inline_translation
+        # either the topic or any of the posts has a translation
+        # also, check the locale first as it is cheaper than loading translation
+        (
           !object.topic.locale_matches?(InlineTranslation.effective_locale) &&
-          object.topic.translation_for(InlineTranslation.effective_locale).present?
+            object.topic.translation_for(InlineTranslation.effective_locale).present?
+        ) ||
+          (
+            object.posts.any? do |post|
+              !post.locale_matches?(InlineTranslation.effective_locale) &&
+                post.translation_for(InlineTranslation.effective_locale).present?
+            end
+          )
       end
 
       plugin.register_topic_preloader_associations(:content_locale) do
@@ -85,6 +89,12 @@ module DiscourseTranslator
       plugin.register_topic_preloader_associations(:translations) do
         SiteSetting.translator_enabled && SiteSetting.experimental_inline_translation
       end
+    end
+
+    def show_translation?(translatable, scope)
+      SiteSetting.experimental_inline_translation &&
+        !translatable.locale_matches?(InlineTranslation.effective_locale) &&
+        !scope&.request&.cookies&.key?(SHOW_ORIGINAL_COOKIE)
     end
   end
 end

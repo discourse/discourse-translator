@@ -122,11 +122,11 @@ describe TopicViewSerializer do
       before do
         topic.title = original_title
         SiteSetting.experimental_inline_translation = true
-        I18n.locale = "ja"
+        I18n.locale = "en"
       end
 
-      def serialize_topic(guardian_user: user, params: {})
-        env = { "action_dispatch.request.parameters" => params, "REQUEST_METHOD" => "GET" }
+      def serialize_topic(guardian_user: user, cookie: "")
+        env = create_request_env.merge("HTTP_COOKIE" => cookie)
         request = ActionDispatch::Request.new(env)
         guardian = Guardian.new(guardian_user, request)
         TopicViewSerializer.new(TopicView.new(topic), scope: guardian)
@@ -141,9 +141,11 @@ describe TopicViewSerializer do
 
       it "does not replace fancy_title with translation when show_original param is present" do
         topic.set_translation("ja", jap_title)
-        expect(serialize_topic(params: { "show" => "original" }).fancy_title).to eq(
-          topic.fancy_title,
-        )
+        expect(
+          serialize_topic(
+            cookie: DiscourseTranslator::InlineTranslation::SHOW_ORIGINAL_COOKIE,
+          ).fancy_title,
+        ).to eq(topic.fancy_title)
       end
 
       it "does not replace fancy_title with translation when no translation exists" do
@@ -159,6 +161,7 @@ describe TopicViewSerializer do
       end
 
       it "returns translated title in fancy_title when translation exists for current locale" do
+        I18n.locale = "ja"
         SiteSetting.automatic_translation_backfill_rate = 1
         SiteSetting.automatic_translation_target_languages = "ja"
         topic.set_translation("ja", jap_title)
@@ -166,8 +169,10 @@ describe TopicViewSerializer do
       end
     end
 
-    describe "#is_translated" do
+    describe "#show_translation_toggle" do
       fab!(:user)
+      fab!(:post_1) { Fabricate(:post, topic:) }
+      fab!(:post_2) { Fabricate(:post, topic:) }
 
       before do
         SiteSetting.automatic_translation_backfill_rate = 1
@@ -184,15 +189,15 @@ describe TopicViewSerializer do
 
         SiteSetting.translator_enabled = false
         SiteSetting.experimental_inline_translation = false
-        expect(serialize_topic.is_translated).to eq(false)
+        expect(serialize_topic.show_translation_toggle).to eq(false)
 
         SiteSetting.translator_enabled = true
         SiteSetting.experimental_inline_translation = false
-        expect(serialize_topic.is_translated).to eq(false)
+        expect(serialize_topic.show_translation_toggle).to eq(false)
 
         SiteSetting.translator_enabled = true
         SiteSetting.experimental_inline_translation = true
-        expect(serialize_topic.is_translated).to eq(true)
+        expect(serialize_topic.show_translation_toggle).to eq(true)
       end
 
       it "returns true when there is translation for the topic" do
@@ -201,7 +206,7 @@ describe TopicViewSerializer do
         I18n.locale = "ja"
         topic.set_translation("ja", "こんにちは")
 
-        expect(serialize_topic.is_translated).to eq(true)
+        expect(serialize_topic.show_translation_toggle).to eq(true)
       end
     end
   end

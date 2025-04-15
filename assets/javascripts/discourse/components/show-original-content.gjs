@@ -11,10 +11,7 @@ const SHOW_ORIGINAL_COOKIE_EXPIRY = 30;
 
 export default class ShowOriginalContent extends Component {
   static shouldRender(args) {
-    return (
-      args.topic.is_translated ||
-      args.topic.postStream.posts.some(({ is_translated }) => is_translated)
-    );
+    return args.topic.show_translation_toggle;
   }
 
   @service router;
