@@ -12,3 +12,4 @@ en:
       content_translated: "Page is machine-translated. Click to view original"
       translated_from: "Translated from %{language} by %{translator}"
       translating: "Translating"
+      originally_written_in: "This post was originally written in %{language}"

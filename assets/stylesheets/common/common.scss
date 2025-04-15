@@ -22,3 +22,11 @@
     color: var(--tertiary);
   }
 }
+
+.post-info .post-info.post-translated-indicator {
+  display: inline;
+
+  svg {
+    color: var(--primary-med-or-secondary-med);
+  }
+}
