@@ -34,7 +34,8 @@ describe DiscourseTranslator::Base do
   end
 
   describe ".text_for_detection" do
-    fab!(:post)
+    fab!(:topic) { Fabricate(:topic, title: "it is a fine day") }
+    fab!(:post) { Fabricate(:post, topic:) }
 
     it "truncates to DETECTION_CHAR_LIMIT of 1000" do
       post.raw = "a" * 1001
@@ -45,6 +46,12 @@ describe DiscourseTranslator::Base do
       text = "a" * 999
       post.raw = text
       expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(text)
+    end
+
+    it "appends some text from the first post for topics" do
+      topic.first_post.raw = "a" * 999
+      expected = (topic.title + " " + topic.first_post.raw).truncate(1000)
+      expect(DiscourseTranslator::Base.text_for_detection(topic)).to eq(expected)
     end
   end
 
