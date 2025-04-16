@@ -29,7 +29,7 @@ module DiscourseTranslator
 
         # we want to return false if the post is created within a short buffer ago,
         # this prevents the 🌐from appearing and then disappearing if the lang is same as user's lang
-        return false if post.created_at > POST_DETECTION_BUFFER.ago && post.detected_locale.blank?
+        return false if post.updated_at > POST_DETECTION_BUFFER.ago && post.detected_locale.blank?
 
         if SiteSetting.experimental_inline_translation
           locale = DiscourseTranslator::InlineTranslation.effective_locale
