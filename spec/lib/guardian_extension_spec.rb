@@ -117,7 +117,7 @@ describe DiscourseTranslator::Extensions::GuardianExtension do
   describe "#can_translate?" do
     fab!(:group)
     fab!(:user) { Fabricate(:user, locale: "en", groups: [group]) }
-    fab!(:post) { Fabricate(:post, created_at: 5.minutes.ago) }
+    fab!(:post) { Fabricate(:post, updated_at: 5.minutes.ago) }
 
     let(:guardian) { Guardian.new(user) }
 
@@ -160,16 +160,16 @@ describe DiscourseTranslator::Extensions::GuardianExtension do
         expect(guardian.can_translate?(post)).to eq(false)
       end
 
-      it "allows translation depending on when the post is created" do
+      it "allows translation depending on when the post is updated" do
         SiteSetting.restrict_translation_by_group = "#{group.id}"
 
-        post.update(created_at: Time.now)
+        post.update(updated_at: Time.now)
         expect(guardian.can_translate?(post)).to eq(false)
 
         post.set_detected_locale("jp")
         expect(guardian.can_translate?(post)).to eq(true)
 
-        post.update(created_at: 5.minutes.ago)
+        post.update(updated_at: 5.minutes.ago)
         expect(guardian.can_translate?(post)).to eq(true)
 
         post.set_detected_locale("pt")
