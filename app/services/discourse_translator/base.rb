@@ -128,7 +128,8 @@ module DiscourseTranslator
       if translatable.class.name == "Topic"
         # due to topics having short titles,
         # we need to add the first post to the detection text
-        text = text + " " + get_untranslated(translatable.first_post, raw: true)
+        first_post = get_untranslated(translatable.first_post, raw: true)
+        text = text + " " + first_post if first_post
       end
 
       text.truncate(DETECTION_CHAR_LIMIT, omission: nil)
