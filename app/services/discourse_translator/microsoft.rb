@@ -155,7 +155,7 @@ module DiscourseTranslator
       result(uri.to_s, body, default_headers).first["language"]
     end
 
-    def self.translate!(translatable, target_locale_sym = I18n.locale)
+    def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
       detected_lang = detect(translatable)
 
       if text_for_translation(translatable).length > LENGTH_LIMIT

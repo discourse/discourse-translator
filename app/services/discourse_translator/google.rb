@@ -96,7 +96,7 @@ module DiscourseTranslator
       end
     end
 
-    def self.translate!(translatable, target_locale_sym = I18n.locale)
+    def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
       res =
         result(
           TRANSLATE_URI,

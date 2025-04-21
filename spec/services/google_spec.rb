@@ -96,7 +96,7 @@ RSpec.describe DiscourseTranslator::Google do
     end
   end
 
-  describe ".translate!" do
+  describe ".translate_translatable!" do
     let(:post) { Fabricate(:post) }
 
     it "raises an error and warns admin on failure" do
@@ -178,7 +178,7 @@ RSpec.describe DiscourseTranslator::Google do
         body: %{ { "data": { "translations": [ { "translatedText": "#{translated_text}" } ] } } },
       )
 
-      expect(described_class.translate!(post)).to eq(translated_text)
+      expect(described_class.translate_translatable!(post)).to eq(translated_text)
     end
   end
 end

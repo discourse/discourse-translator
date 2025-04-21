@@ -49,7 +49,7 @@ module DiscourseTranslator
               )
       end
 
-      translated = translate!(translatable, target_locale_sym)
+      translated = translate_translatable!(translatable, target_locale_sym)
       save_translation(translatable, target_locale_sym) { translated }
       [detected_lang, translated]
     end
@@ -60,7 +60,7 @@ module DiscourseTranslator
     # @param translatable [Post|Topic]
     # @param target_locale_sym [Symbol]
     # @return [String]
-    def self.translate!(translatable, target_locale_sym = I18n.locale)
+    def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
       raise "Not Implemented"
     end
 

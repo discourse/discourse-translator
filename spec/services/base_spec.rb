@@ -134,7 +134,7 @@ describe DiscourseTranslator::Base do
 
     it "performs translation when needed" do
       TestTranslator.save_detected_locale(post) { "es" }
-      TestTranslator.expects(:translate!).returns("hello")
+      TestTranslator.expects(:translate_translatable!).returns("hello")
 
       expect(TestTranslator.translate(post)).to eq(%w[es hello])
     end

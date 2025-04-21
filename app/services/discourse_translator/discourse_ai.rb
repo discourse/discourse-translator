@@ -21,7 +21,7 @@ module DiscourseTranslator
       ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
     end
 
-    def self.translate!(translatable, target_locale_sym = I18n.locale)
+    def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
       unless required_settings_enabled
         raise TranslatorError.new(
                 I18n.t(

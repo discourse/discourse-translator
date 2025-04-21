@@ -130,7 +130,7 @@ module DiscourseTranslator
       result(uri.to_s, "", default_headers)["lang"]
     end
 
-    def self.translate!(translatable, target_locale_sym = I18n.locale)
+    def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
       detected_lang = detect(translatable)
       locale =
         SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))

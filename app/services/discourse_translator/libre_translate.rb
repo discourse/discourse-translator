@@ -93,7 +93,7 @@ module DiscourseTranslator
       res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang }
     end
 
-    def self.translate!(translatable, target_locale_sym = I18n.locale)
+    def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
       detected_lang = detect(translatable)
 
       res =
