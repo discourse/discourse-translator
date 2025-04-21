@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-RSpec.describe DiscourseTranslator::Yandex do
+RSpec.describe DiscourseTranslator::Provider::Yandex do
   let(:mock_response) { Struct.new(:status, :body) }
 
   describe ".access_token" do
@@ -49,7 +47,9 @@ RSpec.describe DiscourseTranslator::Yandex do
         ),
       )
 
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+      expect {
+        described_class.translate(post)
+      }.to raise_error DiscourseTranslator::Provider::TranslatorError
     end
   end
 end

@@ -14,9 +14,15 @@ module DiscourseTranslator
 
     shared_examples "translation_successful" do
       it "returns the translated text" do
-        DiscourseTranslator::Microsoft.expects(:translate).with(reply).returns(%w[ja ニャン猫])
+        DiscourseTranslator::Provider::Microsoft
+          .expects(:translate)
+          .with(reply)
+          .returns(%w[ja ニャン猫])
         if reply.is_first_post?
-          DiscourseTranslator::Microsoft.expects(:translate).with(reply.topic).returns(%w[ja タイトル])
+          DiscourseTranslator::Provider::Microsoft
+            .expects(:translate)
+            .with(reply.topic)
+            .returns(%w[ja タイトル])
         end
 
         post "/translator/translate.json", params: { post_id: reply.id }
@@ -84,8 +90,8 @@ module DiscourseTranslator
           end
 
           it "rescues translator errors" do
-            DiscourseTranslator::Microsoft.expects(:translate).raises(
-              ::DiscourseTranslator::TranslatorError,
+            DiscourseTranslator::Provider::Microsoft.expects(:translate).raises(
+              ::DiscourseTranslator::Provider::TranslatorError,
             )
 
             post "/translator/translate.json", params: { post_id: reply.id }

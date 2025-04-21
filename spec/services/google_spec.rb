@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DiscourseTranslator::Google do
+RSpec.describe DiscourseTranslator::Provider::Google do
   let(:api_key) { "12345" }
   before do
     SiteSetting.translator_enabled = true
@@ -43,9 +43,13 @@ RSpec.describe DiscourseTranslator::Google do
       post.raw = rand(36**length).to_s(36)
       detected_lang = "en"
 
-      request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
+      request_url = "#{DiscourseTranslator::Provider::Google::DETECT_URI}"
       body = {
-        q: post.raw.truncate(DiscourseTranslator::Google::DETECTION_CHAR_LIMIT, omission: nil),
+        q:
+          post.raw.truncate(
+            DiscourseTranslator::Provider::Google::DETECTION_CHAR_LIMIT,
+            omission: nil,
+          ),
         key: api_key,
       }
 
@@ -77,7 +81,7 @@ RSpec.describe DiscourseTranslator::Google do
     it "equates source language to target" do
       source = "en"
       target = "fr"
-      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+      stub_request(:post, DiscourseTranslator::Provider::Google::SUPPORT_URI).to_return(
         status: 200,
         body: %{ { "data": { "languages": [ { "language": "#{source}" }] } } },
       )
@@ -87,7 +91,7 @@ RSpec.describe DiscourseTranslator::Google do
     it "checks again without -* when the source language is not supported" do
       source = "en"
       target = "fr"
-      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+      stub_request(:post, DiscourseTranslator::Provider::Google::SUPPORT_URI).to_return(
         status: 200,
         body: %{ { "data": { "languages": [ { "language": "#{source}" }] } } },
       )
@@ -103,7 +107,7 @@ RSpec.describe DiscourseTranslator::Google do
       described_class.expects(:access_token).returns(api_key)
       described_class.expects(:detect).returns("__")
 
-      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+      stub_request(:post, DiscourseTranslator::Provider::Google::SUPPORT_URI).to_return(
         status: 400,
         body: {
           error: {
@@ -116,7 +120,7 @@ RSpec.describe DiscourseTranslator::Google do
       ProblemCheckTracker[:translator_error].no_problem!
 
       expect { described_class.translate(post) }.to raise_error(
-        DiscourseTranslator::ProblemCheckedTranslationError,
+        DiscourseTranslator::Provider::ProblemCheckedTranslationError,
       )
 
       expect(AdminNotice.problem.last.message).to eq(
@@ -136,7 +140,9 @@ RSpec.describe DiscourseTranslator::Google do
 
       Excon.expects(:post).returns(mock_response.new(413, "<html><body>some html</body></html>"))
 
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+      expect {
+        described_class.translate(post)
+      }.to raise_error DiscourseTranslator::Provider::TranslatorError
     end
 
     it "returns error with source and target locale when translation is not supported" do
@@ -163,11 +169,11 @@ RSpec.describe DiscourseTranslator::Google do
       }
 
       translated_text = "hur dur hur dur"
-      stub_request(:post, DiscourseTranslator::Google::SUPPORT_URI).to_return(
+      stub_request(:post, DiscourseTranslator::Provider::Google::SUPPORT_URI).to_return(
         status: 200,
         body: %{ { "data": { "languages": [ { "language": "de" }] } } },
       )
-      stub_request(:post, DiscourseTranslator::Google::TRANSLATE_URI).with(
+      stub_request(:post, DiscourseTranslator::Provider::Google::TRANSLATE_URI).with(
         body: URI.encode_www_form(body),
         headers: {
           "Content-Type" => "application/x-www-form-urlencoded",
