@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "base"
-require "json"
-
 module DiscourseTranslator
-  class Google < Base
+  class Google < BaseProvider
     TRANSLATE_URI = "https://www.googleapis.com/language/translate/v2".freeze
     DETECT_URI = "https://www.googleapis.com/language/translate/v2/detect".freeze
     SUPPORT_URI = "https://www.googleapis.com/language/translate/v2/languages".freeze

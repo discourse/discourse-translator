@@ -9,7 +9,7 @@ module DiscourseTranslator
   class ProblemCheckedTranslationError < TranslatorError
   end
 
-  class Base
+  class BaseProvider
     DETECTION_CHAR_LIMIT = 1000
 
     def self.key_prefix
@@ -62,6 +62,11 @@ module DiscourseTranslator
     # @return [String]
     def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
       raise "Not Implemented"
+    end
+
+    def self.translate_text(text, target_locale_sym = I18n.locale)
+      max_char = SiteSetting.max_characters_per_translation
+      text.truncate(max_char, omission: nil)
     end
 
     # Returns the stored detected locale of a post or topic.

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "base"
-
 module DiscourseTranslator
-  class Microsoft < Base
+  class Microsoft < BaseProvider
     TRANSLATE_URI = "https://api.cognitive.microsofttranslator.com/translate"
     DETECT_URI = "https://api.cognitive.microsofttranslator.com/detect"
     CUSTOM_URI_SUFFIX = "cognitiveservices.azure.com/translator/text/v3.0"

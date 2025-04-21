@@ -2,12 +2,12 @@
 
 require "rails_helper"
 
-describe DiscourseTranslator::Base do
-  class TestTranslator < DiscourseTranslator::Base
+describe DiscourseTranslator::BaseProvider do
+  class TestTranslator < DiscourseTranslator::BaseProvider
     SUPPORTED_LANG_MAPPING = { en: "en", ar: "ar", es_MX: "es-MX", pt: "pt" }
   end
 
-  class EmptyTranslator < DiscourseTranslator::Base
+  class EmptyTranslator < DiscourseTranslator::BaseProvider
   end
 
   describe ".language_supported?" do
@@ -39,19 +39,19 @@ describe DiscourseTranslator::Base do
 
     it "truncates to DETECTION_CHAR_LIMIT of 1000" do
       post.raw = "a" * 1001
-      expect(DiscourseTranslator::Base.text_for_detection(post).length).to eq(1000)
+      expect(DiscourseTranslator::BaseProvider.text_for_detection(post).length).to eq(1000)
     end
 
     it "returns the text if it's less than DETECTION_CHAR_LIMIT" do
       text = "a" * 999
       post.raw = text
-      expect(DiscourseTranslator::Base.text_for_detection(post)).to eq(text)
+      expect(DiscourseTranslator::BaseProvider.text_for_detection(post)).to eq(text)
     end
 
     it "appends some text from the first post for topics" do
       topic.first_post.raw = "a" * 999
       expected = (topic.title + " " + topic.first_post.raw).truncate(1000)
-      expect(DiscourseTranslator::Base.text_for_detection(topic)).to eq(expected)
+      expect(DiscourseTranslator::BaseProvider.text_for_detection(topic)).to eq(expected)
     end
   end
 
@@ -60,14 +60,14 @@ describe DiscourseTranslator::Base do
 
     it "truncates to max_characters_per_translation" do
       post.cooked = "a" * (SiteSetting.max_characters_per_translation + 1)
-      expect(DiscourseTranslator::Base.text_for_translation(post).length).to eq(
+      expect(DiscourseTranslator::BaseProvider.text_for_translation(post).length).to eq(
         SiteSetting.max_characters_per_translation,
       )
     end
 
     it "uses raw if required" do
       post.raw = "a" * (SiteSetting.max_characters_per_translation + 1)
-      expect(DiscourseTranslator::Base.text_for_translation(post, raw: true).length).to eq(
+      expect(DiscourseTranslator::BaseProvider.text_for_translation(post, raw: true).length).to eq(
         SiteSetting.max_characters_per_translation,
       )
     end

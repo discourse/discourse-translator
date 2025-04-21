@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "base"
-require "json"
-
 module DiscourseTranslator
-  class LibreTranslate < Base
+  class LibreTranslate < BaseProvider
     SUPPORTED_LANG_MAPPING = {
       en: "en",
       en_GB: "en",

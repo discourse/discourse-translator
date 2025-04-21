@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "base"
-
 module DiscourseTranslator
-  class Yandex < Base
+  class Yandex < BaseProvider
     TRANSLATE_URI = "https://translate.yandex.net/api/v1.5/tr.json/translate"
     DETECT_URI = "https://translate.yandex.net/api/v1.5/tr.json/detect"
 

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "base"
-
 module DiscourseTranslator
-  class Amazon < Base
+  class Amazon < BaseProvider
     require "aws-sdk-translate"
 
     MAX_BYTES = 10_000
