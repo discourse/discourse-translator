@@ -11,7 +11,10 @@ module Jobs
 
       target_locales = SiteSetting.automatic_translation_target_languages.split("|")
       target_locales.each do |target_locale|
-        DiscourseTranslator::Provider.get.translate(translatable, target_locale.to_sym)
+        DiscourseTranslator::Provider::TranslatorProvider.get.translate(
+          translatable,
+          target_locale.to_sym,
+        )
       end
 
       topic_id, post_id =

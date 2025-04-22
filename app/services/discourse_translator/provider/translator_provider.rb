@@ -2,8 +2,10 @@
 
 module DiscourseTranslator
   module Provider
-    def self.get
-      DiscourseTranslator::Provider.get
+    class TranslatorProvider
+      def self.get
+        "DiscourseTranslator::Provider::#{SiteSetting.translator_provider}".constantize
+      end
     end
   end
 end

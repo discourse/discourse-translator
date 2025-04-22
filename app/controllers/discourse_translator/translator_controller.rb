@@ -40,9 +40,11 @@ module ::DiscourseTranslator
 
       begin
         title_json = {}
-        detected_lang, translation = DiscourseTranslator::Provider.get.translate(post)
+        detected_lang, translation =
+          DiscourseTranslator::Provider::TranslatorProvider.get.translate(post)
         if post.is_first_post?
-          _, title_translation = DiscourseTranslator::Provider.get.translate(post.topic)
+          _, title_translation =
+            DiscourseTranslator::Provider::TranslatorProvider.get.translate(post.topic)
           title_json = { title_translation: title_translation }
         end
         render json: { translation: translation, detected_lang: detected_lang }.merge(title_json),

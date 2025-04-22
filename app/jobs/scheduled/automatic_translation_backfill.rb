@@ -67,7 +67,7 @@ module Jobs
     end
 
     def translator
-      @translator_klass ||= DiscourseTranslator::Provider.get
+      @translator_klass ||= DiscourseTranslator::Provider::TranslatorProvider.get
     end
 
     def translate_records(type, record_ids, target_locale)
