@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DiscourseTranslator::Amazon do
+RSpec.describe DiscourseTranslator::Provider::Amazon do
   let(:mock_response) { Struct.new(:status, :body) }
 
   describe ".truncate" do

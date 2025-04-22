@@ -10,7 +10,7 @@ describe Jobs::AutomaticTranslationBackfill do
   def expect_google_check_language
     Excon
       .expects(:post)
-      .with(DiscourseTranslator::Google::SUPPORT_URI, anything, anything)
+      .with(DiscourseTranslator::Provider::Google::SUPPORT_URI, anything, anything)
       .returns(
         Struct.new(:status, :body).new(
           200,
@@ -23,7 +23,7 @@ describe Jobs::AutomaticTranslationBackfill do
   def expect_google_detect(locale)
     Excon
       .expects(:post)
-      .with(DiscourseTranslator::Google::DETECT_URI, anything, anything)
+      .with(DiscourseTranslator::Provider::Google::DETECT_URI, anything, anything)
       .returns(
         Struct.new(:status, :body).new(
           200,
@@ -36,7 +36,7 @@ describe Jobs::AutomaticTranslationBackfill do
   def expect_google_translate(text)
     Excon
       .expects(:post)
-      .with(DiscourseTranslator::Google::TRANSLATE_URI, body: anything, headers: anything)
+      .with(DiscourseTranslator::Provider::Google::TRANSLATE_URI, body: anything, headers: anything)
       .returns(
         Struct.new(:status, :body).new(
           200,

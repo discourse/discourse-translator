@@ -10,7 +10,7 @@ describe Jobs::TranslateTranslatable do
     SiteSetting.translator_provider = "Google"
     SiteSetting.automatic_translation_backfill_rate = 100
     SiteSetting.automatic_translation_target_languages = "es|fr"
-    allow(DiscourseTranslator::Google).to receive(:translate)
+    allow(DiscourseTranslator::Provider::Google).to receive(:translate)
   end
 
   describe "#execute" do
@@ -19,7 +19,7 @@ describe Jobs::TranslateTranslatable do
 
       job.execute(type: "Post", translatable_id: post.id)
 
-      expect(DiscourseTranslator::Google).not_to have_received(:translate)
+      expect(DiscourseTranslator::Provider::Google).not_to have_received(:translate)
     end
 
     it "does nothing when target languages are empty" do
@@ -27,7 +27,7 @@ describe Jobs::TranslateTranslatable do
 
       job.execute(type: "Post", translatable_id: post.id)
 
-      expect(DiscourseTranslator::Google).not_to have_received(:translate)
+      expect(DiscourseTranslator::Provider::Google).not_to have_received(:translate)
     end
 
     it "translates posts to configured target languages" do
@@ -38,8 +38,8 @@ describe Jobs::TranslateTranslatable do
 
       job.execute(type: "Post", translatable_id: post.id)
 
-      expect(DiscourseTranslator::Google).to have_received(:translate).with(post, :es)
-      expect(DiscourseTranslator::Google).to have_received(:translate).with(post, :fr)
+      expect(DiscourseTranslator::Provider::Google).to have_received(:translate).with(post, :es)
+      expect(DiscourseTranslator::Provider::Google).to have_received(:translate).with(post, :fr)
     end
 
     it "translates topics to configured target languages" do
@@ -47,8 +47,8 @@ describe Jobs::TranslateTranslatable do
 
       job.execute(type: "Topic", translatable_id: topic.id)
 
-      expect(DiscourseTranslator::Google).to have_received(:translate).with(topic, :es)
-      expect(DiscourseTranslator::Google).to have_received(:translate).with(topic, :fr)
+      expect(DiscourseTranslator::Provider::Google).to have_received(:translate).with(topic, :es)
+      expect(DiscourseTranslator::Provider::Google).to have_received(:translate).with(topic, :fr)
     end
 
     it "does nothing when translatable is not found" do
@@ -56,7 +56,7 @@ describe Jobs::TranslateTranslatable do
 
       job.execute(type: "Post", translatable_id: -1)
 
-      expect(DiscourseTranslator::Google).not_to have_received(:translate)
+      expect(DiscourseTranslator::Provider::Google).not_to have_received(:translate)
     end
   end
 end

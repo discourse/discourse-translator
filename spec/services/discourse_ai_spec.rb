@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DiscourseTranslator::DiscourseAi do
+describe DiscourseTranslator::Provider::DiscourseAi do
   fab!(:post)
   fab!(:topic)
 
@@ -29,7 +29,7 @@ describe DiscourseTranslator::DiscourseAi do
     it "returns the detected language" do
       locale = "de"
       DiscourseAi::Completions::Llm.with_prepared_responses([locale_json(locale)]) do
-        expect(DiscourseTranslator::DiscourseAi.detect!(post)).to eq locale
+        expect(DiscourseTranslator::Provider::DiscourseAi.detect!(post)).to eq locale
       end
     end
   end
@@ -44,7 +44,7 @@ describe DiscourseTranslator::DiscourseAi do
       DiscourseAi::Completions::Llm.with_prepared_responses(
         [translation_json("some translated text")],
       ) do
-        locale, translated_text = DiscourseTranslator::DiscourseAi.translate(post)
+        locale, translated_text = DiscourseTranslator::Provider::DiscourseAi.translate(post)
         expect(locale).to eq "de"
         expect(translated_text).to eq "<p>some translated text</p>"
       end
@@ -55,7 +55,7 @@ describe DiscourseTranslator::DiscourseAi do
       DiscourseAi::Completions::Llm.with_prepared_responses(
         [translation_json("some translated text")],
       ) do
-        locale, translated_text = DiscourseTranslator::DiscourseAi.translate(topic)
+        locale, translated_text = DiscourseTranslator::Provider::DiscourseAi.translate(topic)
         expect(locale).to eq "de"
         expect(translated_text).to eq "some translated text"
       end
@@ -65,7 +65,11 @@ describe DiscourseTranslator::DiscourseAi do
       post.update(raw: "#{"a" * 3000} #{"b" * 3000}")
       DiscourseAi::Completions::Llm.with_prepared_responses(
         %w[lol wut].map { |content| translation_json(content) },
-      ) { expect(DiscourseTranslator::DiscourseAi.translate!(post)).to eq "<p>lolwut</p>" }
+      ) do
+        expect(
+          DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post),
+        ).to eq "<p>lolwut</p>"
+      end
     end
   end
 

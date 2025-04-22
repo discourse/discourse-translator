@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-RSpec.describe DiscourseTranslator::Microsoft do
+RSpec.describe DiscourseTranslator::Provider::Microsoft do
   before { SiteSetting.translator_enabled = true }
   after { Discourse.redis.del(described_class.cache_key) }
 
@@ -66,7 +64,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
         ProblemCheckTracker[:translator_error].no_problem!
 
         expect { described_class.detect(post) }.to raise_error(
-          DiscourseTranslator::ProblemCheckedTranslationError,
+          DiscourseTranslator::Provider::ProblemCheckedTranslationError,
         )
 
         expect(AdminNotice.problem.last.message).to eq(
@@ -104,7 +102,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
     context "without azure key" do
       it "raise a MicrosoftNoAzureKeyError" do
         expect { described_class.detect(post) }.to raise_error(
-          DiscourseTranslator::ProblemCheckedTranslationError,
+          DiscourseTranslator::Provider::ProblemCheckedTranslationError,
           I18n.t("translator.microsoft.missing_key"),
         )
       end
@@ -168,7 +166,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
         post.set_detected_locale("donkey")
 
         expect { described_class.translate(post) }.to raise_error(
-          DiscourseTranslator::TranslatorError,
+          DiscourseTranslator::Provider::TranslatorError,
           I18n.t("translator.failed.post", source_locale: "donkey", target_locale: I18n.locale),
         )
       end
@@ -176,10 +174,12 @@ RSpec.describe DiscourseTranslator::Microsoft do
       it "raises an error if the post is too long to be translated" do
         I18n.locale = "ja"
         SiteSetting.max_characters_per_translation = 100_000
-        post.update_columns(cooked: "*" * (DiscourseTranslator::Microsoft::LENGTH_LIMIT + 1))
+        post.update_columns(
+          cooked: "*" * (DiscourseTranslator::Provider::Microsoft::LENGTH_LIMIT + 1),
+        )
 
         expect { described_class.translate(post) }.to raise_error(
-          DiscourseTranslator::TranslatorError,
+          DiscourseTranslator::Provider::TranslatorError,
           I18n.t("translator.too_long"),
         )
       end
@@ -204,7 +204,7 @@ RSpec.describe DiscourseTranslator::Microsoft do
         )
 
         expect { described_class.translate(post) }.to raise_error(
-          DiscourseTranslator::TranslatorError,
+          DiscourseTranslator::Provider::TranslatorError,
         )
       end
     end
