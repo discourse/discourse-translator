@@ -11,7 +11,7 @@ module Jobs
 
       target_locales = SiteSetting.automatic_translation_target_languages.split("|")
       target_locales.each do |target_locale|
-        "DiscourseTranslator::Provider::#{SiteSetting.translator_provider}".constantize.translate(
+        DiscourseTranslator::Provider::TranslatorProvider.get.translate(
           translatable,
           target_locale.to_sym,
         )
