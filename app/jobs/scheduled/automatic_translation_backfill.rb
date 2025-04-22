@@ -67,8 +67,7 @@ module Jobs
     end
 
     def translator
-      @translator_klass ||=
-        "DiscourseTranslator::Provider::#{SiteSetting.translator_provider}".constantize
+      @translator_klass ||= DiscourseTranslator::Provider.get
     end
 
     def translate_records(type, record_ids, target_locale)
