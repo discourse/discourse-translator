@@ -106,6 +106,11 @@ module DiscourseTranslator
         res["translations"][0]["translatedText"]
       end
 
+      def self.translate_text!(text, target_locale_sym = I18n.locale)
+        res = result(TRANSLATE_URI, q: text, target: SUPPORTED_LANG_MAPPING[target_locale_sym])
+        res["translations"][0]["translatedText"]
+      end
+
       def self.result(url, body)
         body[:key] = access_token
 

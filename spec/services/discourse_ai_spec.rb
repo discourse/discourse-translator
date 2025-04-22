@@ -34,7 +34,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
     end
   end
 
-  describe ".translate" do
+  describe ".translate_translatable!" do
     before do
       post.set_detected_locale("de")
       topic.set_detected_locale("de")
@@ -44,8 +44,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
       DiscourseAi::Completions::Llm.with_prepared_responses(
         [translation_json("some translated text")],
       ) do
-        locale, translated_text = DiscourseTranslator::Provider::DiscourseAi.translate(post)
-        expect(locale).to eq "de"
+        translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post)
         expect(translated_text).to eq "<p>some translated text</p>"
       end
     end
@@ -55,8 +54,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
       DiscourseAi::Completions::Llm.with_prepared_responses(
         [translation_json("some translated text")],
       ) do
-        locale, translated_text = DiscourseTranslator::Provider::DiscourseAi.translate(topic)
-        expect(locale).to eq "de"
+        translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(topic)
         expect(translated_text).to eq "some translated text"
       end
     end
@@ -69,6 +67,17 @@ describe DiscourseTranslator::Provider::DiscourseAi do
         expect(
           DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post),
         ).to eq "<p>lolwut</p>"
+      end
+    end
+  end
+
+  describe ".translate_text!" do
+    it "returns the translated text" do
+      DiscourseAi::Completions::Llm.with_prepared_responses(
+        [translation_json("some translated text")],
+      ) do
+        translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_text!("derp")
+        expect(translated_text).to eq "some translated text"
       end
     end
   end

@@ -10,27 +10,13 @@ module DiscourseTranslator
       end
 
       def self.detect!(topic_or_post)
-        unless required_settings_enabled
-          raise TranslatorError.new(
-                  I18n.t(
-                    "translator.discourse_ai.ai_helper_required",
-                    { base_url: Discourse.base_url },
-                  ),
-                )
-        end
+        required_settings_enabled!
 
         ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
       end
 
       def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        unless required_settings_enabled
-          raise TranslatorError.new(
-                  I18n.t(
-                    "translator.discourse_ai.ai_helper_required",
-                    { base_url: Discourse.base_url },
-                  ),
-                )
-        end
+        required_settings_enabled!
 
         language = get_language_name(target_locale_sym)
         translated =
@@ -51,11 +37,25 @@ module DiscourseTranslator
         DiscourseTranslator::TranslatedContentNormalizer.normalize(translatable, translated)
       end
 
+      def self.translate_text!(text, target_locale_sym = I18n.locale)
+        required_settings_enabled!
+
+        language = get_language_name(target_locale_sym)
+        ::DiscourseAi::ShortTextTranslator.new(text, language).translate
+      end
+
       private
 
-      def self.required_settings_enabled
-        SiteSetting.translator_enabled && SiteSetting.translator_provider == "DiscourseAi" &&
-          SiteSetting.discourse_ai_enabled && SiteSetting.ai_helper_enabled
+      def self.required_settings_enabled!
+        unless SiteSetting.translator_enabled && SiteSetting.translator_provider == "DiscourseAi" &&
+                 SiteSetting.discourse_ai_enabled && SiteSetting.ai_helper_enabled
+          raise TranslatorError.new(
+                  I18n.t(
+                    "translator.discourse_ai.ai_helper_required",
+                    { base_url: Discourse.base_url },
+                  ),
+                )
+        end
       end
 
       def self.get_language_name(target_locale_sym)
