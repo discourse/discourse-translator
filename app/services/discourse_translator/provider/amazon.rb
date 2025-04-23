@@ -140,6 +140,20 @@ module DiscourseTranslator
         end
       end
 
+      def self.translate_text!(text, target_locale_sym = I18n.locale)
+        begin
+          client.translate_text(
+            {
+              text: truncate(text),
+              source_language_code: "auto",
+              target_language_code: SUPPORTED_LANG_MAPPING[target_locale_sym],
+            },
+          )
+        rescue Aws::Translate::Errors::UnsupportedLanguagePairException
+          raise I18n.t("translator.not_supported")
+        end
+      end
+
       def self.client
         opts = { region: SiteSetting.translator_aws_region }
 

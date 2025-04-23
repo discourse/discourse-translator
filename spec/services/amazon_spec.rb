@@ -46,7 +46,7 @@ RSpec.describe DiscourseTranslator::Provider::Amazon do
     end
   end
 
-  describe ".translate" do
+  describe ".translate_translatable!" do
     let(:post) { Fabricate(:post) }
     let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
 
@@ -66,8 +66,32 @@ RSpec.describe DiscourseTranslator::Provider::Amazon do
     end
 
     it "raises an error when trying to translate an unsupported language" do
-      expect { described_class.translate(post) }.to raise_error(
+      expect { described_class.translate_translatable!(post) }.to raise_error(
         I18n.t("translator.failed.post", source_locale: "en", target_locale: "es"),
+      )
+    end
+  end
+
+  describe ".translate_text!" do
+    let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
+
+    before do
+      client.stub_responses(
+        :translate_text,
+        "UnsupportedLanguagePairException",
+        {
+          translated_text: "Probando traducciones",
+          source_language_code: "en",
+          target_language_code: "es",
+        },
+      )
+      described_class.stubs(:client).returns(client)
+      I18n.stubs(:locale).returns(:es)
+    end
+
+    it "raises an error when trying to translate an unsupported language" do
+      expect { described_class.translate_text!("derp") }.to raise_error(
+        I18n.t("translator.not_supported", source_locale: "en", target_locale: "es"),
       )
     end
   end

@@ -65,6 +65,10 @@ module DiscourseTranslator
         raise "Not Implemented"
       end
 
+      def self.translate_text(text, target_locale_sym = I18n.locale)
+        raise "Not Implemented"
+      end
+
       # Returns the stored detected locale of a post or topic.
       # If the locale does not exist yet, it will be detected first via the API then stored.
       # @param translatable [Post|Topic]

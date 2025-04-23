@@ -171,6 +171,18 @@ module DiscourseTranslator
         response_body.first["translations"].first["text"]
       end
 
+      def self.translate_text!(text, target_locale_sym = I18n.locale)
+        locale =
+          SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
+
+        query = default_query.merge("to" => locale, "textType" => "html")
+        body = [{ "Text" => text }].to_json
+        uri = URI(translate_endpoint)
+        uri.query = URI.encode_www_form(query)
+        response_body = result(uri.to_s, body, default_headers)
+        response_body.first["translations"].first["text"]
+      end
+
       def self.translate_supported?(detected_lang, target_lang)
         SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
           SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)

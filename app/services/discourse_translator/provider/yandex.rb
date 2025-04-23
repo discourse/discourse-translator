@@ -148,6 +148,11 @@ module DiscourseTranslator
         response_body["text"][0]
       end
 
+      def self.translate_text!(translatable, target_locale_sym = I18n.locale)
+        # Not supported for v1.5 https://translate.yandex.com/developers
+        raise TranslatorError.new(I18n.t("translator.not_supported"))
+      end
+
       def self.translate_supported?(detected_lang, target_lang)
         SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
           SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)

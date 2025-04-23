@@ -4,6 +4,15 @@ RSpec.describe DiscourseTranslator::Provider::Microsoft do
   before { SiteSetting.translator_enabled = true }
   after { Discourse.redis.del(described_class.cache_key) }
 
+  def translate_endpoint(from: "en", to: I18n.locale)
+    uri = URI(described_class.translate_endpoint)
+    default_query = described_class.default_query.merge("textType" => "html")
+    default_query = default_query.merge("from" => from) if from
+    default_query = default_query.merge("to" => to) if to
+    uri.query = URI.encode_www_form(default_query)
+    uri.to_s
+  end
+
   describe ".detect" do
     let(:post) { Fabricate(:post) }
     let(:detected_lang) { "en" }
@@ -112,20 +121,6 @@ RSpec.describe DiscourseTranslator::Provider::Microsoft do
   describe ".translate" do
     let(:post) { Fabricate(:post) }
 
-    def translate_endpoint
-      uri = URI(described_class.translate_endpoint)
-      uri.query =
-        URI.encode_www_form(
-          described_class.default_query.merge(
-            "from" => "en",
-            "to" => I18n.locale,
-            "textType" => "html",
-          ),
-        )
-
-      uri.to_s
-    end
-
     before do
       post.set_detected_locale("en")
       SiteSetting.translator_azure_subscription_key = "e1bba646088021aaf1ef972a48"
@@ -207,6 +202,20 @@ RSpec.describe DiscourseTranslator::Provider::Microsoft do
           DiscourseTranslator::Provider::TranslatorError,
         )
       end
+    end
+  end
+
+  describe ".translate_text!" do
+    it "translates text" do
+      text = "ABCDEFG"
+      SiteSetting.translator_azure_subscription_key = "123123"
+
+      I18n.locale = :es
+      stub_request(:post, translate_endpoint(from: nil, to: "es")).with(
+        { body: [{ "Text" => text }].to_json },
+      ).to_return(status: 200, body: [{ "translations" => [{ "text" => "some text" }] }].to_json)
+
+      expect(described_class.translate_text!(text)).to eq("some text")
     end
   end
 end

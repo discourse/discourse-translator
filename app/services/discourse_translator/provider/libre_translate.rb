@@ -105,6 +105,12 @@ module DiscourseTranslator
         res["translatedText"]
       end
 
+      def self.translate_text!(text, target_locale_sym = I18n.locale)
+        # Unsupported - see https://libretranslate.com/docs/#/translate/post_translate
+        # requires a source language
+        raise TranslatorError.new(I18n.t("translator.not_supported"))
+      end
+
       def self.get(url)
         begin
           response = Excon.get(url)

@@ -187,4 +187,25 @@ RSpec.describe DiscourseTranslator::Provider::Google do
       expect(described_class.translate_translatable!(post)).to eq(translated_text)
     end
   end
+
+  describe ".translate_text!" do
+    it "translates plain text" do
+      text = "ABCDEFG"
+      body = { q: text, target: "ja", key: api_key }
+
+      translated_text = "hur dur hur dur"
+      stub_request(:post, DiscourseTranslator::Provider::Google::TRANSLATE_URI).with(
+        body: URI.encode_www_form(body),
+        headers: {
+          "Content-Type" => "application/x-www-form-urlencoded",
+          "Referer" => "http://test.localhost",
+        },
+      ).to_return(
+        status: 200,
+        body: %{ { "data": { "translations": [ { "translatedText": "#{translated_text}" } ] } } },
+      )
+
+      expect(described_class.translate_text!(text, :ja)).to eq(translated_text)
+    end
+  end
 end
