@@ -13,7 +13,7 @@ module Jobs
       return if locales.blank?
 
       cat_id = args[:from_category_id] || Category.order(:id).first&.id
-      last_id = cat_id
+      last_id = nil
 
       # we're just gonna take all categories and keep it simple
       # instead of checking in the db which ones are absent
