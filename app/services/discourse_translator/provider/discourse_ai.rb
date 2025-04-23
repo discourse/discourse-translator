@@ -10,13 +10,13 @@ module DiscourseTranslator
       end
 
       def self.detect!(topic_or_post)
-        required_settings_enabled!
+        validate_required_settings!
 
         ::DiscourseAi::LanguageDetector.new(text_for_detection(topic_or_post)).detect
       end
 
       def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        required_settings_enabled!
+        validate_required_settings!
 
         language = get_language_name(target_locale_sym)
         translated =
@@ -38,7 +38,7 @@ module DiscourseTranslator
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)
-        required_settings_enabled!
+        validate_required_settings!
 
         language = get_language_name(target_locale_sym)
         ::DiscourseAi::ShortTextTranslator.new(text, language).translate
@@ -46,7 +46,7 @@ module DiscourseTranslator
 
       private
 
-      def self.required_settings_enabled!
+      def self.validate_required_settings!
         unless SiteSetting.translator_enabled && SiteSetting.translator_provider == "DiscourseAi" &&
                  SiteSetting.discourse_ai_enabled && SiteSetting.ai_helper_enabled
           raise TranslatorError.new(
