@@ -9,7 +9,10 @@ module DiscourseTranslator
 
       case translatable.class.name
       when "Post", "Topic"
-        DiscourseTranslator::Provider.TranslatorProvider.get.translate(translatable, target_locale_sym)
+        DiscourseTranslator::Provider.TranslatorProvider.get.translate(
+          translatable,
+          target_locale_sym,
+        )
       when "Category"
         CategoryTranslator.translate(translatable, target_locale)
       end
