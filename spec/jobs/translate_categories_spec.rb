@@ -3,6 +3,8 @@
 require "rails_helper"
 
 describe Jobs::TranslateCategories do
+  subject(:job) { described_class.new }
+
   let(:translator) { mock }
 
   def localize_all_categories(*locales)
@@ -26,7 +28,7 @@ describe Jobs::TranslateCategories do
 
     translator.expects(:translate_text!).never
 
-    subject.execute({})
+    job.execute({})
   end
 
   it "does nothing when experimental_category_translation is disabled" do
@@ -34,7 +36,7 @@ describe Jobs::TranslateCategories do
 
     translator.expects(:translate_text!).never
 
-    subject.execute({})
+    job.execute({})
   end
 
   it "does nothing when no target languages are configured" do
@@ -42,7 +44,7 @@ describe Jobs::TranslateCategories do
 
     translator.expects(:translate_text!).never
 
-    subject.execute({})
+    job.execute({})
   end
 
   it "does nothing when no categories exist" do
@@ -50,7 +52,7 @@ describe Jobs::TranslateCategories do
 
     translator.expects(:translate_text!).never
 
-    subject.execute({})
+    job.execute({})
   end
 
   it "translates categories to the configured locales" do
@@ -64,7 +66,7 @@ describe Jobs::TranslateCategories do
       .with(is_a(Category), "zh_CN")
       .times(number_of_categories)
 
-    subject.execute({})
+    job.execute({})
   end
 
   it "skips categories that already have localizations" do
@@ -78,7 +80,7 @@ describe Jobs::TranslateCategories do
     DiscourseTranslator::CategoryTranslator.expects(:translate).with(category1, "pt").never
     DiscourseTranslator::CategoryTranslator.expects(:translate).with(category1, "zh_CN").once
 
-    subject.execute({})
+    job.execute({})
   end
 
   it "continues from a specified category ID" do
@@ -94,7 +96,7 @@ describe Jobs::TranslateCategories do
       .with(category2, any_parameters)
       .twice
 
-    subject.execute(from_category_id: category2.id)
+    job.execute(from_category_id: category2.id)
   end
 
   it "handles translation errors gracefully" do
@@ -107,7 +109,7 @@ describe Jobs::TranslateCategories do
       .raises(StandardError.new("API error"))
     DiscourseTranslator::CategoryTranslator.expects(:translate).with(category1, "zh_CN").once
 
-    expect { subject.execute({}) }.not_to raise_error
+    expect { job.execute({}) }.not_to raise_error
   end
 
   it "enqueues the next batch when there are more categories" do
@@ -118,7 +120,7 @@ describe Jobs::TranslateCategories do
       .with(10.seconds, :translate_categories, from_category_id: any_parameters)
       .times(Category.count)
 
-    subject.execute({})
+    job.execute({})
 
     # Reset the constant
     Jobs::TranslateCategories.send(:remove_const, :BATCH_SIZE)
