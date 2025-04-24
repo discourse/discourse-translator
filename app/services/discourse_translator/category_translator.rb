@@ -16,7 +16,16 @@ module DiscourseTranslator
       translated_name = translator.translate_text!(category.name, target_locale_sym)
       translated_description = translator.translate_text!(category.description, target_locale_sym)
 
-      category.update!(name: translated_name, description: translated_description)
+      localization =
+        CategoryLocalization.find_or_initialize_by(
+          category_id: category.id,
+          locale: target_locale_sym.to_s,
+        )
+
+      localization.name = translated_name
+      localization.description = translated_description
+      localization.save!
+      localization
     end
   end
 end
