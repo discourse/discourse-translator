@@ -21,10 +21,35 @@ describe DiscourseTranslator::CategoryTranslator do
         .with(category.description, target_locale)
         .returns("C'est une catégorie de test")
 
+      res = DiscourseTranslator::CategoryTranslator.translate(category, target_locale)
+
+      expect(res.name).to eq("Catégorie de Test")
+      expect(res.description).to eq("C'est une catégorie de test")
+    end
+
+    it "translates the category name and description" do
+      localized =
+        Fabricate(
+          :category_localization,
+          category: category,
+          locale: target_locale,
+          name: "X",
+          description: "Y",
+        )
+      translator
+        .expects(:translate_text!)
+        .with(category.name, target_locale)
+        .returns("Catégorie de Test")
+      translator
+        .expects(:translate_text!)
+        .with(category.description, target_locale)
+        .returns("C'est une catégorie de test")
+
       DiscourseTranslator::CategoryTranslator.translate(category, target_locale)
 
-      expect(category.name).to eq("Catégorie de Test")
-      expect(category.description).to eq("C'est une catégorie de test")
+      localized.reload
+      expect(localized.name).to eq("Catégorie de Test")
+      expect(localized.description).to eq("C'est une catégorie de test")
     end
 
     it "handles locale format standardization" do
