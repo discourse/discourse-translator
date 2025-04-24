@@ -113,16 +113,23 @@ describe Jobs::TranslateCategories do
   end
 
   it "enqueues the next batch when there are more categories" do
+    Jobs.run_later!
+    freeze_time
     Jobs::TranslateCategories.const_set(:BATCH_SIZE, 1)
-
-    Jobs
-      .expects(:enqueue_in)
-      .with(10.seconds, :translate_categories, from_category_id: any_parameters)
-      .times(Category.count)
 
     job.execute({})
 
-    # Reset the constant
+    Category.all.each do |category|
+      puts category.id
+      expect_job_enqueued(
+        job: :translate_categories,
+        args: {
+          from_category_id: category.id + 1,
+        },
+        at: 10.seconds.from_now,
+      )
+    end
+
     Jobs::TranslateCategories.send(:remove_const, :BATCH_SIZE)
     Jobs::TranslateCategories.const_set(:BATCH_SIZE, 50)
   end
