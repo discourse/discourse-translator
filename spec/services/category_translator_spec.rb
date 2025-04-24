@@ -21,23 +21,48 @@ describe DiscourseTranslator::CategoryTranslator do
         .with(category.description, target_locale)
         .returns("C'est une catégorie de test")
 
+      res = DiscourseTranslator::CategoryTranslator.translate(category, target_locale)
+
+      expect(res.name).to eq("Catégorie de Test")
+      expect(res.description).to eq("C'est une catégorie de test")
+    end
+
+    it "translates the category name and description" do
+      localized =
+        Fabricate(
+          :category_localization,
+          category: category,
+          locale: target_locale,
+          name: "X",
+          description: "Y",
+        )
+      translator
+        .expects(:translate_text!)
+        .with(category.name, target_locale)
+        .returns("Catégorie de Test")
+      translator
+        .expects(:translate_text!)
+        .with(category.description, target_locale)
+        .returns("C'est une catégorie de test")
+
       DiscourseTranslator::CategoryTranslator.translate(category, target_locale)
 
-      expect(category.name).to eq("Catégorie de Test")
-      expect(category.description).to eq("C'est une catégorie de test")
+      localized.reload
+      expect(localized.name).to eq("Catégorie de Test")
+      expect(localized.description).to eq("C'est une catégorie de test")
     end
 
     it "handles locale format standardization" do
-      translator.expects(:translate_text!).with(category.name, :fr_CA).returns("Catégorie de Test")
+      translator.expects(:translate_text!).with(category.name, :fr).returns("Catégorie de Test")
       translator
         .expects(:translate_text!)
-        .with(category.description, :fr_CA)
+        .with(category.description, :fr)
         .returns("C'est une catégorie de test")
 
-      DiscourseTranslator::CategoryTranslator.translate(category, "fr-CA")
+      res = DiscourseTranslator::CategoryTranslator.translate(category, "fr")
 
-      expect(category.name).to eq("Catégorie de Test")
-      expect(category.description).to eq("C'est une catégorie de test")
+      expect(res.name).to eq("Catégorie de Test")
+      expect(res.description).to eq("C'est une catégorie de test")
     end
 
     it "returns nil if category is blank" do
@@ -56,10 +81,11 @@ describe DiscourseTranslator::CategoryTranslator do
         .with(category.description, :es)
         .returns("Esta es una categoría de prueba")
 
-      DiscourseTranslator::CategoryTranslator.translate(category)
+      res = DiscourseTranslator::CategoryTranslator.translate(category)
 
-      expect(category.name).to eq("Categoría de Prueba")
-      expect(category.description).to eq("Esta es una categoría de prueba")
+      expect(res.name).to eq("Categoría de Prueba")
+      expect(res.description).to eq("Esta es una categoría de prueba")
+      expect(res.locale).to eq("es")
     end
   end
 end
