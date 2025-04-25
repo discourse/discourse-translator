@@ -67,17 +67,20 @@ RSpec.describe "Anonymous user language switcher", type: :system do
 
       switcher.expand
       switcher.click_button("Español")
+
       expect(find(".nav-item_latest")).to have_content("Recientes")
 
       topic_page.visit_topic(topic)
-      topic_page.has_topic_title?("Estrategias de vida de El arte de la guerra")
+
+      expect(topic_page).to have_topic_title("Estrategias de vida de El arte de la guerra")
 
       switcher.expand
       switcher.click_button("日本語")
-      topic_page.visit_topic(topic)
-      topic_page.has_topic_title?("孫子兵法からの人生戦略")
+
+      expect(topic_page).to have_topic_title("孫子兵法からの人生戦略")
 
       visit("/")
+
       expect(find(".nav-item_latest")).to have_content("最新")
     end
   end
