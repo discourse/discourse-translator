@@ -251,5 +251,13 @@ This is the scenario we are testing for:
 
       expect(result).not_to include(post_1.id)
     end
+
+    it "does not return posts that already have the target locale translation, even if detected_locale is not the target" do
+      post_7.set_detected_locale("en")
+      post_7.set_translation("de", "hallo")
+
+      result = described_class.new.fetch_untranslated_model_ids(Post, "raw", 50, "de")
+      expect(result).not_to include(post_7.id)
+    end
   end
 end
