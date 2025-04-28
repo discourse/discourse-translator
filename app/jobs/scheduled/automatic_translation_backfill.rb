@@ -15,40 +15,29 @@ module Jobs
     def fetch_untranslated_model_ids(model, content_column, limit, target_locale)
       m = model.name.downcase
 
-      # Query selects every model (post/topic) *except* those who are **both**
-      # already locale detected and translated
       DB.query_single(<<~SQL, target_locale: target_locale, limit: limit)
-        SELECT * FROM
-        (
-          ( -- every post / topic
-            SELECT m.id
-            FROM #{model.table_name} m
-            #{limit_to_public_clause(model)}
-            WHERE m.deleted_at IS NULL
-              AND m.#{content_column} != ''
-              AND m.user_id > 0
-              #{max_age_clause}
-            ORDER BY m.updated_at DESC
-          )
-          EXCEPT
-          (
-            ( -- locale detected
-              SELECT
-                #{m}_id
-              FROM
-                discourse_translator_#{m}_locales
-              WHERE
-                detected_locale = :target_locale
+        SELECT m.id
+        FROM #{model.table_name} m
+        #{limit_to_public_clause(model)}
+        WHERE m.deleted_at IS NULL
+          AND m.#{content_column} != ''
+          AND m.user_id > 0
+          #{max_age_clause}
+          AND (
+            m.id NOT IN (
+              SELECT #{m}_id
+              FROM discourse_translator_#{m}_locales
+              WHERE detected_locale = :target_locale
             )
-            INTERSECT
-            ( -- translated
+          )
+          AND (
+            m.id NOT IN (
               SELECT #{m}_id
               FROM discourse_translator_#{m}_translations
-              WHERE
-                locale = :target_locale
+              WHERE locale = :target_locale
             )
           )
-        ) AS subquery
+        ORDER BY m.updated_at DESC
         LIMIT :limit
       SQL
     end
