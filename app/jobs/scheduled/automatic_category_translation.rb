@@ -7,7 +7,7 @@ module Jobs
 
     def execute(args)
       return unless SiteSetting.translator_enabled
-      return unless SiteSetting.experimental_category_translation
+      return unless SiteSetting.experimental_content_translation
 
       locales = SiteSetting.automatic_translation_target_languages.split("|")
       return if locales.blank?

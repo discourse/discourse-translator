@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe Jobs::TranslateCategories do
   subject(:job) { described_class.new }
 
@@ -15,7 +13,7 @@ describe Jobs::TranslateCategories do
 
   before do
     SiteSetting.translator_enabled = true
-    SiteSetting.experimental_category_translation = true
+    SiteSetting.experimental_content_translation = true
     SiteSetting.automatic_translation_backfill_rate = 100
     SiteSetting.automatic_translation_target_languages = "pt|zh_CN"
 
@@ -31,8 +29,8 @@ describe Jobs::TranslateCategories do
     job.execute({})
   end
 
-  it "does nothing when experimental_category_translation is disabled" do
-    SiteSetting.experimental_category_translation = false
+  it "does nothing when experimental_content_translation is disabled" do
+    SiteSetting.experimental_content_translation = false
 
     translator.expects(:translate_text!).never
 

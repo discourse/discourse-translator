@@ -65,7 +65,7 @@ module DiscourseTranslator
         raise "Not Implemented"
       end
 
-      def self.translate_text(text, target_locale_sym = I18n.locale)
+      def self.translate_text!(text, target_locale_sym = I18n.locale)
         raise "Not Implemented"
       end
 
