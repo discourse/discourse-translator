@@ -129,7 +129,7 @@ discourse_translator:
   experimental_inline_translation:
     default: false
     client: true
-  experimental_category_translation:
+  experimental_content_translation:
     default: false
     hidden: true
   discourse_translator_verbose_logs:
