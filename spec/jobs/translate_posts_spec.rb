@@ -4,7 +4,7 @@ describe Jobs::TranslatePosts do
   fab!(:post)
   subject(:job) { described_class.new }
 
-  let(:locales) { %w[en ja] }
+  let(:locales) { %w[en ja de] }
 
   before do
     SiteSetting.translator_enabled = true
@@ -41,13 +41,6 @@ describe Jobs::TranslatePosts do
     job.execute({})
   end
 
-  it "translates posts to the configured locales" do
-    DiscourseTranslator::PostTranslator.expects(:translate).with(post, "en").at_least_once
-    DiscourseTranslator::PostTranslator.expects(:translate).with(post, "ja").at_least_once
-
-    job.execute({})
-  end
-
   it "skips posts that already have localizations" do
     Post.all.each do |post|
       Fabricate(:post_localization, post:, locale: "en")
@@ -67,19 +60,61 @@ describe Jobs::TranslatePosts do
   end
 
   it "handles translation errors gracefully" do
+    post.update(locale: "es")
     DiscourseTranslator::PostTranslator
       .expects(:translate)
       .with(post, "en")
       .raises(StandardError.new("API error"))
     DiscourseTranslator::PostTranslator.expects(:translate).with(post, "ja").once
+    DiscourseTranslator::PostTranslator.expects(:translate).with(post, "de").once
 
     expect { job.execute({}) }.not_to raise_error
   end
 
   it "logs a summary after translation" do
+    post.update(locale: "es")
     DiscourseTranslator::PostTranslator.stubs(:translate)
     DiscourseTranslator::VerboseLogger.expects(:log).with(includes("Translated 1 posts to en, ja"))
 
     job.execute({})
+  end
+
+  context "translation scenarios" do
+    it "scenario 1: skips post when locale is not set" do
+      DiscourseTranslator::PostTranslator.expects(:translate).never
+
+      job.execute({})
+    end
+
+    it "scenario 2: returns post with locale 'es' if localizations for en/ja/de do not exist" do
+      post = Fabricate(:post, locale: "es")
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "en").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "de").once
+
+      job.execute({})
+    end
+
+    it "scenario 3: returns post with locale 'en' if ja/de localization does not exist" do
+      post = Fabricate(:post, locale: "en")
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "de").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "en").never
+
+      job.execute({})
+    end
+
+    it "scenario 4: skips post with locale 'en' if 'ja' localization already exists" do
+      post = Fabricate(:post, locale: "en")
+      Fabricate(:post_localization, post: post, locale: "ja")
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "en").never
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "ja").never
+      DiscourseTranslator::PostTranslator.expects(:translate).with(post, "de").once
+
+      job.execute({})
+    end
   end
 end

@@ -14,21 +14,24 @@ module Jobs
       locales = SiteSetting.automatic_translation_target_languages.split("|")
       return if locales.blank?
 
-      # keeping this query simple by just getting any post with a missing localization
-      posts =
-        Post
-          .left_joins(:post_localizations)
-          .where(deleted_at: nil)
-          .where("posts.user_id > 0")
-          .where.not(raw: [nil, ""])
-          .group("posts.id")
-          .having(
-            "COUNT(DISTINCT CASE WHEN post_localizations.locale IN (?) THEN post_localizations.locale END) < ?",
-            locales,
-            locales.size,
+      sql = <<~SQL
+        SELECT DISTINCT posts.*
+        FROM posts
+        CROSS JOIN unnest(ARRAY[#{locales.map { |l| ActiveRecord::Base.connection.quote(l) }.join(",")}]) AS target_locale(locale)
+        WHERE
+          posts.deleted_at IS NULL
+          AND posts.user_id > 0
+          AND posts.raw IS NOT NULL AND posts.raw <> ''
+          AND posts.locale IS NOT NULL
+          AND target_locale.locale != posts.locale
+          AND NOT EXISTS (
+            SELECT 1 FROM post_localizations
+            WHERE post_localizations.post_id = posts.id
+              AND post_localizations.locale = target_locale.locale
           )
-          .order(updated_at: :desc)
-          .limit(BATCH_SIZE)
+      SQL
+
+      posts = Post.find_by_sql(sql)
 
       return if posts.empty?
 
