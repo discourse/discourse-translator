@@ -25,7 +25,7 @@ module Jobs
             locales,
             locales.size,
           )
-          .order(id: :desc)
+          .order(updated_at: :desc)
           .limit(BATCH_SIZE)
 
       return if posts.empty?

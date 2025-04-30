@@ -15,7 +15,7 @@ module Jobs
           .where(deleted_at: nil)
           .where("posts.user_id > 0")
           .where.not(raw: [nil, ""])
-          .order(id: :desc)
+          .order(updated_at: :desc)
           .limit(BATCH_SIZE)
       return if posts.empty?
 
