@@ -35,6 +35,26 @@ describe Jobs::DetectPostsLocale do
     job.execute({})
   end
 
+  it "detects most recently updated posts first" do
+    post_2 = Fabricate(:post, locale: nil)
+    post_3 = Fabricate(:post, locale: nil)
+
+    post.update!(updated_at: 3.days.ago)
+    post_2.update!(updated_at: 2.day.ago)
+    post_3.update!(updated_at: 4.day.ago)
+
+    original_batch = described_class::BATCH_SIZE
+    described_class.const_set(:BATCH_SIZE, 1)
+
+    DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post_2).once
+    DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post).never
+    DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post_3).never
+
+    job.execute({})
+  ensure
+    described_class.const_set(:BATCH_SIZE, original_batch)
+  end
+
   it "skips bot posts" do
     post.update!(user: Discourse.system_user)
     DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post).never
