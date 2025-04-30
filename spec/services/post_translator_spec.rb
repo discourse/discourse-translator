@@ -22,6 +22,12 @@ describe DiscourseTranslator::PostTranslator do
       expect(described_class.translate(post, "")).to eq(nil)
     end
 
+    it "returns nil if target_locale is same as post locale" do
+      post.locale = "en"
+
+      expect(described_class.translate(post, "en")).to eq(nil)
+    end
+
     it "translates with post and locale" do
       translator.expects(:translate_post!).with(post, :ja).returns(translated_raw)
 

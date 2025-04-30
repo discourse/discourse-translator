@@ -3,7 +3,7 @@
 module DiscourseTranslator
   class PostTranslator
     def self.translate(post, target_locale = I18n.locale)
-      return if post.blank? || target_locale.blank?
+      return if post.blank? || target_locale.blank? || post.locale == target_locale.to_s
 
       target_locale_sym = target_locale.to_s.sub("-", "_").to_sym
 
