@@ -79,7 +79,7 @@ describe Jobs::TranslatePosts do
     job.execute({})
   end
 
-  context "translation scenarios" do
+  context "for translation scenarios" do
     it "scenario 1: skips post when locale is not set" do
       DiscourseTranslator::PostTranslator.expects(:translate).never
 
