@@ -14,32 +14,23 @@ module Jobs
       locales = SiteSetting.automatic_translation_target_languages.split("|")
       return if locales.blank?
 
-      sql = <<~SQL
-        SELECT DISTINCT posts.*
-        FROM posts
-        CROSS JOIN unnest(ARRAY[#{locales.map { |l| ActiveRecord::Base.connection.quote(l) }.join(",")}]) AS target_locale(locale)
-        WHERE
-          posts.deleted_at IS NULL
-          AND posts.user_id > 0
-          AND posts.raw IS NOT NULL AND posts.raw <> ''
-          AND posts.locale IS NOT NULL
-          AND target_locale.locale != posts.locale
-          AND NOT EXISTS (
-            SELECT 1 FROM post_localizations
-            WHERE post_localizations.post_id = posts.id
-              AND post_localizations.locale = target_locale.locale
-          )
-      SQL
+      locales.each do |locale|
+        posts =
+          Post
+            .joins(
+              "LEFT JOIN post_localizations pl ON pl.post_id = posts.id AND pl.locale = #{ActiveRecord::Base.connection.quote(locale)}",
+            )
+            .where(deleted_at: nil)
+            .where("posts.user_id > 0")
+            .where.not(raw: [nil, ""])
+            .where.not(locale: nil)
+            .where.not(locale: locale)
+            .where("pl.id IS NULL")
+            .limit(BATCH_SIZE)
 
-      posts = Post.find_by_sql(sql)
+        next if posts.empty?
 
-      return if posts.empty?
-
-      posts.each do |post|
-        locales.each do |locale|
-          next if post.locale == locale
-          next if post.has_localization?(locale)
-
+        posts.each do |post|
           begin
             DiscourseTranslator::PostTranslator.translate(post, locale)
           rescue => e
@@ -48,11 +39,9 @@ module Jobs
             )
           end
         end
-      end
 
-      DiscourseTranslator::VerboseLogger.log(
-        "Translated #{posts.size} posts to #{locales.join(", ")}",
-      )
+        DiscourseTranslator::VerboseLogger.log("Translated #{posts.size} posts to #{locale}")
+      end
     end
   end
 end

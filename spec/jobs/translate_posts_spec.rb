@@ -74,7 +74,9 @@ describe Jobs::TranslatePosts do
   it "logs a summary after translation" do
     post.update(locale: "es")
     DiscourseTranslator::PostTranslator.stubs(:translate)
-    DiscourseTranslator::VerboseLogger.expects(:log).with(includes("Translated 1 posts to en, ja"))
+    DiscourseTranslator::VerboseLogger.expects(:log).with(includes("Translated 1 posts to en"))
+    DiscourseTranslator::VerboseLogger.expects(:log).with(includes("Translated 1 posts to ja"))
+    DiscourseTranslator::VerboseLogger.expects(:log).with(includes("Translated 1 posts to de"))
 
     job.execute({})
   end
