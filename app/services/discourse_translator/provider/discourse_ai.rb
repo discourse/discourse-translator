@@ -16,25 +16,32 @@ module DiscourseTranslator
       end
 
       def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
+        if (translatable.class.name == "Post")
+          translate_post!(translatable, target_locale_sym)
+        elsif (translatable.class.name == "Topic")
+          translate_topic!(translatable, target_locale_sym)
+        end
+      end
+
+      def self.translate_post!(post, target_locale_sym = I18n.locale)
+        validate_required_settings!
+
+        text = text_for_translation(post, raw: true)
+        chunks = DiscourseTranslator::ContentSplitter.split(text)
+        translated =
+          chunks
+            .map { |chunk| ::DiscourseAi::PostTranslator.new(chunk, target_locale_sym).translate }
+            .join("")
+        DiscourseTranslator::TranslatedContentNormalizer.normalize(post, translated)
+      end
+
+      def self.translate_topic!(topic, target_locale_sym = I18n.locale)
         validate_required_settings!
 
         language = get_language_name(target_locale_sym)
         translated =
-          case translatable.class.name
-          when "Post"
-            text = text_for_translation(translatable, raw: true)
-            chunks = DiscourseTranslator::ContentSplitter.split(text)
-            chunks
-              .map { |chunk| ::DiscourseAi::PostTranslator.new(chunk, target_locale_sym).translate }
-              .join("")
-          when "Topic"
-            ::DiscourseAi::TopicTranslator.new(
-              text_for_translation(translatable),
-              language,
-            ).translate
-          end
-
-        DiscourseTranslator::TranslatedContentNormalizer.normalize(translatable, translated)
+          ::DiscourseAi::TopicTranslator.new(text_for_translation(topic), language).translate
+        DiscourseTranslator::TranslatedContentNormalizer.normalize(topic, translated)
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)

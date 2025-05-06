@@ -55,18 +55,21 @@ module DiscourseTranslator
         [detected_lang, translated]
       end
 
-      # Subclasses must implement this method to translate the text of a
-      # post or topic and return only the translated text.
-      # Subclasses should use text_for_translation
-      # @param translatable [Post|Topic]
-      # @param target_locale_sym [Symbol]
-      # @return [String]
+      # TODO: Deprecate this in favour of translate_<model>
       def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
         raise "Not Implemented"
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)
         raise "Not Implemented"
+      end
+
+      def self.translate_post!(post, target_locale_sym = I18n.locale)
+        translate_translatable!(post, target_locale_sym)
+      end
+
+      def self.translate_topic!(topic, target_locale_sym = I18n.locale)
+        translate_translatable!(topic, target_locale_sym)
       end
 
       # Returns the stored detected locale of a post or topic.
