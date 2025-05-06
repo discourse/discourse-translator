@@ -28,7 +28,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
   describe ".detect!" do
     it "returns the detected language" do
       locale = "de"
-      DiscourseAi::Completions::Llm.with_prepared_responses([locale_json(locale)]) do
+      DiscourseAi::Completions::Llm.with_prepared_responses([locale]) do
         expect(DiscourseTranslator::Provider::DiscourseAi.detect!(post)).to eq locale
       end
     end
@@ -41,9 +41,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
     end
 
     it "translates the post and returns [locale, translated_text]" do
-      DiscourseAi::Completions::Llm.with_prepared_responses(
-        [translation_json("some translated text")],
-      ) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
         translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post)
         expect(translated_text).to eq "<p>some translated text</p>"
       end
@@ -51,9 +49,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
 
     it "translates the topic" do
       allow(::DiscourseAi::TopicTranslator).to receive(:new).and_call_original
-      DiscourseAi::Completions::Llm.with_prepared_responses(
-        [translation_json("some translated text")],
-      ) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
         translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(topic)
         expect(translated_text).to eq "some translated text"
       end
@@ -61,9 +57,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
 
     it "sends the content for splitting and the split content for translation" do
       post.update(raw: "#{"a" * 3000} #{"b" * 3000}")
-      DiscourseAi::Completions::Llm.with_prepared_responses(
-        %w[lol wut].map { |content| translation_json(content) },
-      ) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(%w[lol wut]) do
         expect(
           DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post),
         ).to eq "<p>lolwut</p>"
@@ -73,20 +67,10 @@ describe DiscourseTranslator::Provider::DiscourseAi do
 
   describe ".translate_text!" do
     it "returns the translated text" do
-      DiscourseAi::Completions::Llm.with_prepared_responses(
-        [translation_json("some translated text")],
-      ) do
+      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
         translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_text!("derp")
         expect(translated_text).to eq "some translated text"
       end
     end
-  end
-
-  def locale_json(content)
-    { locale: content }.to_json
-  end
-
-  def translation_json(content)
-    { translation: content }.to_json
   end
 end
