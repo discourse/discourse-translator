@@ -12,7 +12,7 @@ describe DiscourseAi::LanguageDetector do
 
   describe ".detect" do
     let(:locale_detector) { described_class.new("meow") }
-    let(:llm_response) { "{\"translation\":\"hur dur hur dur!\"}" }
+    let(:llm_response) { "hur dur hur dur!" }
 
     it "creates the correct prompt" do
       allow(DiscourseAi::Completions::Prompt).to receive(:new).with(
@@ -29,6 +29,10 @@ describe DiscourseAi::LanguageDetector do
       mock_prompt = instance_double(DiscourseAi::Completions::Prompt)
       mock_llm = instance_double(DiscourseAi::Completions::Llm)
 
+      structured_output =
+        DiscourseAi::Completions::StructuredOutput.new({ locale: { type: "string" } })
+      structured_output << { locale: llm_response }.to_json
+
       allow(DiscourseAi::Completions::Prompt).to receive(:new).and_return(mock_prompt)
       allow(DiscourseAi::Completions::Llm).to receive(:proxy).with(
         SiteSetting.ai_helper_model,
@@ -37,8 +41,8 @@ describe DiscourseAi::LanguageDetector do
         mock_prompt,
         user: Discourse.system_user,
         feature_name: "translator-language-detect",
-        extra_model_params: locale_detector.response_format,
-      ).and_return(llm_response)
+        response_format: locale_detector.response_format,
+      ).and_return(structured_output)
 
       locale_detector.detect
     end

@@ -13,7 +13,7 @@ describe DiscourseAi::BaseTranslator do
   describe ".translate" do
     let(:text_to_translate) { "cats are great" }
     let(:target_language) { "de" }
-    let(:llm_response) { "{\"translation\":\"hur dur hur dur!\"}" }
+    let(:llm_response) { "hur dur hur dur!" }
 
     it "creates the correct prompt" do
       post_translator = DiscourseAi::PostTranslator.new(text_to_translate, target_language)
@@ -32,6 +32,10 @@ describe DiscourseAi::BaseTranslator do
       mock_llm = instance_double(DiscourseAi::Completions::Llm)
       post_translator = DiscourseAi::PostTranslator.new(text_to_translate, target_language)
 
+      structured_output =
+        DiscourseAi::Completions::StructuredOutput.new({ translation: { type: "string" } })
+      structured_output << { translation: llm_response }.to_json
+
       allow(DiscourseAi::Completions::Prompt).to receive(:new).and_return(mock_prompt)
       allow(DiscourseAi::Completions::Llm).to receive(:proxy).with(
         SiteSetting.ai_helper_model,
@@ -40,8 +44,8 @@ describe DiscourseAi::BaseTranslator do
         mock_prompt,
         user: Discourse.system_user,
         feature_name: "translator-translate",
-        extra_model_params: post_translator.response_format,
-      ).and_return(llm_response)
+        response_format: post_translator.response_format,
+      ).and_return(structured_output)
 
       post_translator.translate
     end
