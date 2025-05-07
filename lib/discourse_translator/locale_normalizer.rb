@@ -25,19 +25,17 @@ module DiscourseTranslator
       #   "zh" => "zh_CN",
       # }
       @locale_map ||=
-        begin
-          output = {}
-          I18n.available_locales.each do |sym|
+        I18n
+          .available_locales
+          .reduce({}) do |output, sym|
             locale = sym.to_s
             output[locale.downcase] = locale
             if locale.include?("_")
               short = locale.split("_").first
               output[short] = locale if output[short].blank?
             end
+            output
           end
-
-          output
-        end
     end
   end
 end
