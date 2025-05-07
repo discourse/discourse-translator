@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe Jobs::DetectPostsLocale do
+describe Jobs::PostsLocaleDetectionBackfill do
   fab!(:post) { Fabricate(:post, locale: nil) }
   subject(:job) { described_class.new }
 
   before do
     SiteSetting.translator_enabled = true
     SiteSetting.experimental_content_translation = true
+    SiteSetting.automatic_translation_backfill_rate = 100
   end
 
   it "does nothing when translator is disabled" do
@@ -43,16 +44,13 @@ describe Jobs::DetectPostsLocale do
     post_2.update!(updated_at: 2.day.ago)
     post_3.update!(updated_at: 4.day.ago)
 
-    original_batch = described_class::BATCH_SIZE
-    described_class.const_set(:BATCH_SIZE, 1)
+    SiteSetting.automatic_translation_backfill_rate = 1
 
     DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post_2).once
     DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post).never
     DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post_3).never
 
     job.execute({})
-  ensure
-    described_class.const_set(:BATCH_SIZE, original_batch)
   end
 
   it "skips bot posts" do
