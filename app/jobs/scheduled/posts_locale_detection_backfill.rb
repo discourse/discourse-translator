@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 module Jobs
-  class DetectPostsLocale < ::Jobs::Base
+  class PostsLocaleDetectionBackfill < ::Jobs::Scheduled
+    every 5.minutes
     cluster_concurrency 1
-    sidekiq_options retry: false
-
-    BATCH_SIZE = 50
 
     def execute(args)
       return unless SiteSetting.translator_enabled
       return unless SiteSetting.experimental_content_translation
+      return if SiteSetting.automatic_translation_backfill_rate == 0
 
+      limit = SiteSetting.automatic_translation_backfill_rate
       posts =
         Post
           .where(locale: nil)
@@ -18,7 +18,7 @@ module Jobs
           .where("posts.user_id > 0")
           .where.not(raw: [nil, ""])
           .order(updated_at: :desc)
-          .limit(BATCH_SIZE)
+          .limit(limit)
       return if posts.empty?
 
       posts.each do |post|
