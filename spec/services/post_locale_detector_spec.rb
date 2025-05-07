@@ -13,14 +13,14 @@ describe DiscourseTranslator::PostLocaleDetector do
     end
 
     it "calls detect! on the provider with the post" do
-      translator.expects(:detect!).with(post).returns("ja")
-      expect(described_class.detect_locale(post)).to eq("ja")
+      translator.expects(:detect!).with(post).returns("zh")
+      expect(described_class.detect_locale(post)).to eq("zh_CN")
     end
 
     it "updates the post locale with the detected locale" do
-      translator.stubs(:detect!).with(post).returns("ja")
+      translator.stubs(:detect!).with(post).returns("zh")
       expect { described_class.detect_locale(post) }.to change { post.reload.locale }.from(nil).to(
-        "ja",
+        "zh_CN",
       )
     end
   end
