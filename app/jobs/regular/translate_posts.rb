@@ -14,6 +14,8 @@ module Jobs
       locales = SiteSetting.automatic_translation_target_languages.split("|")
       return if locales.blank?
 
+      limit = args[:limit] || BATCH_SIZE
+
       locales.each do |locale|
         posts =
           Post
@@ -26,7 +28,7 @@ module Jobs
             .where.not(locale: nil)
             .where.not(locale: locale)
             .where("pl.id IS NULL")
-            .limit(BATCH_SIZE)
+            .limit(limit)
 
         next if posts.empty?
 
