@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Jobs
-  class AutomaticCategoryTranslation < ::Jobs::Scheduled
+  class CategoryTranslationBackfill < ::Jobs::Scheduled
     every 12.hours
     cluster_concurrency 1
 
