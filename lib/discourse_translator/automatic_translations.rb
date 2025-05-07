@@ -7,6 +7,10 @@ module DiscourseTranslator
         if translatable?(post)
           Jobs.enqueue(:translate_translatable, type: "Post", translatable_id: post.id)
         end
+
+        if SiteSetting.experimental_content_localization
+          Jobs.enqueue(:detect_translate_post, post_id: post.id)
+        end
       end
 
       plugin.on(:topic_created) do |topic|
