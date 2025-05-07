@@ -7,8 +7,9 @@ module DiscourseTranslator
 
       translator = DiscourseTranslator::Provider::TranslatorProvider.get
       detected_locale = translator.detect!(post)
-      post.update!(locale: detected_locale)
-      detected_locale
+      locale = LocaleNormalizer.normalize_to_i18n(detected_locale)
+      post.update!(locale:)
+      locale
     end
   end
 end
