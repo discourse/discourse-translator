@@ -17,11 +17,21 @@ module DiscourseTranslator
         if translatable?(topic)
           Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
         end
+
+        if SiteSetting.experimental_content_localization
+          Jobs.enqueue(:detect_translate_topic, topic_id: topic.id)
+        end
       end
 
       plugin.on(:topic_edited) do |topic|
         if translatable?(topic)
           Jobs.enqueue(:translate_translatable, type: "Topic", translatable_id: topic.id)
+        end
+      end
+
+      plugin.on(:post_edited) do |post, topic_changed|
+        if SiteSetting.experimental_content_localization && topic_changed
+          Jobs.enqueue(:detect_translate_topic, topic_id: post.topic_id)
         end
       end
     end
