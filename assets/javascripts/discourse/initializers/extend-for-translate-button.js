@@ -26,42 +26,6 @@ function initializeTranslation(api) {
     );
   }
 
-  if (
-    siteSettings.experimental_inline_translation &&
-    (currentUser || siteSettings.experimental_anon_language_switcher)
-  ) {
-    api.renderInOutlet("topic-navigation", ShowOriginalContent);
-
-    api.registerCustomPostMessageCallback(
-      "translated_post",
-      (topicController, data) => {
-        if (
-          new URLSearchParams(window.location.search).get("show") === "original"
-        ) {
-          return;
-        }
-        const postStream = topicController.get("model.postStream");
-        postStream.triggerChangedPost(data.id, data.updated_at).then(() => {
-          topicController.appEvents.trigger("post-stream:refresh", {
-            id: data.id,
-          });
-        });
-      }
-    );
-
-    api.includePostAttributes("is_translated", "detected_language");
-    api.decorateWidget("post-date:before", (dec) => {
-      if (dec.attrs.is_translated && dec.attrs.detected_language) {
-        return new RenderGlimmer(
-          dec.widget,
-          "div.post-info.post-translated-indicator",
-          TranslatedPostIndicator,
-          { detectedLanguage: dec.attrs.detected_language }
-        );
-      }
-    });
-  }
-
   customizePostMenu(api);
 }
 

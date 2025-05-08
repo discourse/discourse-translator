@@ -17,7 +17,6 @@ module("Integration | Component | translated-post", function (hooks) {
       },
     });
 
-    this.siteSettings.experimental_inline_translation = false;
     this.siteSettings.translator_provider = "Google";
 
     await render(hbs`
@@ -28,24 +27,5 @@ module("Integration | Component | translated-post", function (hooks) {
     assert.dom(".topic-attribution").hasText("良い一日");
     assert.dom(".post-attribution").hasText("Translated from ja by Google");
     assert.dom(".cooked").hasText("こんにちは");
-  });
-
-  test("hides translation when experimental_inline_translation is enabled", async function (assert) {
-    this.set("outletArgs", {
-      post: {
-        isTranslated: true,
-        isTranslating: false,
-        translatedText: "Bonjour monde",
-      },
-    });
-
-    this.siteSettings.experimental_inline_translation = true;
-
-    await render(hbs`
-      <TranslatedPost @outletArgs={{this.outletArgs}} />
-    `);
-
-    assert.dom(".topic-attribution").doesNotExist();
-    assert.dom(".post-attribution").doesNotExist();
   });
 });
