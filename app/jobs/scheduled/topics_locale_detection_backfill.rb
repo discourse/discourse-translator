@@ -23,6 +23,8 @@ module Jobs
       topics.each do |topic|
         begin
           DiscourseTranslator::TopicLocaleDetector.detect_locale(topic)
+        rescue FinalDestination::SSRFDetector::LookupFailedError
+          # do nothing, there are too many sporadic lookup failures
         rescue => e
           Rails.logger.error(
             "Discourse Translator: Failed to detect topic #{topic.id}'s locale: #{e.message}",
