@@ -24,6 +24,8 @@ module Jobs
       posts.each do |post|
         begin
           DiscourseTranslator::PostLocaleDetector.detect_locale(post)
+        rescue FinalDestination::SSRFDetector::LookupFailedError
+          # do nothing, there are too many sporadic lookup failures
         rescue => e
           Rails.logger.error(
             "Discourse Translator: Failed to detect post #{post.id}'s locale: #{e.message}",

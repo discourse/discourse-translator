@@ -23,5 +23,16 @@ describe DiscourseTranslator::TopicLocaleDetector do
         nil,
       ).to("zh_CN")
     end
+
+    it "bypasses validations when updating locale" do
+      topic.update_column(:title, "A")
+      SiteSetting.min_topic_title_length = 15
+      SiteSetting.max_topic_title_length = 16
+
+      translator.stubs(:detect!).with(topic).returns("zh")
+
+      described_class.detect_locale(topic)
+      expect(topic.reload.locale).to eq("zh_CN")
+    end
   end
 end
