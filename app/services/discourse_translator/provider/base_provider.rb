@@ -25,12 +25,11 @@ module DiscourseTranslator
         "#{key_prefix}#{access_token_key}"
       end
 
-      # Returns the stored translation of a post or topic.
-      # If the translation does not exist yet, it will be translated first via the API then stored.
+      # Translates and saves it into a PostTranslation/TopicTranslation
       # If the detected language is the same as the target language, the original text will be returned.
       # @param translatable [Post|Topic]
+      # @return [Array] the detected language and the translated text
       def self.translate(translatable, target_locale_sym = I18n.locale)
-        return if text_for_translation(translatable).blank?
         detected_lang = detect(translatable)
 
         if translatable.locale_matches?(target_locale_sym)
@@ -50,26 +49,38 @@ module DiscourseTranslator
                 )
         end
 
-        translated = translate_translatable!(translatable, target_locale_sym)
-        save_translation(translatable, target_locale_sym) { translated }
-        [detected_lang, translated]
-      end
+        begin
+          begin
+            translated =
+              case translatable.class.name
+              when "Post"
+                translate_post!(translatable, target_locale_sym, { cooked: true })
+              when "Topic"
+                translate_topic!(translatable, target_locale_sym)
+              end
+          end
+        rescue => e
+          raise I18n.t(
+                  "translator.failed.#{translatable.class.name.downcase}",
+                  source_locale: detected_lang,
+                  target_locale: target_locale_sym,
+                )
+        end
 
-      # TODO: Deprecate this in favour of translate_<model>
-      def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        raise "Not Implemented"
+        translatable.set_translation(target_locale_sym, translated)
+        [detected_lang, translated]
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)
         raise "Not Implemented"
       end
 
-      def self.translate_post!(post, target_locale_sym = I18n.locale)
-        translate_translatable!(post, target_locale_sym)
+      def self.translate_post!(post, target_locale_sym = I18n.locale, opts = {})
+        raise "Not Implemented"
       end
 
       def self.translate_topic!(topic, target_locale_sym = I18n.locale)
-        translate_translatable!(topic, target_locale_sym)
+        raise "Not Implemented"
       end
 
       # Returns the stored detected locale of a post or topic.
@@ -77,8 +88,7 @@ module DiscourseTranslator
       # @param translatable [Post|Topic]
       def self.detect(translatable)
         return if text_for_detection(translatable).blank?
-        get_detected_locale(translatable) ||
-          save_detected_locale(translatable) { detect!(translatable) }
+        translatable.detected_locale || translatable.set_detected_locale(detect!(translatable))
       end
 
       # Subclasses must implement this method to detect the text of a post or topic
@@ -92,29 +102,6 @@ module DiscourseTranslator
 
       def self.access_token
         raise "Not Implemented"
-      end
-
-      def self.save_translation(translatable, target_locale_sym = I18n.locale)
-        begin
-          translation = yield
-        rescue Timeout::Error
-          raise TranslatorError.new(I18n.t("translator.api_timeout"))
-        end
-        translatable.set_translation(target_locale_sym, translation)
-        translation
-      end
-
-      def self.get_detected_locale(translatable)
-        translatable.detected_locale
-      end
-
-      def self.save_detected_locale(translatable)
-        # sometimes we may have a user post that is just an emoji
-        # in that case, we will just indicate the post is in the default locale
-        detected_locale = yield.presence || SiteSetting.default_locale
-        translatable.set_detected_locale(detected_locale)
-
-        detected_locale
       end
 
       def self.language_supported?(detected_lang)

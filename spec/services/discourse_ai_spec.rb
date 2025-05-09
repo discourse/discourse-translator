@@ -43,7 +43,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
     it "translates the post and returns [locale, translated_text]" do
       DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
         translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post)
-        expect(translated_text).to eq "<p>some translated text</p>"
+        expect(translated_text).to eq "some translated text"
       end
     end
 
@@ -60,7 +60,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
       DiscourseAi::Completions::Llm.with_prepared_responses(%w[lol wut]) do
         expect(
           DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post),
-        ).to eq "<p>lolwut</p>"
+        ).to eq "lolwut"
       end
     end
   end

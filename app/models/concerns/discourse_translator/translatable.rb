@@ -15,6 +15,7 @@ module DiscourseTranslator
       # locales should be "en-US" instead of "en_US" per https://www.rfc-editor.org/rfc/rfc5646#section-2.1
       locale = locale.to_s.gsub("_", "-")
       (content_locale || build_content_locale).update!(detected_locale: locale)
+      locale
     end
 
     # This method is used to create a translation for a translatable (Post or Topic) and a specific locale.

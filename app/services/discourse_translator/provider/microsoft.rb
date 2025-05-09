@@ -154,27 +154,24 @@ module DiscourseTranslator
         result(uri.to_s, body, default_headers).first["language"]
       end
 
-      def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        detected_lang = detect(translatable)
+      def self.translate_post!(post, target_locale_sym = I18n.locale, opts = {})
+        raw = opts.key?(:raw) ? opts[:raw] : !opts[:cooked]
+        text = text_for_translation(post, raw:)
 
-        if text_for_translation(translatable).length > LENGTH_LIMIT
-          raise TranslatorError.new(I18n.t("translator.too_long"))
-        end
-        locale =
-          SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
+        raise TranslatorError.new(I18n.t("translator.too_long")) if text.length > LENGTH_LIMIT
 
-        query = default_query.merge("from" => detected_lang, "to" => locale, "textType" => "html")
-        body = [{ "Text" => text_for_translation(translatable) }].to_json
-        uri = URI(translate_endpoint)
-        uri.query = URI.encode_www_form(query)
-        response_body = result(uri.to_s, body, default_headers)
-        response_body.first["translations"].first["text"]
+        translate_text!(text, target_locale_sym)
+      end
+
+      def self.translate_topic!(topic, target_locale_sym = I18n.locale)
+        text = text_for_translation(topic)
+        raise TranslatorError.new(I18n.t("translator.too_long")) if text.length > LENGTH_LIMIT
+
+        translate_text!(text, target_locale_sym)
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)
-        locale =
-          SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
-
+        locale = SUPPORTED_LANG_MAPPING[target_locale_sym]
         query = default_query.merge("to" => locale, "textType" => "html")
         body = [{ "Text" => text }].to_json
         uri = URI(translate_endpoint)

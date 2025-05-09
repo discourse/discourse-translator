@@ -91,18 +91,19 @@ module DiscourseTranslator
         res.any? { |obj| obj["code"] == source } && res.any? { |obj| obj["code"] == lang }
       end
 
-      def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        detected_lang = detect(translatable)
+      def self.translate_post!(post, target_locale_sym = I18n.locale, opts = {})
+        raw = opts.key?(:raw) ? opts[:raw] : !opts[:cooked]
+        text = text_for_translation(post, raw:)
 
-        res =
-          result(
-            translate_uri,
-            q: text_for_translation(translatable),
-            source: detected_lang,
-            target: SUPPORTED_LANG_MAPPING[target_locale_sym],
-            format: "html",
-          )
-        res["translatedText"]
+        detected_lang = detect(post)
+
+        send_for_translation(text, detected_lang, target_locale_sym)
+      end
+
+      def self.translate_topic!(topic, target_locale_sym = I18n.locale)
+        detected_lang = detect(topic)
+        text = text_for_translation(topic)
+        send_for_translation(text, detected_lang, target_locale_sym)
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)
@@ -153,6 +154,20 @@ module DiscourseTranslator
         else
           body
         end
+      end
+
+      private
+
+      def self.send_for_translation(text, source_locale, target_locale)
+        res =
+          result(
+            translate_uri,
+            q: text,
+            source: source_locale,
+            target: SUPPORTED_LANG_MAPPING[target_locale],
+            format: "html",
+          )
+        res["translatedText"]
       end
     end
   end
