@@ -31,10 +31,6 @@ export default class TranslatedPost extends Component {
     return this.post.translatedTitle;
   }
 
-  get showTranslation() {
-    return !this.siteSettings.experimental_inline_translation;
-  }
-
   <template>
     <div class="post-translation">
       <ConditionalLoadingSpinner
@@ -42,24 +38,22 @@ export default class TranslatedPost extends Component {
         @condition={{this.loading}}
         @size="small"
       >
-        {{#if this.showTranslation}}
-          <hr />
-          {{#if this.translatedTitle}}
-            <div class="topic-attribution">
-              {{this.translatedTitle}}
-            </div>
-          {{/if}}
-          <div class="post-attribution">
-            {{i18n
-              "translator.translated_from"
-              language=this.post.detectedLang
-              translator=this.siteSettings.translator_provider
-            }}
-          </div>
-          <div class="cooked">
-            {{htmlSafe this.post.translatedText}}
+        <hr />
+        {{#if this.translatedTitle}}
+          <div class="topic-attribution">
+            {{this.translatedTitle}}
           </div>
         {{/if}}
+        <div class="post-attribution">
+          {{i18n
+            "translator.translated_from"
+            language=this.post.detectedLang
+            translator=this.siteSettings.translator_provider
+          }}
+        </div>
+        <div class="cooked">
+          {{htmlSafe this.post.translatedText}}
+        </div>
       </ConditionalLoadingSpinner>
     </div>
   </template>
