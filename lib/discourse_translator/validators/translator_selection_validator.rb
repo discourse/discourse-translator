@@ -18,7 +18,7 @@ module DiscourseTranslator
       end
 
       def error_message
-        return I18n.t("translator.discourse_ai.not_installed") if !defined?(::DiscourseAi)
+        I18n.t("translator.discourse_ai.not_installed") if !defined?(::DiscourseAi)
       end
     end
   end
