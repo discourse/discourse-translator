@@ -12,18 +12,13 @@ module DiscourseTranslator
 
         if val == "DiscourseAi"
           return false if !defined?(::DiscourseAi)
-          return false if !SiteSetting.ai_helper_enabled
         end
 
         true
       end
 
       def error_message
-        return I18n.t("translator.discourse_ai.not_installed") if !defined?(::DiscourseAi)
-
-        if !SiteSetting.ai_helper_enabled
-          I18n.t("translator.discourse_ai.ai_helper_required", { base_url: Discourse.base_url })
-        end
+        I18n.t("translator.discourse_ai.not_installed") if !defined?(::DiscourseAi)
       end
     end
   end

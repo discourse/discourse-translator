@@ -6,9 +6,8 @@ describe DiscourseTranslator::Provider::DiscourseAi do
 
   before do
     Fabricate(:fake_model).tap do |fake_llm|
-      SiteSetting.public_send("ai_helper_model=", "custom:#{fake_llm.id}")
+      SiteSetting.public_send("ai_translation_model=", "custom:#{fake_llm.id}")
     end
-    SiteSetting.ai_helper_enabled = true
     SiteSetting.translator_enabled = true
     SiteSetting.translator_provider = "DiscourseAi"
   end

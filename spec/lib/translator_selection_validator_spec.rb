@@ -21,18 +21,10 @@ describe ::DiscourseTranslator::Validators::TranslatorSelectionValidator do
         end
       end
 
-      context "when DiscourseAi is defined but ai_helper_enabled is false" do
-        it "returns false" do
-          SiteSetting.ai_helper_enabled = false
-          expect(described_class.new.valid_value?("DiscourseAi")).to eq(false)
-        end
-      end
-
-      context "when DiscourseAi is defined and ai_helper_enabled is true" do
+      context "when DiscourseAi is defined" do
         it "returns true" do
           DiscourseAi::Completions::Llm.with_prepared_responses(["OK"]) do
-            SiteSetting.ai_helper_model = "custom:#{llm_model.id}"
-            SiteSetting.ai_helper_enabled = true
+            SiteSetting.ai_translation_model = "custom:#{llm_model.id}"
           end
           expect(described_class.new.valid_value?("DiscourseAi")).to eq(true)
         end
@@ -57,20 +49,10 @@ describe ::DiscourseTranslator::Validators::TranslatorSelectionValidator do
       end
     end
 
-    context "when DiscourseAi is defined but ai_helper_enabled is false" do
-      it "returns the ai_helper_required error message" do
-        SiteSetting.ai_helper_enabled = false
-        expect(described_class.new.error_message).to eq(
-          I18n.t("translator.discourse_ai.ai_helper_required", { base_url: Discourse.base_url }),
-        )
-      end
-    end
-
-    context "when DiscourseAi is defined and ai_helper_enabled is true" do
+    context "when DiscourseAi is defined" do
       it "returns nil" do
         DiscourseAi::Completions::Llm.with_prepared_responses(["OK"]) do
-          SiteSetting.ai_helper_model = "custom:#{llm_model.id}"
-          SiteSetting.ai_helper_enabled = true
+          SiteSetting.ai_translation_model = "custom:#{llm_model.id}"
         end
         expect(described_class.new.error_message).to be_nil
       end
