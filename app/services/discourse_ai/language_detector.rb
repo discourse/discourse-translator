@@ -50,7 +50,7 @@ module DiscourseAi
         )
 
       structured_output =
-        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_helper_model).generate(
+        DiscourseAi::Completions::Llm.proxy(SiteSetting.ai_translation_model).generate(
           prompt,
           user: Discourse.system_user,
           feature_name: "translator-language-detect",

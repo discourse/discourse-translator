@@ -5,9 +5,8 @@ require "rails_helper"
 describe DiscourseAi::BaseTranslator do
   before do
     Fabricate(:fake_model).tap do |fake_llm|
-      SiteSetting.public_send("ai_helper_model=", "custom:#{fake_llm.id}")
+      SiteSetting.public_send("ai_translation_model=", "custom:#{fake_llm.id}")
     end
-    SiteSetting.ai_helper_enabled = true
   end
 
   describe ".translate" do
@@ -38,7 +37,7 @@ describe DiscourseAi::BaseTranslator do
 
       allow(DiscourseAi::Completions::Prompt).to receive(:new).and_return(mock_prompt)
       allow(DiscourseAi::Completions::Llm).to receive(:proxy).with(
-        SiteSetting.ai_helper_model,
+        SiteSetting.ai_translation_model,
       ).and_return(mock_llm)
       allow(mock_llm).to receive(:generate).with(
         mock_prompt,

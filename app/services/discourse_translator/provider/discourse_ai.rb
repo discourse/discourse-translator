@@ -55,7 +55,7 @@ module DiscourseTranslator
 
       def self.validate_required_settings!
         unless SiteSetting.translator_enabled && SiteSetting.translator_provider == "DiscourseAi" &&
-                 SiteSetting.discourse_ai_enabled && SiteSetting.ai_helper_enabled
+                 SiteSetting.discourse_ai_enabled
           raise TranslatorError.new(
                   I18n.t(
                     "translator.discourse_ai.ai_helper_required",
