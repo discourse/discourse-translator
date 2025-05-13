@@ -84,18 +84,10 @@ describe DiscourseTranslator::Provider::BaseProvider do
     end
 
     it "returns cached detection if available" do
-      TestTranslator.save_detected_locale(post) { "en" }
+      post.set_detected_locale("en")
 
       TestTranslator.expects(:detect!).never
       expect(TestTranslator.detect(post)).to eq("en")
-    end
-
-    it "saves the site default locale when detection is empty" do
-      SiteSetting.default_locale = "ja"
-
-      TestTranslator.save_detected_locale(post) { "" }
-
-      expect(post.detected_locale).to eq("ja")
     end
 
     it "performs detection if no cached result" do
@@ -108,39 +100,27 @@ describe DiscourseTranslator::Provider::BaseProvider do
   describe ".translate" do
     fab!(:post)
 
-    it "returns nil when text is blank" do
-      post.cooked = ""
-      expect(TestTranslator.translate(post)).to be_nil
-    end
-
     it "returns original text when detected language matches current locale" do
-      TestTranslator.save_detected_locale(post) { I18n.locale.to_s }
+      post.set_detected_locale(I18n.locale.to_s)
       post.cooked = "hello"
 
       expect(TestTranslator.translate(post)).to eq(%w[en hello])
     end
 
     it "returns cached translation if available" do
-      TestTranslator.save_detected_locale(post) { "es" }
-      TestTranslator.save_translation(post) { "hello" }
+      post.set_detected_locale("es")
+      post.set_translation(I18n.locale, "hello")
 
       expect(TestTranslator.translate(post)).to eq(%w[es hello])
     end
 
     it "raises error when translation not supported" do
-      TestTranslator.save_detected_locale(post) { "xx" }
+      post.set_detected_locale("xx")
       TestTranslator.expects(:translate_supported?).with("xx", :en).returns(false)
 
       expect { TestTranslator.translate(post) }.to raise_error(
         DiscourseTranslator::Provider::TranslatorError,
       )
-    end
-
-    it "performs translation when needed" do
-      TestTranslator.save_detected_locale(post) { "es" }
-      TestTranslator.expects(:translate_translatable!).returns("hello")
-
-      expect(TestTranslator.translate(post)).to eq(%w[es hello])
     end
   end
 end

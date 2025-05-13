@@ -129,26 +129,25 @@ module DiscourseTranslator
         result(uri.to_s, "", default_headers)["lang"]
       end
 
-      def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        detected_lang = detect(translatable)
-        locale =
-          SUPPORTED_LANG_MAPPING[target_locale_sym] || (raise I18n.t("translator.not_supported"))
+      def self.translate_post!(post, target_locale_sym = I18n.locale, opts = {})
+        raw = opts.key?(:raw) ? opts[:raw] : !opts[:cooked]
+        text = text_for_translation(post, raw:)
 
-        query =
-          default_query.merge(
-            "lang" => "#{detected_lang}-#{locale}",
-            "text" => text_for_translation(translatable),
-            "format" => "html",
-          )
+        detected_lang = detect(post)
+        locale = SUPPORTED_LANG_MAPPING[target_locale_sym]
 
-        uri = URI(TRANSLATE_URI)
-        uri.query = URI.encode_www_form(query)
-
-        response_body = result(uri.to_s, "", default_headers)
-        response_body["text"][0]
+        send_for_translation(text, detected_lang, locale)
       end
 
-      def self.translate_text!(translatable, target_locale_sym = I18n.locale)
+      def self.translate_topic!(topic, target_locale_sym = I18n.locale)
+        detected_lang = detect(topic)
+        locale = SUPPORTED_LANG_MAPPING[target_locale_sym]
+        text = text_for_translation(topic)
+
+        send_for_translation(text, detected_lang, locale)
+      end
+
+      def self.translate_text!(text, target_locale_sym = I18n.locale)
         # Not supported for v1.5 https://translate.yandex.com/developers
         raise TranslatorError.new(I18n.t("translator.not_supported"))
       end
@@ -159,6 +158,21 @@ module DiscourseTranslator
       end
 
       private
+
+      def self.send_for_translation(text, source_locale, target_locale)
+        query =
+          default_query.merge(
+            "lang" => "#{source_locale}-#{target_locale}",
+            "text" => text,
+            "format" => "html",
+          )
+
+        uri = URI(TRANSLATE_URI)
+        uri.query = URI.encode_www_form(query)
+
+        response_body = result(uri.to_s, "", default_headers)
+        response_body["text"][0]
+      end
 
       def self.post(uri, body, headers = {})
         Excon.post(uri, body: body, headers: headers)

@@ -33,7 +33,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
     end
   end
 
-  describe ".translate_translatable!" do
+  describe ".translate_post!" do
     before do
       post.set_detected_locale("de")
       topic.set_detected_locale("de")
@@ -41,15 +41,7 @@ describe DiscourseTranslator::Provider::DiscourseAi do
 
     it "translates the post and returns [locale, translated_text]" do
       DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
-        translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post)
-        expect(translated_text).to eq "<p>some translated text</p>"
-      end
-    end
-
-    it "translates the topic" do
-      allow(::DiscourseAi::TopicTranslator).to receive(:new).and_call_original
-      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
-        translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(topic)
+        translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_post!(post)
         expect(translated_text).to eq "some translated text"
       end
     end
@@ -57,9 +49,17 @@ describe DiscourseTranslator::Provider::DiscourseAi do
     it "sends the content for splitting and the split content for translation" do
       post.update(raw: "#{"a" * 3000} #{"b" * 3000}")
       DiscourseAi::Completions::Llm.with_prepared_responses(%w[lol wut]) do
-        expect(
-          DiscourseTranslator::Provider::DiscourseAi.translate_translatable!(post),
-        ).to eq "<p>lolwut</p>"
+        expect(DiscourseTranslator::Provider::DiscourseAi.translate_post!(post)).to eq "lolwut"
+      end
+    end
+  end
+
+  describe ".translate_topic!" do
+    it "translates the topic" do
+      allow(::DiscourseAi::TopicTranslator).to receive(:new).and_call_original
+      DiscourseAi::Completions::Llm.with_prepared_responses(["some translated text"]) do
+        translated_text = DiscourseTranslator::Provider::DiscourseAi.translate_topic!(topic)
+        expect(translated_text).to eq "some translated text"
       end
     end
   end
