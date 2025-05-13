@@ -120,38 +120,25 @@ module DiscourseTranslator
         end
       end
 
-      def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        detected_lang = detect(translatable)
+      def self.translate_post!(post, target_locale_sym = I18n.locale, opts = {})
+        raw = opts.key?(:raw) ? opts[:raw] : !opts[:cooked]
+        text = text_for_translation(post, raw:)
+        translate_text!(text, target_locale_sym)
+      end
 
-        begin
-          client.translate_text(
-            {
-              text: truncate(text_for_translation(translatable)),
-              source_language_code: "auto",
-              target_language_code: SUPPORTED_LANG_MAPPING[target_locale_sym],
-            },
-          )
-        rescue Aws::Translate::Errors::UnsupportedLanguagePairException
-          raise I18n.t(
-                  "translator.failed.#{translatable.class.name.downcase}",
-                  source_locale: detected_lang,
-                  target_locale: target_locale_sym,
-                )
-        end
+      def self.translate_topic!(topic, target_locale_sym = I18n.locale)
+        text = text_for_translation(topic)
+        translate_text!(text, target_locale_sym)
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)
-        begin
-          client.translate_text(
-            {
-              text: truncate(text),
-              source_language_code: "auto",
-              target_language_code: SUPPORTED_LANG_MAPPING[target_locale_sym],
-            },
-          )
-        rescue Aws::Translate::Errors::UnsupportedLanguagePairException
-          raise I18n.t("translator.not_supported")
-        end
+        client.translate_text(
+          {
+            text: truncate(text),
+            source_language_code: "auto",
+            target_language_code: SUPPORTED_LANG_MAPPING[target_locale_sym],
+          },
+        )&.translated_text
       end
 
       def self.client

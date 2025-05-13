@@ -1,7 +1,31 @@
 # frozen_string_literal: true
 
 RSpec.describe DiscourseTranslator::Provider::Yandex do
-  let(:mock_response) { Struct.new(:status, :body) }
+  fab!(:post)
+
+  def detect_endpoint(text)
+    described_class.expects(:access_token).returns("12345")
+    URI(described_class::DETECT_URI)
+      .tap { |uri| uri.query = URI.encode_www_form({ "key" => "12345", "text" => text }) }
+      .to_s
+  end
+
+  def translate_endpoint(text, source_lang, target_lang)
+    described_class.expects(:access_token).returns("12345")
+    URI(described_class::TRANSLATE_URI)
+      .tap do |uri|
+        uri.query =
+          URI.encode_www_form(
+            {
+              "key" => "12345",
+              "text" => text,
+              "lang" => "#{source_lang}-#{target_lang}",
+              "format" => "html",
+            },
+          )
+      end
+      .to_s
+  end
 
   describe ".access_token" do
     describe "when set" do
@@ -14,42 +38,29 @@ RSpec.describe DiscourseTranslator::Provider::Yandex do
     end
   end
 
-  describe ".detect" do
-    let(:post) { Fabricate(:post) }
-
-    it "should store the detected language in a custom field" do
+  describe ".detect!" do
+    it "gets the detected language" do
       detected_lang = "en"
-      described_class.expects(:access_token).returns("12345")
-      Excon
-        .expects(:post)
-        .returns(mock_response.new(200, %{ { "code": 200, "lang": "#{detected_lang}" } }))
-        .once
-      expect(described_class.detect(post)).to eq(detected_lang)
-
-      expect(post.detected_locale).to eq(detected_lang)
+      stub_request(:post, detect_endpoint(post.raw)).to_return(
+        status: 200,
+        body: { lang: "#{detected_lang}" }.to_json,
+      )
+      expect(described_class.detect!(post)).to eq(detected_lang)
     end
   end
 
-  describe ".translate" do
-    let(:post) { Fabricate(:post) }
-
-    it "raises an error on failure" do
-      described_class.expects(:access_token).returns("12345")
+  describe ".translate_post" do
+    it "translates the post" do
+      translated_text = "translated text"
       described_class.expects(:detect).at_least_once.returns("de")
 
-      Excon.expects(:post).returns(
-        mock_response.new(
-          400,
-          {
-            error: "something went wrong",
-            error_description: "you passed in a wrong param",
-          }.to_json,
-        ),
+      stub_request(:post, translate_endpoint(post.raw, "de", I18n.locale)).to_return(
+        status: 200,
+        body: { "text" => [translated_text] }.to_json,
       )
 
-      expect {
-        described_class.translate(post)
-      }.to raise_error DiscourseTranslator::Provider::TranslatorError
+      translation = described_class.translate_post!(post)
+      expect(translation).to eq(translated_text)
     end
   end
 end

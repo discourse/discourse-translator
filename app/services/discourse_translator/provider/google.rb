@@ -96,14 +96,15 @@ module DiscourseTranslator
         end
       end
 
-      def self.translate_translatable!(translatable, target_locale_sym = I18n.locale)
-        res =
-          result(
-            TRANSLATE_URI,
-            q: text_for_translation(translatable),
-            target: SUPPORTED_LANG_MAPPING[target_locale_sym],
-          )
-        res["translations"][0]["translatedText"]
+      def self.translate_post!(post, target_locale_sym = I18n.locale, opts = {})
+        raw = opts.key?(:raw) ? opts[:raw] : !opts[:cooked]
+        text = text_for_translation(post, raw:)
+        translate_text!(text, target_locale_sym)
+      end
+
+      def self.translate_topic!(topic, target_locale_sym = I18n.locale)
+        text = text_for_translation(topic)
+        translate_text!(text, target_locale_sym)
       end
 
       def self.translate_text!(text, target_locale_sym = I18n.locale)

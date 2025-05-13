@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-RSpec.describe DiscourseTranslator::Provider::Amazon do
-  let(:mock_response) { Struct.new(:status, :body) }
+describe DiscourseTranslator::Provider::Amazon do
+  def new_translate_client
+    client = Aws::Translate::Client.new(stub_responses: true)
+    Aws::Translate::Client.stubs(:new).returns(client)
+    client
+  end
 
   describe ".truncate" do
     it "truncates text to 10000 bytes" do
@@ -18,23 +20,20 @@ RSpec.describe DiscourseTranslator::Provider::Amazon do
 
   describe ".detect" do
     let(:post) { Fabricate(:post) }
-    let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
     let(:text) { described_class.truncate(post.cooked) }
     let(:detected_lang) { "en" }
 
-    before do
+    it "should store the detected language" do
+      client = new_translate_client
       client.stub_responses(
         :translate_text,
         {
-          translated_text: "Probando traducciones",
-          source_language_code: "en",
-          target_language_code: "es",
+          translated_text: "translated text",
+          source_language_code: detected_lang,
+          target_language_code: "de",
         },
       )
-      Aws::Translate::Client.stubs(:new).returns(client)
-    end
 
-    it "should store the detected language in a custom field" do
       expect(described_class.detect(post)).to eq(detected_lang)
 
       expect(post.detected_locale).to eq(detected_lang)
@@ -46,53 +45,95 @@ RSpec.describe DiscourseTranslator::Provider::Amazon do
     end
   end
 
-  describe ".translate_translatable!" do
-    let(:post) { Fabricate(:post) }
-    let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
+  describe ".translate_post!" do
+    fab!(:post) { Fabricate(:post, raw: "rawraw rawrawraw", cooked: "coocoo coococooo") }
 
     before do
-      client.stub_responses(
-        :translate_text,
-        "UnsupportedLanguagePairException",
-        {
-          translated_text: "Probando traducciones",
-          source_language_code: "en",
-          target_language_code: "es",
-        },
-      )
-      described_class.stubs(:client).returns(client)
       post.set_detected_locale("en")
-      I18n.stubs(:locale).returns(:es)
+      I18n.locale = :de
     end
 
-    it "raises an error when trying to translate an unsupported language" do
-      expect { described_class.translate_translatable!(post) }.to raise_error(
-        I18n.t("translator.failed.post", source_locale: "en", target_locale: "es"),
+    it "translates post with raw" do
+      client = new_translate_client
+      client.stub_responses(
+        :translate_text,
+        {
+          translated_text: "translated text",
+          source_language_code: "en",
+          target_language_code: "de",
+        },
       )
+
+      expect(described_class.translate_post!(post, :de, { raw: true })).to eq("translated text")
+    end
+
+    it "translates post with cooked" do
+      client = new_translate_client
+      client.stub_responses(
+        :translate_text,
+        {
+          translated_text: "translated text",
+          source_language_code: "en",
+          target_language_code: "de",
+        },
+      )
+
+      expect(described_class.translate_post!(post, :de, { cooked: true })).to eq("translated text")
+    end
+
+    it "translates post with raw when unspecified" do
+      client = new_translate_client
+      client.stub_responses(
+        :translate_text,
+        {
+          translated_text: "translated text",
+          source_language_code: "en",
+          target_language_code: "de",
+        },
+      )
+
+      expect(described_class.translate_post!(post, :de)).to eq("translated text")
+    end
+  end
+
+  describe ".translate_topic!" do
+    fab!(:topic)
+
+    before do
+      topic.set_detected_locale("en")
+      I18n.locale = :de
+    end
+
+    it "translates topic's title" do
+      client = new_translate_client
+      client.stub_responses(
+        :translate_text,
+        {
+          translated_text: "translated text",
+          source_language_code: "en",
+          target_language_code: "de",
+        },
+      )
+
+      expect(described_class.translate_topic!(topic, :de)).to eq("translated text")
     end
   end
 
   describe ".translate_text!" do
-    let!(:client) { Aws::Translate::Client.new(stub_responses: true) }
+    before { I18n.locale = :es }
 
-    before do
+    it "translates the text" do
+      client = new_translate_client
       client.stub_responses(
         :translate_text,
-        "UnsupportedLanguagePairException",
         {
-          translated_text: "Probando traducciones",
+          translated_text: "translated text",
           source_language_code: "en",
           target_language_code: "es",
         },
       )
-      described_class.stubs(:client).returns(client)
-      I18n.stubs(:locale).returns(:es)
-    end
 
-    it "raises an error when trying to translate an unsupported language" do
-      expect { described_class.translate_text!("derp") }.to raise_error(
-        I18n.t("translator.not_supported", source_locale: "en", target_locale: "es"),
-      )
+      expect(described_class.translate_text!("derp")).to eq("translated text")
     end
   end
 end
