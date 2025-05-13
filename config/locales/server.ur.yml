@@ -5,3 +5,5 @@
 # https://translate.discourse.org/
 
 ur:
+  site_settings:
+    restrict_translation_by_poster_group: "صرف اجازت یافتہ گروپس میں صارفین کے ذریعے کی گئی پوسٹس کے ترجمے کی اجازت دیں۔ اگر خالی ہے تو تمام صارفین کی پوسٹس کے ترجمے کی اجازت دیں۔"
