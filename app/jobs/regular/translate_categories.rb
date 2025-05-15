@@ -26,6 +26,8 @@ module Jobs
             next if CategoryLocalization.exists?(category_id: category.id, locale: locale)
             begin
               DiscourseTranslator::CategoryTranslator.translate(category, locale)
+            rescue FinalDestination::SSRFDetector::LookupFailedError
+              # do nothing, there are too many sporadic lookup failures
             rescue => e
               Rails.logger.error(
                 "Discourse Translator: Failed to translate category #{category.id} to #{locale}: #{e.message}",
