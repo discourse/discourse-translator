@@ -7,7 +7,7 @@ module Jobs
       return unless SiteSetting.experimental_content_translation
       return if args[:post_id].blank?
 
-      post = Post.find(args[:post_id])
+      post = Post.find_by(id: args[:post_id])
       return if post.blank? || post.raw.blank? || post.deleted_at.present? || post.user_id <= 0
 
       detected_locale = DiscourseTranslator::PostLocaleDetector.detect_locale(post)

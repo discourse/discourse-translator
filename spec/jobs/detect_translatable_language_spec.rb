@@ -13,7 +13,11 @@ describe Jobs::DetectTranslatableLanguage do
     client = Aws::Translate::Client.new(stub_responses: true)
     client.stub_responses(
       :translate_text,
-      { translated_text: "大丈夫", source_language_code: "en", target_language_code: "jp" },
+      {
+        translated_text: "translated text",
+        source_language_code: "en",
+        target_language_code: "jp",
+      },
     )
     Aws::Translate::Client.stubs(:new).returns(client)
   end

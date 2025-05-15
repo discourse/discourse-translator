@@ -7,7 +7,7 @@ module Jobs
       return unless SiteSetting.experimental_content_translation
       return if args[:topic_id].blank?
 
-      topic = Topic.find(args[:topic_id])
+      topic = Topic.find_by(id: args[:topic_id])
       if topic.blank? || topic.title.blank? || topic.deleted_at.present? || topic.user_id <= 0
         return
       end
