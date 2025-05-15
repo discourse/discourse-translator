@@ -22,7 +22,7 @@ module DiscourseAi
           response_format: response_format,
         )
 
-      structured_output&.read_latest_buffered_chunk&.dig(:translation)
+      structured_output&.read_buffered_property(:translation)
     end
 
     def formatted_content
