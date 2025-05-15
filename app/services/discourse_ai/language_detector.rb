@@ -57,7 +57,7 @@ module DiscourseAi
           response_format: response_format,
         )
 
-      structured_output&.read_latest_buffered_chunk&.dig(:locale)
+      structured_output&.read_buffered_property(:locale)
     end
 
     def response_format
