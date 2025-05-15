@@ -23,5 +23,14 @@ describe DiscourseTranslator::PostLocaleDetector do
         "zh_CN",
       )
     end
+
+    it "bypasses validations when updating locale" do
+      post.update_column(:raw, "A")
+
+      translator.stubs(:detect!).with(post).returns("zh_CN")
+
+      described_class.detect_locale(post)
+      expect(post.reload.locale).to eq("zh_CN")
+    end
   end
 end

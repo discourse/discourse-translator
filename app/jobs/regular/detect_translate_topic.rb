@@ -22,6 +22,8 @@ module Jobs
 
         begin
           DiscourseTranslator::TopicTranslator.translate(topic, locale)
+        rescue FinalDestination::SSRFDetector::LookupFailedError
+          # do nothing, there are too many sporadic lookup failures
         rescue => e
           Rails.logger.error(
             "Discourse Translator: Failed to translate topic #{topic.id} to #{locale}: #{e.message}",
