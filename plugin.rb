@@ -29,7 +29,6 @@ after_initialize do
     Guardian.prepend(DiscourseTranslator::Extensions::GuardianExtension)
     Post.prepend(DiscourseTranslator::Extensions::PostExtension)
     Topic.prepend(DiscourseTranslator::Extensions::TopicExtension)
-    TopicViewSerializer.prepend(DiscourseTranslator::Extensions::TopicViewSerializerExtension)
   end
 
   add_to_serializer :post, :can_translate do
@@ -37,7 +36,5 @@ after_initialize do
   end
 
   DiscourseTranslator::ParallelTextTranslation.new.inject(self)
-  DiscourseTranslator::InlineTranslation.new.inject(self)
-
   DiscourseTranslator::AutomaticTranslations.new.inject(self)
 end

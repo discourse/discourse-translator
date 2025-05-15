@@ -28,57 +28,6 @@ module("Unit | Service | translator", function (hooks) {
     assert.strictEqual(post.translatedTitle, "Surprise!");
   });
 
-  test("translatePost - with experimental translation for first post", async function (assert) {
-    const service = this.owner.lookup("service:translator");
-
-    service.siteSettings.experimental_inline_translation = true;
-
-    let headerUpdateCalled = false;
-    let postStreamRefreshCalled = false;
-    let titleSet = null;
-
-    service.appEvents.on(
-      "header:update-topic",
-      () => (headerUpdateCalled = true)
-    );
-    service.appEvents.on(
-      "post-stream:refresh",
-      () => (postStreamRefreshCalled = true)
-    );
-    service.documentTitle.setTitle = (title) => (titleSet = title);
-
-    pretender.post("/translator/translate", () => {
-      return response({
-        detected_lang: "ja",
-        translation: "I am a cat",
-        title_translation: "Surprise!",
-      });
-    });
-
-    const topic = {
-      set: function (key, value) {
-        this[key] = value;
-      },
-    };
-    const post = {
-      id: 1,
-      post_number: 1,
-      topic,
-      set: function (key, value) {
-        this[key] = value;
-      },
-    };
-
-    await service.translatePost(post);
-
-    assert.true(headerUpdateCalled);
-    assert.true(postStreamRefreshCalled);
-    assert.strictEqual(titleSet, "Surprise!");
-    assert.strictEqual(post.cooked, "I am a cat");
-    assert.false(post.can_translate);
-    assert.strictEqual(topic.fancy_title, "Surprise!");
-  });
-
   test("clearPostTranslation", function (assert) {
     const service = this.owner.lookup("service:translator");
 

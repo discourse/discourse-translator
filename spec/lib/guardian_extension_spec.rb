@@ -138,28 +138,6 @@ describe DiscourseTranslator::Extensions::GuardianExtension do
         expect(Guardian.new.can_translate?(post)).to eq(false)
       end
 
-      describe "anon user" do
-        before { SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}" }
-
-        it "cannot translate" do
-          SiteSetting.experimental_inline_translation = true
-          expect(Guardian.new.can_translate?(post)).to eq(false)
-
-          SiteSetting.experimental_inline_translation = false
-          expect(Guardian.new.can_translate?(post)).to eq(false)
-        end
-      end
-
-      it "cannot translate when post detected locale matches i18n locale" do
-        post.set_detected_locale("pt")
-
-        SiteSetting.experimental_inline_translation = true
-        expect(guardian.can_translate?(post)).to eq(false)
-
-        SiteSetting.experimental_inline_translation = false
-        expect(guardian.can_translate?(post)).to eq(false)
-      end
-
       it "allows translation depending on when the post is updated" do
         SiteSetting.restrict_translation_by_group = "#{group.id}"
 
@@ -176,76 +154,38 @@ describe DiscourseTranslator::Extensions::GuardianExtension do
         expect(guardian.can_translate?(post)).to eq(false)
       end
 
-      describe "when experimental_inline_translation enabled" do
-        before do
-          SiteSetting.experimental_inline_translation = true
+      it "cannot translate when user is not in restrict_translation_by_group" do
+        SiteSetting.restrict_translation_by_group = "#{group.id + 1}"
 
-          SiteSetting.automatic_translation_backfill_rate = 1
-          SiteSetting.automatic_translation_target_languages = "pt"
-        end
-
-        describe "logged in user" do
-          it "cannot translate when user is not in restrict_translation_by_group" do
-            SiteSetting.restrict_translation_by_group = "#{group.id + 1}"
-
-            expect(guardian.can_translate?(post)).to eq(false)
-          end
-
-          describe "user is in restrict_translation_by_group" do
-            before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
-
-            it "cannot translate when post has translation for user locale" do
-              post.set_detected_locale("ja")
-              post.set_translation("pt", "Olá, mundo!")
-
-              expect(guardian.can_translate?(post)).to eq(false)
-            end
-
-            it "can translate when post does not have translation for user locale" do
-              post.set_detected_locale("jp")
-
-              expect(guardian.can_translate?(post)).to eq(true)
-            end
-          end
-        end
+        expect(guardian.can_translate?(post)).to eq(false)
       end
 
-      describe "when experimental inline translation disabled" do
-        before { SiteSetting.experimental_inline_translation = false }
+      describe "user is in restrict_translation_by_group" do
+        before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
 
-        it "cannot translate when user is not in restrict_translation_by_group" do
-          SiteSetting.restrict_translation_by_group = "#{group.id + 1}"
+        it "can translate when post's detected locale does not match i18n locale, regardless of translation presence" do
+          post.set_detected_locale("jp")
+          expect(guardian.can_translate?(post)).to eq(true)
+
+          post.set_translation("pt", "Olá, mundo!")
+          expect(guardian.can_translate?(post)).to eq(true)
+        end
+
+        it "cannot translate if poster is not in restrict_translation_by_poster_group" do
+          SiteSetting.restrict_translation_by_poster_group = "#{Group::AUTO_GROUPS[:staff]}"
 
           expect(guardian.can_translate?(post)).to eq(false)
         end
 
-        describe "user is in restrict_translation_by_group" do
-          before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
+        it "can translate if poster is in restrict_translation_by_poster_group" do
+          poster = post.user
+          poster_group = Fabricate(:group, users: [poster])
 
-          it "can translate when post's detected locale does not match i18n locale, regardless of translation presence" do
-            post.set_detected_locale("jp")
-            expect(guardian.can_translate?(post)).to eq(true)
+          SiteSetting.restrict_translation_by_poster_group = "#{poster_group.id}"
+          expect(guardian.can_translate?(post)).to eq(true)
 
-            post.set_translation("pt", "Olá, mundo!")
-            expect(guardian.can_translate?(post)).to eq(true)
-          end
-
-          it "cannot translate if poster is not in restrict_translation_by_poster_group" do
-            SiteSetting.restrict_translation_by_poster_group = "#{Group::AUTO_GROUPS[:staff]}"
-
-            expect(guardian.can_translate?(post)).to eq(false)
-          end
-
-          it "can translate if poster is in restrict_translation_by_poster_group" do
-            poster = post.user
-            poster_group = Fabricate(:group, users: [poster])
-
-            SiteSetting.restrict_translation_by_poster_group = "#{poster_group.id}"
-            expect(guardian.can_translate?(post)).to eq(true)
-
-            SiteSetting.restrict_translation_by_poster_group = ""
-            expect(guardian.can_translate?(post)).to eq(true)
-          end
+          SiteSetting.restrict_translation_by_poster_group = ""
+          expect(guardian.can_translate?(post)).to eq(true)
         end
       end
     end

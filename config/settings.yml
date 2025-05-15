@@ -126,9 +126,6 @@ discourse_translator:
     default: false
     client: true
     validator: "DiscourseTranslator::Validators::LanguageSwitcherSettingValidator"
-  experimental_inline_translation:
-    default: false
-    client: true
   experimental_content_translation:
     default: false
     hidden: true
