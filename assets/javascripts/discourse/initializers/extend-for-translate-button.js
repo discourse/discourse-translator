@@ -1,10 +1,7 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
-import RenderGlimmer from "discourse/widgets/render-glimmer";
 import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
-import ShowOriginalContent from "../components/show-original-content";
 import TranslatedPost from "../components/translated-post";
-import TranslatedPostIndicator from "../components/translated-post-indicator";
 
 function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
