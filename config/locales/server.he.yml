@@ -27,7 +27,6 @@ he:
     errors:
       needs_nonzero_backfill: "תרגום שפה אוטומטי דורש שהערך של ההגדרה הנסתרת ‚automatic_translation_backfill_rate’ יהיה שונה מאפס. נא לגשת להנהלת האתר שלך כדי להגדיל את המגבלה הזאת."
       experimental_anon_language_switcher_requirements: "בורר השפה הניסיוני דורש את הפעלת הגדרת האתר `set locale from cookie` (הגדרת השפה מהעוגיות), ושתחת `automatic translation target languages` (שפות יעד לתרגום אוטומטי) תהיה לפחות שפה אחת."
-    experimental_inline_translation: "הפעלת יכולת ניסיונית לתרגום פנימי. מחליפה תרגום מקבילי קיים, מה שמאפשר למבקרי האתר עם שפה ששונה מברירת המחדל לצפות בתוכן בשפה שלהם."
     automatic_translation_target_languages: "השפה אליה לתרגם את תוכן המשתמשים אוטומטית (פוסטים, נושאים). אם השדה ריק, אף שפה לא תתורגם אוטומטית."
   translator:
     failed:
