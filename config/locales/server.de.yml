@@ -27,7 +27,6 @@ de:
     errors:
       needs_nonzero_backfill: "Für die automatische Sprachübersetzung muss die versteckte Einstellung 'automatic_translation_backfill_rate' ungleich Null sein. Bitte wende dich an deinen Website-Administrator, um dieses Limit zu erhöhen."
       experimental_anon_language_switcher_requirements: "Die experimentelle Sprachumschaltung setzt voraus, dass die Website-Einstellung `set locale from cookie` aktiviert ist und `automatic translation target languages` mindestens eine Sprache enthält."
-    experimental_inline_translation: "Aktiviere die experimentelle Übersetzungsfunktion mit Überschreiben. Diese ersetzt die bisherige parallele Übersetzung und ermöglicht es Besuchern der Website, die nicht das Standardgebietsschema verwenden, Inhalte direkt in ihrer Sprache zu sehen."
     automatic_translation_target_languages: "Die Sprachen, in die Benutzerinhalte (Beiträge, Themen) automatisch übersetzt werden sollen. Wenn nichts ausgewählt ist, wird in keine Sprachen automatisch übersetzt."
   translator:
     failed:
