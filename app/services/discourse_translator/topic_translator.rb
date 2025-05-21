@@ -10,11 +10,14 @@ module DiscourseTranslator
       translator = DiscourseTranslator::Provider::TranslatorProvider.get
       translated_title = translator.translate_topic!(topic, target_locale_sym)
 
+      translated_excerpt = translator.translate_text!(topic.excerpt, target_locale_sym)
+
       localization =
         TopicLocalization.find_or_initialize_by(topic_id: topic.id, locale: target_locale_sym.to_s)
 
       localization.title = translated_title
       localization.fancy_title = Topic.fancy_title(translated_title)
+      localization.excerpt = translated_excerpt
       localization.localizer_user_id = Discourse.system_user.id
       localization.save!
       localization
