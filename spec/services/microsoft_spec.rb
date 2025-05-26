@@ -188,4 +188,16 @@ RSpec.describe DiscourseTranslator::Provider::Microsoft do
       expect(described_class.translate_text!(text)).to eq(translated_text)
     end
   end
+
+  describe ".translate_supported?" do
+    it "allows translation of topics in supported languages" do
+      expect(described_class.translate_supported?(:en, "zh-Hans")).to eq(true)
+      expect(described_class.translate_supported?("en", :zh_CN)).to eq(true)
+      expect(described_class.translate_supported?("zh-Hans", :en)).to eq(true)
+      expect(described_class.translate_supported?(:zh_CN, "en")).to eq(true)
+
+      expect(described_class.translate_supported?(:tr, "en")).to eq(true)
+      expect(described_class.translate_supported?("tr", "en")).to eq(true)
+    end
+  end
 end
