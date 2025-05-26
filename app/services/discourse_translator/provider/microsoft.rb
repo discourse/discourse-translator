@@ -180,9 +180,12 @@ module DiscourseTranslator
         response_body.first["translations"].first["text"]
       end
 
-      def self.translate_supported?(detected_lang, target_lang)
-        SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
-          SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
+      def self.translate_supported?(detected, target)
+        s = SUPPORTED_LANG_MAPPING
+
+        # Azure language support indicates to and from language codes
+        (s.keys.include?(target.to_sym) || s.values.include?(target.to_s)) &&
+          (s.keys.include?(detected.to_sym) || s.values.include?(detected.to_s))
       end
 
       private
