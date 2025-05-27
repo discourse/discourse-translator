@@ -68,4 +68,14 @@ describe Jobs::DetectTranslateTopic do
 
     expect { job.execute({ topic_id: topic.id }) }.not_to raise_error
   end
+
+  it "skips public content when `automatic_translation_backfill_limit_to_public_content ` site setting is enabled" do
+    SiteSetting.automatic_translation_backfill_limit_to_public_content = true
+    topic.category.update!(read_restricted: true)
+
+    DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).never
+    DiscourseTranslator::TopicTranslator.expects(:translate).never
+
+    job.execute({ topic_id: topic.id })
+  end
 end

@@ -2,6 +2,8 @@
 
 module Jobs
   class DetectTranslatePost < ::Jobs::Base
+    sidekiq_options retry: false
+
     def execute(args)
       return unless SiteSetting.translator_enabled
       return unless SiteSetting.experimental_content_translation
@@ -10,7 +12,18 @@ module Jobs
       post = Post.find_by(id: args[:post_id])
       return if post.blank? || post.raw.blank? || post.deleted_at.present? || post.user_id <= 0
 
-      detected_locale = DiscourseTranslator::PostLocaleDetector.detect_locale(post)
+      if SiteSetting.automatic_translation_backfill_limit_to_public_content
+        topic = post.topic
+        return if topic.blank? || topic.category&.read_restricted?
+      end
+
+      begin
+        detected_locale = DiscourseTranslator::PostLocaleDetector.detect_locale(post)
+      rescue FinalDestination::SSRFDetector::LookupFailedError
+        # this job is non-critical
+        # the backfill job will handle failures
+        return
+      end
 
       locales = SiteSetting.automatic_translation_target_languages.split("|")
       return if locales.blank?

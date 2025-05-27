@@ -76,4 +76,57 @@ describe Jobs::PostsLocaleDetectionBackfill do
 
     job.execute({})
   end
+
+  describe "with public content limitation" do
+    fab!(:private_category) { Fabricate(:private_category, group: Group[:staff]) }
+    fab!(:private_topic) { Fabricate(:topic, category: private_category) }
+    fab!(:private_post) { Fabricate(:post, topic: private_topic, locale: nil) }
+
+    before { SiteSetting.automatic_translation_backfill_limit_to_public_content = true }
+
+    it "only processes posts from public categories" do
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post).once
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(private_post).never
+
+      job.execute({})
+    end
+
+    it "processes all posts when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_limit_to_public_content = false
+
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post).once
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(private_post).once
+
+      job.execute({})
+    end
+  end
+
+  describe "with max age limit" do
+    fab!(:old_post) { Fabricate(:post, locale: nil, created_at: 10.days.ago) }
+    fab!(:new_post) { Fabricate(:post, locale: nil, created_at: 2.days.ago) }
+
+    before { SiteSetting.automatic_translation_backfill_max_age_days = 5 }
+
+    it "only processes posts within the age limit" do
+      # other posts
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).at_least_once
+
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(new_post).once
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(old_post).never
+
+      job.execute({})
+    end
+
+    it "processes all posts when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_max_age_days = 0
+
+      # other posts
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).at_least_once
+
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(new_post).once
+      DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(old_post).once
+
+      job.execute({})
+    end
+  end
 end
