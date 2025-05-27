@@ -3,6 +3,7 @@
 module Jobs
   class TopicsLocaleDetectionBackfill < ::Jobs::Scheduled
     every 5.minutes
+    sidekiq_options retry: false
     cluster_concurrency 1
 
     def execute(args)

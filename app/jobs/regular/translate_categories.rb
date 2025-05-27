@@ -3,6 +3,8 @@
 module Jobs
   class TranslateCategories < ::Jobs::Base
     cluster_concurrency 1
+    sidekiq_options retry: false
+
     BATCH_SIZE = 50
 
     def execute(args)

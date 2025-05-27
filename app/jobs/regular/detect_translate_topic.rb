@@ -2,6 +2,8 @@
 
 module Jobs
   class DetectTranslateTopic < ::Jobs::Base
+    sidekiq_options retry: false
+
     def execute(args)
       return unless SiteSetting.translator_enabled
       return unless SiteSetting.experimental_content_translation
@@ -16,7 +18,13 @@ module Jobs
         return if topic.category&.read_restricted?
       end
 
-      detected_locale = DiscourseTranslator::TopicLocaleDetector.detect_locale(topic)
+      begin
+        detected_locale = DiscourseTranslator::TopicLocaleDetector.detect_locale(topic)
+      rescue FinalDestination::SSRFDetector::LookupFailedError
+        # this job is non-critical
+        # the backfill job will handle failures
+        return
+      end
 
       locales = SiteSetting.automatic_translation_target_languages.split("|")
       return if locales.blank?
