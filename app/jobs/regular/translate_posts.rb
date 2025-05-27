@@ -30,12 +30,13 @@ module Jobs
             .where("pl.id IS NULL")
 
         if SiteSetting.automatic_translation_backfill_limit_to_public_content
-          public_categories = Category.where(read_restricted: false).pluck(:id)
           posts =
-            posts
-              .joins(:topic)
-              .where(topics: { category_id: public_categories })
-              .where(topics: { archetype: "regular" })
+            posts.joins(:topic).where(
+              topics: {
+                category_id: Category.where(read_restricted: false).select(:id),
+                archetype: "regular",
+              },
+            )
         end
 
         if SiteSetting.automatic_translation_backfill_max_age_days > 0

@@ -29,8 +29,7 @@ module Jobs
             .where("tl.id IS NULL")
 
         if SiteSetting.automatic_translation_backfill_limit_to_public_content
-          public_categories = Category.where(read_restricted: false).pluck(:id)
-          topics = topics.where(category_id: public_categories)
+          topics = topics.where(category_id: Category.where(read_restricted: false).select(:id))
         end
 
         if SiteSetting.automatic_translation_backfill_max_age_days > 0

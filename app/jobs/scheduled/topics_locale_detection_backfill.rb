@@ -12,11 +12,10 @@ module Jobs
       limit = SiteSetting.automatic_translation_backfill_rate
       return if limit == 0
 
-      topics = Topic.where(locale: nil).where(deleted_at: nil).where("topics.user_id > 0")
+      topics = Topic.where(locale: nil, deleted_at: nil).where("topics.user_id > 0")
 
       if SiteSetting.automatic_translation_backfill_limit_to_public_content
-        public_categories = Category.where(read_restricted: false).pluck(:id)
-        topics = topics.where(category_id: public_categories)
+        topics = topics.where(category_id: Category.where(read_restricted: false).select(:id))
       end
 
       if SiteSetting.automatic_translation_backfill_max_age_days > 0
