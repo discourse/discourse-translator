@@ -21,6 +21,12 @@ module Jobs
       return if categories.empty?
 
       categories.each do |category|
+        if SiteSetting.automatic_translation_backfill_limit_to_public_content &&
+             category.read_restricted?
+          last_id = category.id
+          next
+        end
+
         CategoryLocalization.transaction do
           locales.each do |locale|
             next if CategoryLocalization.exists?(category_id: category.id, locale: locale)

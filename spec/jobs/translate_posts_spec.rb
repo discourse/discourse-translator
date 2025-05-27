@@ -119,4 +119,71 @@ describe Jobs::TranslatePosts do
       job.execute({})
     end
   end
+
+  describe "with public content limitation" do
+    fab!(:private_category) { Fabricate(:private_category, group: Group[:staff]) }
+    fab!(:private_topic) { Fabricate(:topic, category: private_category) }
+    fab!(:private_post) { Fabricate(:post, topic: private_topic, locale: "es") }
+    fab!(:public_post) { Fabricate(:post, locale: "es") }
+
+    before { SiteSetting.automatic_translation_backfill_limit_to_public_content = true }
+
+    it "only processes posts from public categories" do
+      DiscourseTranslator::PostTranslator.expects(:translate).with(public_post, "en").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(public_post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(public_post, "de").once
+
+      DiscourseTranslator::PostTranslator
+        .expects(:translate)
+        .with(private_post, any_parameters)
+        .never
+
+      job.execute({})
+    end
+
+    it "processes all posts when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_limit_to_public_content = false
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(public_post, "en").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(public_post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(public_post, "de").once
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(private_post, "en").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(private_post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(private_post, "de").once
+
+      job.execute({})
+    end
+  end
+
+  describe "with max age limit" do
+    fab!(:old_post) { Fabricate(:post, locale: "es", created_at: 10.days.ago) }
+    fab!(:new_post) { Fabricate(:post, locale: "es", created_at: 2.days.ago) }
+
+    before { SiteSetting.automatic_translation_backfill_max_age_days = 5 }
+
+    it "only processes posts within the age limit" do
+      DiscourseTranslator::PostTranslator.expects(:translate).with(new_post, "en").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(new_post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(new_post, "de").once
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(old_post, any_parameters).never
+
+      job.execute({})
+    end
+
+    it "processes all posts when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_max_age_days = 0
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(new_post, "en").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(new_post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(new_post, "de").once
+
+      DiscourseTranslator::PostTranslator.expects(:translate).with(old_post, "en").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(old_post, "ja").once
+      DiscourseTranslator::PostTranslator.expects(:translate).with(old_post, "de").once
+
+      job.execute({})
+    end
+  end
 end

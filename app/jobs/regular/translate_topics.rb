@@ -27,7 +27,21 @@ module Jobs
             .where.not(locale: nil)
             .where.not(locale: locale)
             .where("tl.id IS NULL")
-            .limit(limit)
+
+        if SiteSetting.automatic_translation_backfill_limit_to_public_content
+          public_categories = Category.where(read_restricted: false).pluck(:id)
+          topics = topics.where(category_id: public_categories)
+        end
+
+        if SiteSetting.automatic_translation_backfill_max_age_days > 0
+          topics =
+            topics.where(
+              "topics.created_at > ?",
+              SiteSetting.automatic_translation_backfill_max_age_days.days.ago,
+            )
+        end
+
+        topics = topics.order(updated_at: :desc).limit(limit)
 
         next if topics.empty?
 

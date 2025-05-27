@@ -76,4 +76,59 @@ describe Jobs::TopicsLocaleDetectionBackfill do
 
     job.execute({})
   end
+
+  describe "with public content limitation" do
+    fab!(:private_category) { Fabricate(:private_category, group: Group[:staff]) }
+    fab!(:public_topic) { Fabricate(:topic, locale: nil) }
+    fab!(:private_topic) { Fabricate(:topic, category: private_category, locale: nil) }
+
+    before do
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).at_least_once
+
+      SiteSetting.automatic_translation_backfill_limit_to_public_content = true
+    end
+
+    it "only processes topics from public categories" do
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(public_topic).once
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(private_topic).never
+
+      job.execute({})
+    end
+
+    it "processes all topics when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_limit_to_public_content = false
+
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(public_topic).once
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(private_topic).once
+
+      job.execute({})
+    end
+  end
+
+  describe "with max age limit" do
+    fab!(:old_topic) { Fabricate(:topic, locale: nil, created_at: 10.days.ago) }
+    fab!(:new_topic) { Fabricate(:topic, locale: nil, created_at: 2.days.ago) }
+
+    before do
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).at_least_once
+
+      SiteSetting.automatic_translation_backfill_max_age_days = 5
+    end
+
+    it "only processes topics within the age limit" do
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(new_topic).once
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(old_topic).never
+
+      job.execute({})
+    end
+
+    it "processes all topics when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_max_age_days = 0
+
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(new_topic).once
+      DiscourseTranslator::TopicLocaleDetector.expects(:detect_locale).with(old_topic).once
+
+      job.execute({})
+    end
+  end
 end

@@ -10,6 +10,11 @@ module Jobs
       post = Post.find_by(id: args[:post_id])
       return if post.blank? || post.raw.blank? || post.deleted_at.present? || post.user_id <= 0
 
+      if SiteSetting.automatic_translation_backfill_limit_to_public_content
+        topic = post.topic
+        return if topic.blank? || topic.category&.read_restricted?
+      end
+
       detected_locale = DiscourseTranslator::PostLocaleDetector.detect_locale(post)
 
       locales = SiteSetting.automatic_translation_target_languages.split("|")

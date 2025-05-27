@@ -119,4 +119,70 @@ describe Jobs::TranslateTopics do
       job.execute({})
     end
   end
+
+  describe "with public content limitation" do
+    fab!(:private_category) { Fabricate(:private_category, group: Group[:staff]) }
+    fab!(:private_topic) { Fabricate(:topic, category: private_category, locale: "es") }
+    fab!(:public_topic) { Fabricate(:topic, locale: "es") }
+
+    before { SiteSetting.automatic_translation_backfill_limit_to_public_content = true }
+
+    it "only processes topics from public categories" do
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(public_topic, "en").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(public_topic, "ja").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(public_topic, "de").once
+
+      DiscourseTranslator::TopicTranslator
+        .expects(:translate)
+        .with(private_topic, any_parameters)
+        .never
+
+      job.execute({})
+    end
+
+    it "processes all topics when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_limit_to_public_content = false
+
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(public_topic, "en").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(public_topic, "ja").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(public_topic, "de").once
+
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(private_topic, "en").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(private_topic, "ja").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(private_topic, "de").once
+
+      job.execute({})
+    end
+  end
+
+  describe "with max age limit" do
+    fab!(:old_topic) { Fabricate(:topic, locale: "es", created_at: 10.days.ago) }
+    fab!(:new_topic) { Fabricate(:topic, locale: "es", created_at: 2.days.ago) }
+
+    before { SiteSetting.automatic_translation_backfill_max_age_days = 5 }
+
+    it "only processes topics within the age limit" do
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(new_topic, "en").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(new_topic, "ja").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(new_topic, "de").once
+
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(old_topic, any_parameters).never
+
+      job.execute({})
+    end
+
+    it "processes all topics when setting is disabled" do
+      SiteSetting.automatic_translation_backfill_max_age_days = 0
+
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(new_topic, "en").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(new_topic, "ja").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(new_topic, "de").once
+
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(old_topic, "en").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(old_topic, "ja").once
+      DiscourseTranslator::TopicTranslator.expects(:translate).with(old_topic, "de").once
+
+      job.execute({})
+    end
+  end
 end

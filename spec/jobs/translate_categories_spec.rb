@@ -131,4 +131,24 @@ describe Jobs::TranslateCategories do
     Jobs::TranslateCategories.send(:remove_const, :BATCH_SIZE)
     Jobs::TranslateCategories.const_set(:BATCH_SIZE, 50)
   end
+
+  it "skips read-restricted categories when configured" do
+    SiteSetting.automatic_translation_backfill_limit_to_public_content = true
+
+    category1 = Fabricate(:category, name: "Public Category", read_restricted: false)
+    category2 = Fabricate(:category, name: "Private Category", read_restricted: true)
+
+    DiscourseTranslator::CategoryTranslator.expects(:translate).at_least_once
+
+    DiscourseTranslator::CategoryTranslator
+      .expects(:translate)
+      .with(category1, any_parameters)
+      .twice
+    DiscourseTranslator::CategoryTranslator
+      .expects(:translate)
+      .with(category2, any_parameters)
+      .never
+
+    job.execute({})
+  end
 end

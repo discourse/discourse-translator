@@ -8,16 +8,25 @@ module Jobs
     def execute(args)
       return unless SiteSetting.translator_enabled
       return unless SiteSetting.experimental_content_translation
-      return if SiteSetting.automatic_translation_backfill_rate == 0
-
       limit = SiteSetting.automatic_translation_backfill_rate
-      topics =
-        Topic
-          .where(locale: nil)
-          .where(deleted_at: nil)
-          .where("topics.user_id > 0")
-          .order(updated_at: :desc)
-          .limit(limit)
+      return if limit == 0
+
+      topics = Topic.where(locale: nil).where(deleted_at: nil).where("topics.user_id > 0")
+
+      if SiteSetting.automatic_translation_backfill_limit_to_public_content
+        public_categories = Category.where(read_restricted: false).pluck(:id)
+        topics = topics.where(category_id: public_categories)
+      end
+
+      if SiteSetting.automatic_translation_backfill_max_age_days > 0
+        topics =
+          topics.where(
+            "topics.created_at > ?",
+            SiteSetting.automatic_translation_backfill_max_age_days.days.ago,
+          )
+      end
+
+      topics = topics.order(updated_at: :desc).limit(limit)
       return if topics.empty?
 
       topics.each do |topic|

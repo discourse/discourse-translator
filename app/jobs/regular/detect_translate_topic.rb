@@ -12,6 +12,10 @@ module Jobs
         return
       end
 
+      if SiteSetting.automatic_translation_backfill_limit_to_public_content
+        return if topic.category&.read_restricted?
+      end
+
       detected_locale = DiscourseTranslator::TopicLocaleDetector.detect_locale(topic)
 
       locales = SiteSetting.automatic_translation_target_languages.split("|")
