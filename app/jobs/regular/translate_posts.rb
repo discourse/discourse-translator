@@ -11,7 +11,7 @@ module Jobs
       return unless SiteSetting.translator_enabled
       return unless SiteSetting.experimental_content_translation
 
-      locales = SiteSetting.automatic_translation_target_languages.split("|")
+      locales = SiteSetting.experimental_content_localization_supported_locales.split("|")
       return if locales.blank?
 
       limit = args[:limit] || BATCH_SIZE

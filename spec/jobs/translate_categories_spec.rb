@@ -15,7 +15,7 @@ describe Jobs::TranslateCategories do
     SiteSetting.translator_enabled = true
     SiteSetting.experimental_content_translation = true
     SiteSetting.automatic_translation_backfill_rate = 100
-    SiteSetting.automatic_translation_target_languages = "pt|zh_CN"
+    SiteSetting.experimental_content_localization_supported_locales = "pt|zh_CN"
 
     DiscourseTranslator::Provider.stubs(:get).returns(translator)
     Jobs.run_immediately!
@@ -38,7 +38,7 @@ describe Jobs::TranslateCategories do
   end
 
   it "does nothing when no target languages are configured" do
-    SiteSetting.automatic_translation_target_languages = ""
+    SiteSetting.experimental_content_localization_supported_locales = ""
 
     translator.expects(:translate_text!).never
 

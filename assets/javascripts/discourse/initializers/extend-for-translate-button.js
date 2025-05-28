@@ -1,5 +1,4 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
-import LanguageSwitcher from "../components/language-switcher";
 import ToggleTranslationButton from "../components/post-menu/toggle-translation-button";
 import TranslatedPost from "../components/translated-post";
 
@@ -7,20 +6,6 @@ function initializeTranslation(api) {
   const siteSettings = api.container.lookup("service:site-settings");
   if (!siteSettings.translator_enabled) {
     return;
-  }
-
-  const currentUser = api.getCurrentUser();
-
-  if (
-    !currentUser &&
-    siteSettings.experimental_anon_language_switcher &&
-    siteSettings.automatic_translation_target_languages
-  ) {
-    api.headerIcons.add(
-      "discourse-translator_language-switcher",
-      LanguageSwitcher,
-      { before: ["search"] }
-    );
   }
 
   customizePostMenu(api);
