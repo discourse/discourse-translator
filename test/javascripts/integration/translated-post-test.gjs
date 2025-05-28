@@ -1,12 +1,14 @@
 import { render } from "@ember/test-helpers";
-import { hbs } from "ember-cli-htmlbars";
 import { module, test } from "qunit";
 import { setupRenderingTest } from "discourse/tests/helpers/component-test";
+import TranslatedPost from "discourse/plugins/discourse-translator/discourse/components/translated-post";
 
 module("Integration | Component | translated-post", function (hooks) {
   setupRenderingTest(hooks);
 
   test("renders translation when post is translated", async function (assert) {
+    const self = this;
+
     this.set("outletArgs", {
       post: {
         isTranslated: true,
@@ -19,9 +21,9 @@ module("Integration | Component | translated-post", function (hooks) {
 
     this.siteSettings.translator_provider = "Google";
 
-    await render(hbs`
-      <TranslatedPost @outletArgs={{this.outletArgs}} />
-    `);
+    await render(
+      <template><TranslatedPost @outletArgs={{self.outletArgs}} /></template>
+    );
 
     assert.dom(".post-translation").exists();
     assert.dom(".topic-attribution").hasText("良い一日");
