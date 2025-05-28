@@ -36,5 +36,4 @@ after_initialize do
   end
 
   DiscourseTranslator::ParallelTextTranslation.new.inject(self)
-  DiscourseTranslator::AutomaticTranslations.new.inject(self)
 end

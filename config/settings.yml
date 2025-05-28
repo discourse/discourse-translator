@@ -7,25 +7,11 @@ discourse_translator:
     client: true
     type: enum
     choices:
-      - DiscourseAi
       - Microsoft
       - Google
       - Amazon
       - Yandex
       - LibreTranslate
-    validator: "DiscourseTranslator::Validators::TranslatorSelectionValidator"
-  automatic_translation_backfill_rate:
-    default: 0
-    client: false
-    hidden: true
-  automatic_translation_backfill_limit_to_public_content:
-    default: false
-    client: false
-    hidden: true
-  automatic_translation_backfill_max_age_days:
-    default: 0
-    client: false
-    hidden: true
   translator_azure_subscription_key:
     default: ''
   translator_azure_region:
@@ -114,10 +100,3 @@ discourse_translator:
     default: ""
     client: true
     type: group_list
-  experimental_content_translation:
-    default: false
-    hidden: true
-  discourse_translator_verbose_logs:
-    default: false
-    client: false
-    hidden: true
