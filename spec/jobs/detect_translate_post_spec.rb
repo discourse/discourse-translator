@@ -10,7 +10,7 @@ describe Jobs::DetectTranslatePost do
     SiteSetting.translator_enabled = true
     SiteSetting.experimental_content_translation = true
     SiteSetting.automatic_translation_backfill_rate = 1
-    SiteSetting.automatic_translation_target_languages = locales.join("|")
+    SiteSetting.experimental_content_localization_supported_locales = locales.join("|")
   end
 
   it "does nothing when translator is disabled" do
@@ -45,7 +45,7 @@ describe Jobs::DetectTranslatePost do
   end
 
   it "does not translate when no target languages are configured" do
-    SiteSetting.automatic_translation_target_languages = ""
+    SiteSetting.experimental_content_localization_supported_locales = ""
     DiscourseTranslator::PostLocaleDetector.expects(:detect_locale).with(post).returns("en")
     DiscourseTranslator::PostTranslator.expects(:translate).never
 

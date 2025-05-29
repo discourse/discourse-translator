@@ -14,14 +14,6 @@ discourse_translator:
       - Yandex
       - LibreTranslate
     validator: "DiscourseTranslator::Validators::TranslatorSelectionValidator"
-  automatic_translation_target_languages:
-    default: ""
-    type: list
-    client: true
-    list_type: named
-    allow_any: false
-    choices: "DiscourseTranslator::TranslatableLanguagesSetting.values"
-    validator: "DiscourseTranslator::Validators::TranslatableLanguagesValidator"
   automatic_translation_backfill_rate:
     default: 0
     client: false
@@ -122,10 +114,6 @@ discourse_translator:
     default: ""
     client: true
     type: group_list
-  experimental_anon_language_switcher:
-    default: false
-    client: true
-    validator: "DiscourseTranslator::Validators::LanguageSwitcherSettingValidator"
   experimental_content_translation:
     default: false
     hidden: true

@@ -26,7 +26,7 @@ module Jobs
         return
       end
 
-      locales = SiteSetting.automatic_translation_target_languages.split("|")
+      locales = SiteSetting.experimental_content_localization_supported_locales.split("|")
       return if locales.blank?
 
       locales.each do |locale|

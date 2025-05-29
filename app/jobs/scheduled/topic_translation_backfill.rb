@@ -9,7 +9,7 @@ module Jobs
       return unless SiteSetting.translator_enabled
       return unless SiteSetting.experimental_content_translation
 
-      return if SiteSetting.automatic_translation_target_languages.blank?
+      return if SiteSetting.experimental_content_localization_supported_locales.blank?
       return if SiteSetting.automatic_translation_backfill_rate == 0
 
       Jobs.enqueue(:translate_topics, limit: SiteSetting.automatic_translation_backfill_rate)
