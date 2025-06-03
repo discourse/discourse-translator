@@ -23,9 +23,6 @@ ro:
     translator_azure_custom_subdomain: "Necesar dacă utilizezi o rețea virtuală sau un firewall pentru Azure Cognitive Services. Notă: introdu numai subdomeniul personalizat, nu punctul-final personalizat complet."
     restrict_translation_by_group: "Doar grupurile permise pot traduce"
     restrict_translation_by_poster_group: "Permite traducerea numai a articolelor făcute de utilizatorii din grupurile permise. Dacă este gol, permite traducerea articolelor de la toți utilizatorii."
-    errors:
-      needs_nonzero_backfill: "Traducerea automată a limbii necesită ca setarea ascunsă „ automatic_translation_backfill_rate” să aibă o valoare diferită de zero. Te rugăm să te adresezi administratorului site-ului tău pentru a crește această limită."
-    automatic_translation_target_languages: "Limbile pentru a traduce automat conținutul utilizatorului (postări, subiecte). Dacă este gol, nicio limbă nu va fi tradusă automat."
   translator:
     failed:
       topic: "Traducătorul nu poate traduce titlul acestui subiect (%{source_locale}) în limba ta (%{target_locale})."
