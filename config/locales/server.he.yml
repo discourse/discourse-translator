@@ -23,11 +23,6 @@ he:
     translator_azure_custom_subdomain: "נחוץ אם נעשה שימוש ברשת וירטואלית או בחומת אש לשירותי Azure Cognitive. לתשומת לבך: יש למלא רק את תת־שם התחום, לא את נקודת הגישה המותאמת אישית במלואה."
     restrict_translation_by_group: "רק קבוצות מורשות יכולות לתרגם"
     restrict_translation_by_poster_group: "לאפשר תרגום של פוסטים שנוצרו על ידי משתמשים בקבוצות מורשות בלבד. אם ריק, לאפשר תרגומים של פוסטים מכל המשתמשים."
-    experimental_anon_language_switcher: "הפעלת בורר שפות ניסיוני. כך יוכלו מבקרי האתר שלא נכנסו לחשבונות המשתמש שלהם לעבור בין הגרסאות המתורגמות של Discourse ותוכן שנתרם על ידי המשתמשים בנושאים."
-    errors:
-      needs_nonzero_backfill: "תרגום שפה אוטומטי דורש שהערך של ההגדרה הנסתרת ‚automatic_translation_backfill_rate’ יהיה שונה מאפס. נא לגשת להנהלת האתר שלך כדי להגדיל את המגבלה הזאת."
-      experimental_anon_language_switcher_requirements: "בורר השפה הניסיוני דורש את הפעלת הגדרת האתר `set locale from cookie` (הגדרת השפה מהעוגיות), ושתחת `automatic translation target languages` (שפות יעד לתרגום אוטומטי) תהיה לפחות שפה אחת."
-    automatic_translation_target_languages: "השפה אליה לתרגם את תוכן המשתמשים אוטומטית (פוסטים, נושאים). אם השדה ריק, אף שפה לא תתורגם אוטומטית."
   translator:
     failed:
       topic: "המתרגם לא מסוגל לתרגם את כותרת הנושא הזאת (%{source_locale}) לשפה שלך (%{target_locale})."

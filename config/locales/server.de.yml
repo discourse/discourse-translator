@@ -23,11 +23,6 @@ de:
     translator_azure_custom_subdomain: "Erforderlich, wenn du ein virtuelles Netzwerk oder eine Firewall für Azure Cognitive Services verwendest. Hinweis: Gib nur die benutzerdefinierte Subdomain ein, nicht den vollständigen benutzerdefinierten Endpunkt."
     restrict_translation_by_group: "Nur berechtigte Gruppen können übersetzen"
     restrict_translation_by_poster_group: "Erlaube nur die Übersetzung von Beiträgen von Benutzern aus zulässigen Gruppen. Wenn das Feld leer ist, wird die Übersetzung von Beiträgen aller Benutzer erlaubt."
-    experimental_anon_language_switcher: "Aktiviere die experimentelle Sprachumschaltung. Damit können nicht eingeloggte Besucher zwischen übersetzten Versionen von Discourse und von Benutzern beigetragenen Inhalten in Themen wechseln."
-    errors:
-      needs_nonzero_backfill: "Für die automatische Sprachübersetzung muss die versteckte Einstellung 'automatic_translation_backfill_rate' ungleich Null sein. Bitte wende dich an deinen Website-Administrator, um dieses Limit zu erhöhen."
-      experimental_anon_language_switcher_requirements: "Die experimentelle Sprachumschaltung setzt voraus, dass die Website-Einstellung `set locale from cookie` aktiviert ist und `automatic translation target languages` mindestens eine Sprache enthält."
-    automatic_translation_target_languages: "Die Sprachen, in die Benutzerinhalte (Beiträge, Themen) automatisch übersetzt werden sollen. Wenn nichts ausgewählt ist, wird in keine Sprachen automatisch übersetzt."
   translator:
     failed:
       topic: "Der Übersetzer kann diesen Thementitel (%{source_locale}) nicht in deine Sprache (%{target_locale}) übersetzen."
