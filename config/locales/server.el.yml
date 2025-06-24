@@ -6,6 +6,7 @@
 
 el:
   site_settings:
+    translator_enabled: "Ενεργοποιήστε το πρόσθετο μεταφραστή."
     translator_provider: "Ο πάροχος της μεταφραστικής υπηρεσίας."
     translator_azure_subscription_key: "Κλειδί Συνδρομής Azure"
     translator_azure_region: "Περιοχή Azure"
@@ -18,6 +19,7 @@ el:
     translator_aws_key_id: "ID κλειδιού AWS"
     translator_aws_secret_access: "Κλειδί μυστικής πρόσβασης AWS"
     translator_aws_iam_role: "Ρόλος IAM AWS"
+    restrict_translation_by_group: "Μόνο οι επιτρεπόμενες ομάδες μπορούν να μεταφράσουν"
   translator:
     not_supported: "Αυτή η γλώσσα δεν υποστηρίζεται από τον μεταφραστή."
     too_long: "Αυτή η ανάρτηση είναι πολύ μεγάλη για να μεταφραστεί από τον μεταφραστή."

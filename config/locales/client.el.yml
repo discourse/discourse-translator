@@ -14,4 +14,8 @@ el:
     translator:
       view_translation: "Προβολή μετάφρασης"
       hide_translation: "Απόκρυψη μετάφρασης"
+      content_not_translated: "Η σελίδα δεν έχει μεταφραστεί. Κάντε κλικ για μετάφραση."
+      content_translated: "Η σελίδα είναι μεταφρασμένη από μηχανή. Κάντε κλικ για να δείτε το πρωτότυπο"
       translated_from: "Μεταφρασμένο από %{language} από τον/την %{translator}"
+      translating: "Μετάφραση"
+      originally_written_in: "Αυτή η ανάρτηση γράφτηκε αρχικά σε %{language}"
