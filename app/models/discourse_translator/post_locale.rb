@@ -21,3 +21,7 @@ end
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
+# Indexes
+#
+#  index_discourse_translator_post_locales_on_post_id  (post_id) UNIQUE
+#

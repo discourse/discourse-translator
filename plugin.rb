@@ -31,6 +31,10 @@ after_initialize do
     Topic.prepend(DiscourseTranslator::Extensions::TopicExtension)
   end
 
+  TopicView.on_preload do |topic_view|
+    topic_view.instance_variable_set(:@posts, topic_view.posts.includes(:content_locale))
+  end
+
   add_to_serializer :post, :can_translate do
     scope.can_translate?(object)
   end
