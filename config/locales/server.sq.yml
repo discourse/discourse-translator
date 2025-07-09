@@ -5,3 +5,44 @@
 # https://translate.discourse.org/
 
 sq:
+  site_settings:
+    translator_enabled: "\"Aktivo shtojcën e përkthyesit."
+    translator_provider: "Ofruesi i shërbimit të përkthimit."
+    translator_azure_subscription_key: "Çelësi i Abonimit Azure"
+    translator_azure_region: "Rajoni Azure"
+    translator_google_api_key: "Çelësi i API-t të Google-it"
+    translator_yandex_api_key: "Çelësi i API-t të Yandex"
+    max_characters_per_translation: "Numri maksimal i karaktereve që mund të dërgohen për përkthim. Nëse përmbajtja është më e gjatë se kaq, teksti do të shkurtohet. Vini re se çdo ofrues ka gjithashtu kufizimet e veta."
+    max_translations_per_minute: "Numri i përkthimeve që një përdorues i zakonshëm mund të bëjë në minutë."
+    translator_libretranslate_endpoint: "Pika përfundore (endpoint) e API-së LibreTranslate"
+    translator_libretranslate_api_key: "Çelësi API i LibreTranslate"
+    translator_aws_region: "Rajoni AWS"
+    translator_aws_key_id: "ID e Çelësit AWS"
+    translator_aws_secret_access: "Çelësi sekret i qasjes në AWS"
+    translator_aws_iam_role: "Roli IAM i AWS"
+    translator_azure_custom_subdomain: "E kërkuar nëse përdoret një Rrjet Virtual ose Firewall për Azure Cognitive Services. Shënim: Vendosni vetëm nën-domenin e personalizuar, jo të gjithë pikën përfundore (endpoint) të personalizuar."
+    restrict_translation_by_group: "Vetëm grupet e lejuara mund të përkthejnë"
+    restrict_translation_by_poster_group: "Lejo vetëm përkthimin e postimeve të bëra nga përdoruesit në grupet e lejuara. Nëse është bosh, lejo përkthimin e postimeve nga të gjithë përdoruesit."
+  translator:
+    failed:
+      topic: "Përkthyesi nuk është në gjendje të përkthejë titullin e kësaj teme (%{source_locale}) në gjuhën tuaj (%{target_locale})."
+      post: "Përkthyesi nuk është në gjendje të përkthejë përmbajtjen e këtij postimi (%{source_locale}) në gjuhën tuaj (%{target_locale})."
+    not_supported: "Kjo gjuhë nuk mbështetet nga përkthyesi."
+    too_long: "Ky postim është shumë i gjatë për t'u përkthyer nga përkthyesi."
+    not_available: "Shërbimi i përkthyesit nuk është aktualisht i disponueshëm."
+    api_timeout: "Shërbimi i përkthyesit vonoi shumë për t'u përgjigjur. Ju lutemi provoni përsëri më vonë."
+    amazon:
+      invalid_credentials: "Kredencialet e dhëna për përkthimin e AWS janë të pavlefshme."
+    microsoft:
+      missing_token: "Përkthyesi nuk mundi të merrte një token të vlefshëm."
+      missing_key: "Nuk është dhënë Çelësi i Abonimit Azure."
+    discourse_ai:
+      not_installed: "Duhet të instaloni shtojcën discurse-ai për të përdorur këtë veçori."
+      ai_helper_required: 'Duhet të <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">konfiguroni ndihmësin e inteligjencës artificiale</a> për të përdorur këtë veçori.'
+  not_in_group:
+    user_not_in_group: "Nuk je në ndonjë grup që lejohet të përkthesh."
+    poster_not_in_group: "Postimi nuk është bërë nga një përdorues në një grup të lejuar."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} u përdor si përkthyes, por nuk u dha asnjë %{key}. Shiko <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">cilësimet e faqes</a>."
+      translator_error: "%{provider} raportoi një gabim përkthimi me kodin %{code}: %{message}"
