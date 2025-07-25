@@ -6,6 +6,7 @@
 
 zh_CN:
   site_settings:
+    translator_enabled: "启用翻译器插件。"
     translator_provider: "翻译服务提供商。"
     translator_azure_subscription_key: "Azure 订阅密钥"
     translator_azure_region: "Azure 区域"
@@ -23,9 +24,13 @@ zh_CN:
     restrict_translation_by_group: "只有允许的群组才能翻译"
     restrict_translation_by_poster_group: "仅允许翻译允许的群组中用户发布的帖子。如果为空，则允许翻译所有用户的帖子。"
   translator:
+    failed:
+      topic: "翻译器无法将此话题的标题 (%{source_locale}) 翻译成您的语言 (%{target_locale})。"
+      post: "翻译器无法将此帖子的内容 (%{source_locale}) 翻译成您的语言 (%{target_locale})。"
     not_supported: "翻译器不支持此语言。"
     too_long: "帖子过长，翻译器无法翻译。"
     not_available: "该翻译服务目前不可用。"
+    api_timeout: "翻译器服务的响应时间过长。请稍后再试。"
     amazon:
       invalid_credentials: "提供的 AWS 翻译凭据无效。"
     microsoft:

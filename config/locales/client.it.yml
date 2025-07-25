@@ -14,5 +14,8 @@ it:
     translator:
       view_translation: "Visualizza traduzione"
       hide_translation: "Nascondi traduzione"
+      content_not_translated: "Pagina non tradotta. Clicca per tradurre"
+      content_translated: "La pagina è tradotta automaticamente. Clicca per visualizzare l'originale"
       translated_from: "Tradotto dalla lingua %{language} da %{translator}"
       translating: "Traduzione in corso"
+      originally_written_in: "Questo post è stato scritto originariamente in %{language}"
