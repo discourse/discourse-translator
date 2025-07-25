@@ -14,5 +14,8 @@ zh_CN:
     translator:
       view_translation: "查看翻译"
       hide_translation: "隐藏翻译"
+      content_not_translated: "页面未翻译。点击进行翻译"
+      content_translated: "页面由机器翻译。点击查看原文"
       translated_from: "由 %{translator} 译自%{language}"
       translating: "正在翻译"
+      originally_written_in: "这篇帖子的原始语言为%{language}"

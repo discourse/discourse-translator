@@ -6,6 +6,7 @@
 
 it:
   site_settings:
+    translator_enabled: "Abilita il plugin di traduzione."
     translator_provider: "Il fornitore del servizio di traduzione."
     translator_azure_subscription_key: "Chiave di sottoscrizione Azure"
     translator_azure_region: "Regione Azure"
@@ -23,9 +24,13 @@ it:
     restrict_translation_by_group: "Solo i gruppi autorizzati possono tradurre"
     restrict_translation_by_poster_group: "Consenti solo la traduzione dei messaggi scritti dagli utenti nei gruppi consentiti. Se vuoto, consente le traduzioni dei messaggi di tutti gli utenti."
   translator:
+    failed:
+      topic: "Il traduttore non è in grado di tradurre il titolo di questo argomento (%{source_locale}) nella tua lingua (%{target_locale})."
+      post: "Il traduttore non è in grado di tradurre il contenuto di questo messaggio (%{source_locale}) nella tua lingua (%{target_locale})."
     not_supported: "Questa lingua non è supportata dal traduttore."
     too_long: "Questo messaggio è troppo lungo per essere tradotto dal traduttore."
     not_available: "Il servizio di traduzione non è attualmente disponibile."
+    api_timeout: "Il servizio di traduzione impiega troppo tempo a rispondere. Riprova più tardi."
     amazon:
       invalid_credentials: "Le credenziali fornite per AWS Translate non sono valide."
     microsoft:
