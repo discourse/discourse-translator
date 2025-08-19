@@ -14,5 +14,8 @@ ru:
     translator:
       view_translation: "Показать перевод"
       hide_translation: "Скрыть перевод"
+      content_not_translated: "Страница не переведена. Нажмите, чтобы перевести."
+      content_translated: "Страница переведена автоматически. Нажмите, чтобы увидеть оригинал."
       translated_from: "Перевод; переводчик — %{translator}, исходный язык — %{language}"
       translating: "Переводится"
+      originally_written_in: "Этот пост изначально был написан в %{language}"
