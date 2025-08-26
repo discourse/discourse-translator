@@ -6,6 +6,7 @@
 
 ar:
   site_settings:
+    translator_enabled: "تفعيل المكوِّن الإضافي للترجمة."
     translator_provider: "مقدِّم خدمة الترجمة."
     translator_azure_subscription_key: "مفتاح اشتراك Azure"
     translator_azure_region: "منطقة Azure"
@@ -23,9 +24,13 @@ ar:
     restrict_translation_by_group: "لا يمكن الترجمة إلا للمجموعات المُدرَجة في قائمة السماح"
     restrict_translation_by_poster_group: "السماح بترجمة المنشورات التي يُنشئها المستخدمون في المجموعات المسموح بها فقط. إذا كانت فارغة، فاسمح بترجمة المنشورات من جميع المستخدمين."
   translator:
+    failed:
+      topic: "تتعذَّر على أداة الترجمة ترجمة عنوان هذا الموضوع (%{source_locale}) إلى اللغة التي اخترتها (%{target_locale})."
+      post: "تتعذَّر على أداة الترجمة ترجمة محتوى هذا المنشور (%{source_locale}) إلى اللغة التي اخترتها (%{target_locale})."
     not_supported: "لا يدعم المترجم هذه اللغة."
     too_long: "هذا المنشور طويل جدًا ولا يستطيع المترجم ترجمته."
     not_available: "خدمة المترجم غير متوفرة حاليًا."
+    api_timeout: "استغرقت أداة الترجمة وقتًا طويلًا للرد. يُرجى المحاولة لاحقًا."
     amazon:
       invalid_credentials: "بيانات الاعتماد المقدَّمة لترجمة AWS غير صالحة."
     microsoft:

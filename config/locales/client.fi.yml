@@ -14,5 +14,8 @@ fi:
     translator:
       view_translation: "Näytä käännös"
       hide_translation: "Piilota käännös"
+      content_not_translated: "Sivua ei ole käännetty. Käännä klikkaamalla."
+      content_translated: "Sivu on konekäännetty. Katso alkuperäinen klikkaamalla."
       translated_from: "%{translator} käänsi kielestä %{language}"
       translating: "Kääntäminen"
+      originally_written_in: "Tämä viesti on alun perin kirjoitettu kielellä %{language}"

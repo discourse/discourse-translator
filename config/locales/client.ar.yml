@@ -9,10 +9,13 @@ ar:
     admin:
       site_settings:
         categories:
-          discourse_translator: "مترجم Discourse"
+          discourse_translator: "أداة ترجمة Discourse"
   js:
     translator:
       view_translation: "عرض الترجمة"
       hide_translation: "إخفاء الترجمة"
+      content_not_translated: "الصفحة غير مترجمة. انقر للترجمة."
+      content_translated: "الصفحة مُترجمة ترجمةً آلية. انقر لعرض النص الأصلي."
       translated_from: "تمت الترجمة من %{language} بواسطة %{translator}"
       translating: "جارٍ الترجمة"
+      originally_written_in: "اللغة الأصلية لهذا المنشور هي %{language}"
