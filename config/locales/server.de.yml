@@ -6,7 +6,7 @@
 
 de:
   site_settings:
-    translator_enabled: "Aktiviere das Übersetzer-Plugin."
+    translator_enabled: "Aktiviere das Übersetzer-Plug-in."
     translator_provider: "Der Anbieter des Übersetzungsdienstes."
     translator_azure_subscription_key: "Azure-Abonnementschlüssel"
     translator_azure_region: "Azure-Region"

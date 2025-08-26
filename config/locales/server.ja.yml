@@ -6,6 +6,7 @@
 
 ja:
   site_settings:
+    translator_enabled: "翻訳ツールプラグインを有効にする。"
     translator_provider: "翻訳サービスのプロバイダー。"
     translator_azure_subscription_key: "Azure サブスクリプションキー"
     translator_azure_region: "Azure リージョン"
@@ -23,9 +24,13 @@ ja:
     restrict_translation_by_group: "許可されたグループのみが翻訳できます"
     restrict_translation_by_poster_group: "許可されたグループのユーザーによる投稿の翻訳のみを許可します。空白の場合、すべてのユーザーによる投稿の翻訳を許可します。"
   translator:
+    failed:
+      topic: "翻訳ツールはこのトピックのタイトル (%{source_locale}) をあなたの言語 (%{target_locale}) に翻訳できません。"
+      post: "翻訳ツールはこの投稿のコンテンツ (%{source_locale}) をあなたの言語 (%{target_locale}) に翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
     too_long: "この投稿は翻訳ツールで翻訳するには長すぎます。"
     not_available: "現在、翻訳ツールサービスは使用できません。"
+    api_timeout: "翻訳ツールサービスの応答に時間がかかっています。後でもう一度お試しください。"
     amazon:
       invalid_credentials: "指定された AWS Translate の資格情報は無効です。"
     microsoft:

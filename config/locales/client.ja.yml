@@ -14,5 +14,8 @@ ja:
     translator:
       view_translation: "翻訳を表示"
       hide_translation: "翻訳を非表示"
+      content_not_translated: "ページは翻訳されていません。クリックして翻訳"
+      content_translated: "ページは機械翻訳されています。クリックして元の投稿を表示"
       translated_from: "%{translator} で%{language}から翻訳"
       translating: "翻訳中"
+      originally_written_in: "元の投稿は%{language}で書かれています"
