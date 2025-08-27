@@ -18,4 +18,4 @@ ru:
       content_translated: "Страница переведена автоматически. Нажмите, чтобы увидеть оригинал."
       translated_from: "Перевод; переводчик — %{translator}, исходный язык — %{language}"
       translating: "Переводится"
-      originally_written_in: "Этот пост изначально был написан в %{language}"
+      originally_written_in: "Исходный язык этой публикации — %{language}"

@@ -14,5 +14,8 @@ tr_TR:
     translator:
       view_translation: "Çeviriyi görüntüle"
       hide_translation: "Çeviriyi gizle"
+      content_not_translated: "Sayfa çevrilmedi. Çevirmek için tıklayın"
+      content_translated: "Sayfa makine çevirisiyle çevrildi. Orijinal hâlini görüntülemek için tıklayın"
       translated_from: "%{language} dilinden %{translator} tarafından çevrilmiştir."
       translating: "Çevriliyor"
+      originally_written_in: "Bu gönderi orijinal olarak %{language} dilinde yazıldı"

@@ -6,6 +6,7 @@
 
 tr_TR:
   site_settings:
+    translator_enabled: "Çevirmen eklentisini etkinleştirin."
     translator_provider: "Çeviri hizmetinin sağlayıcısı."
     translator_azure_subscription_key: "Azure Abonelik Anahtarı"
     translator_azure_region: "Azure Region"
@@ -23,9 +24,13 @@ tr_TR:
     restrict_translation_by_group: "Yalnızca izin verilen gruplar çeviri yapabilir"
     restrict_translation_by_poster_group: "Yalnızca izin verilen gruplardaki kullanıcılar tarafından oluşturulan gönderilerin çevirisine izin verin. Boşsa tüm kullanıcıların gönderilerinin çevrilmesine izin verin."
   translator:
+    failed:
+      topic: "Çevirmen bu konunun başlığını (%{source_locale}) dilinize (%{target_locale}) çeviremiyor."
+      post: "Çevirmen bu gönderinin içeriğini (%{source_locale}) dilinize (%{target_locale}) çeviremiyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
     too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
     not_available: "Çevirmen hizmeti şu anda kullanılamıyor."
+    api_timeout: "Çevirmen hizmetinin yanıt vermesi çok uzun sürdü. Lütfen daha sonra tekrar deneyin."
     amazon:
       invalid_credentials: "AWS çevirisi için sağlanan kimlik bilgileri geçersiz."
     microsoft:
