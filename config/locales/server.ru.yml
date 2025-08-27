@@ -6,7 +6,7 @@
 
 ru:
   site_settings:
-    translator_enabled: "Включите плагин переводчика."
+    translator_enabled: "Включить плагин переводчика."
     translator_provider: "Поставщик услуг перевода."
     translator_azure_subscription_key: "Ключ подписки Azure"
     translator_azure_region: "Регион Azure"
@@ -26,11 +26,11 @@ ru:
   translator:
     failed:
       topic: "Переводчик не может перевести название этой темы (%{source_locale}) на ваш язык (%{target_locale})."
-      post: "Переводчик не может перевести содержимое этого сообщения (%{source_locale}) на ваш язык (%{target_locale})."
+      post: "Переводчик не может перевести контент этой публикации (%{source_locale}) на ваш язык (%{target_locale})."
     not_supported: "Этот язык не поддерживается переводчиком."
     too_long: "Эта запись слишком длинная для перевода."
     not_available: "Сервис перевода сейчас недоступен."
-    api_timeout: "Службе переводчиков потребовалось слишком много времени, чтобы ответить. Пожалуйста, повтори попытку позже."
+    api_timeout: "Сервис перевода слишком долго не отвечал. Попробуйте еще раз позже."
     amazon:
       invalid_credentials: "Предоставленные учетные данные для сервиса машинного перевода AWS недействительны."
     microsoft:
