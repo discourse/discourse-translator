@@ -14,5 +14,8 @@ nl:
     translator:
       view_translation: "Vertaling weergeven"
       hide_translation: "Vertaling verbergen"
+      content_not_translated: "Pagina niet vertaald. Klik om te vertalen"
+      content_translated: "Pagina is machinaal vertaald. Klik om het origineel te bekijken"
       translated_from: "Vertaald uit het %{language} door %{translator}"
       translating: "Vertalen"
+      originally_written_in: "Dit bericht is oorspronkelijk geschreven in het %{language}"
