@@ -6,6 +6,7 @@
 
 nl:
   site_settings:
+    translator_enabled: "Schakel de vertaalplug-in in."
     translator_provider: "De aanbieder van de vertaaldienst."
     translator_azure_subscription_key: "Azure-abonnementssleutel"
     translator_azure_region: "Azure-regio"
@@ -23,9 +24,13 @@ nl:
     restrict_translation_by_group: "Alleen toegestane groepen kunnen vertalen"
     restrict_translation_by_poster_group: "Sta alleen vertalingen toe van berichten gemaakt door gebruikers in toegestane groepen. Als dit leeg is, worden vertalingen van berichten van alle gebruikers toegestaan."
   translator:
+    failed:
+      topic: "De vertaler kan de titel van dit topic (%{source_locale}) niet vertalen naar jouw taal (%{target_locale})."
+      post: "De vertaler kan de inhoud van dit bericht (%{source_locale}) niet vertalen naar jouw taal (%{target_locale})."
     not_supported: "Deze taal wordt niet ondersteund door de vertaler."
     too_long: "Dit bericht is te lang om door de vertaler te worden vertaald."
     not_available: "De vertaalservice is momenteel niet beschikbaar."
+    api_timeout: "De vertaalservice deed er te lang over om te reageren. Probeer het later opnieuw."
     amazon:
       invalid_credentials: "De opgegeven aanmeldgegevens voor AWS Translate zijn ongeldig."
     microsoft:

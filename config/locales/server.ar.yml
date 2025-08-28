@@ -6,7 +6,7 @@
 
 ar:
   site_settings:
-    translator_enabled: "تفعيل المكوِّن الإضافي للترجمة."
+    translator_enabled: "تفعيل المكوِّن الإضافي لأداة الترجمة."
     translator_provider: "مقدِّم خدمة الترجمة."
     translator_azure_subscription_key: "مفتاح اشتراك Azure"
     translator_azure_region: "منطقة Azure"
@@ -27,14 +27,14 @@ ar:
     failed:
       topic: "تتعذَّر على أداة الترجمة ترجمة عنوان هذا الموضوع (%{source_locale}) إلى اللغة التي اخترتها (%{target_locale})."
       post: "تتعذَّر على أداة الترجمة ترجمة محتوى هذا المنشور (%{source_locale}) إلى اللغة التي اخترتها (%{target_locale})."
-    not_supported: "لا يدعم المترجم هذه اللغة."
-    too_long: "هذا المنشور طويل جدًا ولا يستطيع المترجم ترجمته."
-    not_available: "خدمة المترجم غير متوفرة حاليًا."
+    not_supported: "لا تدعم أداة الترجمة هذه اللغة."
+    too_long: "هذا المنشور طويل جدًا ولا تستطيع أداة الترجمة ترجمته."
+    not_available: "أداة الترجمة غير متوفرة حاليًا."
     api_timeout: "استغرقت أداة الترجمة وقتًا طويلًا للرد. يُرجى المحاولة لاحقًا."
     amazon:
       invalid_credentials: "بيانات الاعتماد المقدَّمة لترجمة AWS غير صالحة."
     microsoft:
-      missing_token: "لم يتمكَّن المترجم من استرداد رمز مميَّز صالح."
+      missing_token: "لم تتمكَّن أداة الترجمة من استرداد رمز مميَّز صالح."
       missing_key: "لم يتم توفير مفتاح اشتراك Azure."
     discourse_ai:
       not_installed: "يجب عليك تثبيت المكوِّن الإضافي discourse-ai لاستخدام هذه الميزة."
@@ -44,5 +44,5 @@ ar:
     poster_not_in_group: "لم يتم إنشاء المنشور بواسطة مستخدم في مجموعة مسموح بها."
   dashboard:
     problem:
-      missing_translator_api_key: "تم استخدام %{provider} كمترجم، ولكن لم يتم تقديم مفتاح %{key}. انظر <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">إعدادات الموقع</a>."
+      missing_translator_api_key: "أداة الترجمة التي جرى استخدامها هي %{provider}، ولكن لم يتم تقديم مفتاح %{key}. يُرجى الاطلاع على <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">إعدادات الموقع</a>."
       translator_error: "أبلغ %{provider} عن خطأ في الترجمة بالرمز %{code}: %{message}"
