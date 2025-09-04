@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 be:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Перакладчык Discourse"
+  js:
+    translator:
+      view_translation: "Праглядзець пераклад"
+      hide_translation: "Схаваць пераклад"
+      content_not_translated: "Старонка не перакладзена. Націсніце, каб перакласці"
+      content_translated: "Старонка перакладзена машынным спосабам. Націсніце, каб праглядзець арыгінал."
+      translated_from: "Перакладзена з %{language} карыстальнікам %{translator}"
+      translating: "Перакладаецца"
+      originally_written_in: "Гэты допіс быў першапачаткова напісаны на %{language}"
