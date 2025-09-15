@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 pt:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Discourse Translator"
+  js:
+    translator:
+      view_translation: "Ver tradução"
+      hide_translation: "Ocultar tradução"
+      content_not_translated: "Página não traduzida. Clique para traduzir"
+      content_translated: "A página foi traduzida automaticamente. Clique para ver o original"
+      translated_from: "Traduzido de %{language} por %{translator}"
+      translating: "A traduzir"
+      originally_written_in: "Este artigo foi originalmente escrito em %{language}"
