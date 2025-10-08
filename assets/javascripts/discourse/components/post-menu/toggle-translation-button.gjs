@@ -10,7 +10,6 @@ export default class ToggleTranslationButton extends Component {
     return args.post.can_translate;
   }
 
-  @service modal;
   @service translator;
 
   get isTranslating() {

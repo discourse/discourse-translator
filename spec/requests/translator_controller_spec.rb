@@ -4,7 +4,7 @@ require "rails_helper"
 
 module DiscourseTranslator
   describe TranslatorController do
-    fab!(:user) { Fabricate(:trust_level_1) }
+    fab!(:user, :trust_level_1)
 
     before do
       SiteSetting.translator_enabled = true

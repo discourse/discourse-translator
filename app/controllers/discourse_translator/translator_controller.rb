@@ -48,7 +48,7 @@ module ::DiscourseTranslator
           title_json = { title_translation: title_translation }
         end
         render json: { translation: translation, detected_lang: detected_lang }.merge(title_json),
-               status: 200
+               status: :ok
       rescue ::DiscourseTranslator::Provider::TranslatorError => e
         render_json_error e.message, status: 422
       end

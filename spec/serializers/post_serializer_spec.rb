@@ -6,7 +6,7 @@ RSpec.describe PostSerializer do
   fab!(:group)
   fab!(:user) { Fabricate(:user, locale: "en", groups: [group]) }
 
-  fab!(:post_user_group) { Fabricate(:group) }
+  fab!(:post_user_group, :group)
   fab!(:post_user) { Fabricate(:user, locale: "en", groups: [post_user_group]) }
   fab!(:post) { Fabricate(:post, user: post_user) }
 
