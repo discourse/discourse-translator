@@ -1,11 +1,7 @@
-import Service, { service } from "@ember/service";
+import Service from "@ember/service";
 import { ajax } from "discourse/lib/ajax";
 
 export default class TranslatorService extends Service {
-  @service siteSettings;
-  @service appEvents;
-  @service documentTitle;
-
   async translatePost(post) {
     const response = await ajax("/translator/translate", {
       type: "POST",

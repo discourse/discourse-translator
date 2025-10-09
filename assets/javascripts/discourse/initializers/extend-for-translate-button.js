@@ -35,6 +35,6 @@ function customizePostMenu(api) {
 export default {
   name: "extend-for-translate-button",
   initialize() {
-    withPluginApi("1.39.2", (api) => initializeTranslation(api));
+    withPluginApi((api) => initializeTranslation(api));
   },
 };
