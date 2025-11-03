@@ -27,6 +27,10 @@ el:
     microsoft:
       missing_token: "Ο μεταφραστής δεν μπόρεσε να ανακτήσει ένα έγκυρο token."
       missing_key: "Δεν δόθηκε Κλειδί Συνδρομής Azure."
+  not_in_group:
+    user_not_in_group: "Δεν ανήκετε σε ομάδα που επιτρέπεται να μεταφράζει."
+    poster_not_in_group: "Η ανάρτηση δεν έγινε από χρήστη σε επιτρεπόμενη ομάδα."
   dashboard:
     problem:
+      missing_translator_api_key: "Ως μεταφραστής χρησιμοποιήθηκε το %{provider}, αλλά δεν δόθηκε το %{key}. Δείτε τις <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">ρυθμίσεις ιστοτόπου</a>."
       translator_error: "Ο/Η %{provider} ανέφερε σφάλμα μετάφρασης με κωδικό %{code}: %{message}"
