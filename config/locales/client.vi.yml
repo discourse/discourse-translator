@@ -9,13 +9,13 @@ vi:
     admin:
       site_settings:
         categories:
-          discourse_translator: "Dịch"
+          discourse_translator: "Discourse Translator"
   js:
     translator:
       view_translation: "Xem bản dịch"
       hide_translation: "Ẩn bản dịch"
       content_not_translated: "Trang chưa được dịch. Nhấn để dịch"
       content_translated: "Trang được dịch tự động. Nhấn để xem bản gốc"
-      translated_from: "Dịch từ %{language} sang %{translator}"
-      translating: "Dang dịch"
-      originally_written_in: "Bài viết gốc được viết bằng %{language}"
+      translated_from: "Đã dịch từ %{language} bằng %{translator}"
+      translating: "Đang dịch"
+      originally_written_in: "Tút gốc được viết bằng %{language}"
