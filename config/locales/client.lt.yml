@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 lt:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Diskurso vertėjas"
+  js:
+    translator:
+      view_translation: "Peržiūrėti vertimą"
+      hide_translation: "Slėpti vertimą"
+      content_not_translated: "Puslapis neišverstas. Spustelėkite, jei norite išversti."
+      content_translated: "Puslapis išverstas mašininiu būdu. Spustelėkite, kad peržiūrėtumėte originalą."
+      translated_from: "Išvertė iš %{language} %{translator}"
+      translating: "Verčiama"
+      originally_written_in: "Šis įrašas iš pradžių buvo parašytas %{language}kalba"
