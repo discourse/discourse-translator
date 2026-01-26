@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe DiscourseTranslator::Extensions::GuardianExtension do
   describe "anon user" do
     let!(:guardian) { Guardian.new }

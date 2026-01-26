@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe PostSerializer do
   fab!(:group)
   fab!(:user) { Fabricate(:user, locale: "en", groups: [group]) }

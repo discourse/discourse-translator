@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe Post do
   before do
     SiteSetting.translator_enabled = true
