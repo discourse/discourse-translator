@@ -7,20 +7,16 @@ module("Integration | Component | toggle-translation-button", function (hooks) {
   setupRenderingTest(hooks);
 
   test("doesn't render when post cannot be translated", async function (assert) {
-    const self = this;
-
     this.set("post", { can_translate: false });
 
     await render(
-      <template><ToggleTranslationButton @post={{self.post}} /></template>
+      <template><ToggleTranslationButton @post={{this.post}} /></template>
     );
 
     assert.dom("button").doesNotExist();
   });
 
   test("renders translation button with correct states", async function (assert) {
-    const self = this;
-
     const post = {
       can_translate: true,
       isTranslated: false,
@@ -31,7 +27,7 @@ module("Integration | Component | toggle-translation-button", function (hooks) {
 
     await render(
       <template>
-        <ToggleTranslationButton @post={{self.post}} @showLabel={{true}} />
+        <ToggleTranslationButton @post={{this.post}} @showLabel={{true}} />
       </template>
     );
 
@@ -42,7 +38,7 @@ module("Integration | Component | toggle-translation-button", function (hooks) {
     post.isTranslating = true;
     await render(
       <template>
-        <ToggleTranslationButton @post={{self.post}} @showLabel={{true}} />
+        <ToggleTranslationButton @post={{this.post}} @showLabel={{true}} />
       </template>
     );
     assert.dom("button").hasAttribute("disabled");
@@ -52,7 +48,7 @@ module("Integration | Component | toggle-translation-button", function (hooks) {
     post.isTranslated = true;
     await render(
       <template>
-        <ToggleTranslationButton @post={{self.post}} @showLabel={{true}} />
+        <ToggleTranslationButton @post={{this.post}} @showLabel={{true}} />
       </template>
     );
     assert.dom("button").hasClass("translated");

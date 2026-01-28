@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe DiscourseTranslator::Provider::BaseProvider do
   class TestTranslator < DiscourseTranslator::Provider::BaseProvider
     SUPPORTED_LANG_MAPPING = { en: "en", ar: "ar", es_MX: "es-MX", pt: "pt" }

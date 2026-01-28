@@ -7,8 +7,6 @@ module("Integration | Component | translated-post", function (hooks) {
   setupRenderingTest(hooks);
 
   test("renders translation when post is translated", async function (assert) {
-    const self = this;
-
     this.set("outletArgs", {
       post: {
         isTranslated: true,
@@ -22,7 +20,7 @@ module("Integration | Component | translated-post", function (hooks) {
     this.siteSettings.translator_provider = "Google";
 
     await render(
-      <template><TranslatedPost @outletArgs={{self.outletArgs}} /></template>
+      <template><TranslatedPost @outletArgs={{this.outletArgs}} /></template>
     );
 
     assert.dom(".post-translation").exists();

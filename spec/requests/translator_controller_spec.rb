@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 module DiscourseTranslator
   describe TranslatorController do
     fab!(:user, :trust_level_1)

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe DiscourseTranslator::Provider::LibreTranslate do
   let(:mock_response) { Struct.new(:status, :body) }
   let(:api_key) { "12345" }
