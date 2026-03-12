@@ -1,6 +1,6 @@
 import Component from "@glimmer/component";
+import DTooltip from "discourse/float-kit/components/d-tooltip";
 import { i18n } from "discourse-i18n";
-import DTooltip from "float-kit/components/d-tooltip";
 
 export default class TranslatedPostIndicator extends Component {
   get tooltip() {
