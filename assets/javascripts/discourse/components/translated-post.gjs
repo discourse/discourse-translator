@@ -1,6 +1,6 @@
 import Component from "@glimmer/component";
 import { service } from "@ember/service";
-import { htmlSafe } from "@ember/template";
+import { trustHTML } from "@ember/template";
 import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
 import { i18n } from "discourse-i18n";
 
@@ -52,7 +52,7 @@ export default class TranslatedPost extends Component {
           }}
         </div>
         <div class="cooked">
-          {{htmlSafe this.post.translatedText}}
+          {{trustHTML this.post.translatedText}}
         </div>
       </ConditionalLoadingSpinner>
     </div>
