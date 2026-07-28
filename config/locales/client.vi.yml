@@ -9,7 +9,7 @@ vi:
     admin:
       site_settings:
         categories:
-          discourse_translator: "Discourse Translator"
+          discourse_translator: "Trình dịch Discourse"
   js:
     translator:
       view_translation: "Xem bản dịch"
@@ -18,4 +18,4 @@ vi:
       content_translated: "Trang được dịch tự động. Nhấn để xem bản gốc"
       translated_from: "Đã dịch từ %{language} bằng %{translator}"
       translating: "Đang dịch"
-      originally_written_in: "Tút gốc được viết bằng %{language}"
+      originally_written_in: "Nội dung gốc được viết bằng %{language}"
