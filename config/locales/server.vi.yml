@@ -5,3 +5,44 @@
 # https://translate.discourse.org/
 
 vi:
+  site_settings:
+    translator_enabled: "Bật plugin dịch thuật."
+    translator_provider: "Nhà cung cấp dịch vụ dịch thuật."
+    translator_azure_subscription_key: "Khóa đăng ký Azure (Subscription Key)"
+    translator_azure_region: " Khu vực Azure (Azure Region)"
+    translator_google_api_key: "Khóa API Google"
+    translator_yandex_api_key: "Khóa API Yandex"
+    max_characters_per_translation: "Số ký tự tối đa được gửi để dịch. Nếu vượt quá, văn bản sẽ bị cắt bớt. Lưu ý mỗi nhà cung cấp có giới hạn riêng."
+    max_translations_per_minute: "Số lượt dịch tối đa mỗi phút cho người dùng thông thường."
+    translator_libretranslate_endpoint: "Điểm cuối API LibreTranslate (API Endpoint)"
+    translator_libretranslate_api_key: "Khóa API LibreTranslate"
+    translator_aws_region: "Khu vực AWS (AWS Region)"
+    translator_aws_key_id: "Mã khóa AWS (Key ID)"
+    translator_aws_secret_access: "Khóa truy cập bảo mật AWS (Secret Access Key)"
+    translator_aws_iam_role: "Vai trò AWS IAM (IAM Role)"
+    translator_azure_custom_subdomain: "Yêu cầu nếu dùng Mạng ảo hoặc Tường lửa cho Azure Cognitive Services. Lưu ý: Chỉ nhập tên miền phụ tùy chỉnh, không nhập toàn bộ điểm cuối."
+    restrict_translation_by_group: "Chỉ các nhóm được cấp phép mới có thể dịch"
+    restrict_translation_by_poster_group: "Chỉ cho phép dịch bài viết của người dùng thuộc nhóm được cấp phép. Nếu để trống, cho phép dịch bài viết của tất cả người dùng."
+  translator:
+    failed:
+      topic: "Trình dịch không thể dịch tiêu đề bài viết này (%{source_locale}) sang ngôn ngữ của bạn (%{target_locale})."
+      post: "Trình dịch không thể dịch nội dung bài viết này (%{source_locale}) sang ngôn ngữ của bạn (%{target_locale})."
+    not_supported: "Ngôn ngữ này chưa được trình dịch hỗ trợ."
+    too_long: "Bài viết này quá dài, trình dịch không thể xử lý."
+    not_available: "Dịch vụ dịch thuật hiện không khả dụng."
+    api_timeout: "Dịch vụ dịch thuật mất quá nhiều thời gian để phản hồi. Vui lòng thử lại sau."
+    amazon:
+      invalid_credentials: "Thông tin xác thực cho AWS Translate không hợp lệ."
+    microsoft:
+      missing_token: "Trình dịch không thể lấy mã xác thực (token) hợp lệ."
+      missing_key: "Chưa cung cấp Khóa đăng ký Azure (Azure Subscription Key)."
+    discourse_ai:
+      not_installed: "Cần cài đặt plugin discourse-ai để sử dụng tính năng này."
+      ai_helper_required: 'Cần <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">cấu hình AI Helper</a> để sử dụng tính năng này.'
+  not_in_group:
+    user_not_in_group: "Bạn không thuộc nhóm được cấp phép sử dụng tính năng dịch."
+    poster_not_in_group: "Bài viết không được đăng bởi người dùng thuộc nhóm có quyền dịch."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} được sử dụng làm trình dịch, nhưng chưa cung cấp %{key}. Xem tại <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">cài đặt trang web</a>."
+      translator_error: "%{provider} đã báo lỗi dịch thuật với mã %{code}: %{message}"
