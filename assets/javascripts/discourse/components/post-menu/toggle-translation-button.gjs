@@ -1,8 +1,8 @@
 import Component from "@glimmer/component";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
-import DButton from "discourse/components/d-button";
-import concatClass from "discourse/helpers/concat-class";
+import DButton from "discourse/ui-kit/d-button";
+import concatClass from "discourse/ui-kit/helpers/d-concat-class";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 
 export default class ToggleTranslationButton extends Component {
