@@ -107,10 +107,9 @@ module DiscourseTranslator
             fab!(:admin)
 
             before do
-              SiteSetting.restrict_translation_by_group =
-                "#{Group.find_by(name: "admins").id}|not_in_the_list"
+              SiteSetting.restrict_translation_by_group = Group::AUTO_GROUPS[:admins].to_s
 
-              log_in_user(admin)
+              sign_in(admin)
             end
 
             include_examples "translation_successful"
@@ -131,7 +130,7 @@ module DiscourseTranslator
             before do
               SiteSetting.restrict_translation_by_group = "#{group.id}|"
 
-              log_in_user(user)
+              sign_in(user)
             end
             describe "post made by an user in a allowlisted group" do
               before do
