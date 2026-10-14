@@ -1,89 +1,197 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-describe DiscourseTranslator::GuardianExtension do
-  shared_examples "post_group_allowed" do
-    it "returns true when the post was made by an user in a allowlisted group" do
-      SiteSetting.restrict_translation_by_poster_group = "#{Group[:trust_level_1].id}"
-
-      expect(guardian.post_group_allowed?(post)).to eq(true)
-    end
-
-    it "returns true when no group has selected in settings" do
-      SiteSetting.restrict_translation_by_poster_group = ""
-
-      expect(guardian.post_group_allowed?(post)).to eq(true)
-    end
-  end
-
-  shared_examples "post_group_not_allowed" do
-    it "returns true when the post was made by an user not in a allowlisted group" do
-      SiteSetting.restrict_translation_by_poster_group = "#{Group[:trust_level_4].id}"
-
-      expect(guardian.post_group_allowed?(post)).to eq(false)
-    end
-  end
-
+describe DiscourseTranslator::Extensions::GuardianExtension do
   describe "anon user" do
     let!(:guardian) { Guardian.new }
-    let(:post) { Fabricate(:post) }
-    describe "#user_group_allowed?" do
-      it "returns false when the user is not logged in" do
-        SiteSetting.restrict_translation_by_group = "not_in_the_list"
+    fab!(:post)
 
-        expect(guardian.user_group_allowed?).to eq(false)
+    before do
+      SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:everyone]}"
+      SiteSetting.restrict_translation_by_poster_group = "#{Group::AUTO_GROUPS[:everyone]}"
+    end
+
+    describe "#user_group_allow_translate?" do
+      it "returns false" do
+        expect(guardian.user_group_allow_translate?).to eq(false)
       end
     end
 
-    describe "#post_group_allowed?" do
-      include_examples "post_group_not_allowed"
+    describe "#poster_group_allow_translate?" do
+      it "returns false" do
+        expect(guardian.poster_group_allow_translate?(post)).to eq(false)
+      end
     end
+  end
 
-    describe "#authorized?" do
-      it "returns false with authorized groups" do
-        expect(guardian.authorized?(nil, ["authorized_group"])).to eq(false)
+  describe "deleted poster" do
+    fab!(:group)
+    fab!(:user)
+    fab!(:poster) { Fabricate(:user, groups: [group]) }
+    fab!(:post) { Fabricate(:post, user: poster) }
+    let!(:guardian) { Guardian.new(user) }
+
+    describe "#poster_group_allow_translate?" do
+      it "returns false when the post user has been deleted" do
+        SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
+
+        post.update(user: nil)
+
+        expect(guardian.poster_group_allow_translate?(post)).to eq(false)
       end
     end
   end
 
   describe "logged in user" do
-    let(:user) do
-      user = Fabricate(:user)
-      user.group_users << Fabricate(:group_user, user: user, group: Group[:trust_level_1])
-      user
-    end
+    fab!(:group)
+    fab!(:user) { Fabricate(:user, groups: [group]) }
+    fab!(:post) { Fabricate(:post, user: user) }
     let(:guardian) { Guardian.new(user) }
-    let(:post) { Fabricate(:post, user: user) }
 
-    describe "#user_group_allowed?" do
-      it "returns true when the user is in a allowlisted group" do
-        SiteSetting.restrict_translation_by_group =
-          "#{Group.find_by(name: user.groups.first.name).id}|not_in_the_list"
+    describe "#user_group_allow_translate?" do
+      it "returns true when the user is in restrict_translation_by_group" do
+        SiteSetting.restrict_translation_by_group = "#{group.id}"
 
-        expect(guardian.user_group_allowed?).to eq(true)
+        expect(guardian.user_group_allow_translate?).to eq(true)
       end
 
-      it "returns false when the user is not in a allowlisted group" do
-        SiteSetting.restrict_translation_by_group = "not_in_the_list"
+      it "returns false when the user is not in restrict_translation_by_group" do
+        SiteSetting.restrict_translation_by_group = "#{Group::AUTO_GROUPS[:moderators]}"
 
-        expect(guardian.user_group_allowed?).to eq(false)
+        expect(guardian.user_group_allow_translate?).to eq(false)
       end
     end
 
-    describe "#post_group_allowed?" do
-      include_examples "post_group_allowed"
-      include_examples "post_group_not_allowed"
+    describe "#poster_group_allow_translate?" do
+      it "returns true when the post user is in restrict_translation_by_poster_group" do
+        SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
+
+        expect(guardian.poster_group_allow_translate?(post)).to eq(true)
+      end
+
+      it "returns false when the post user is not in restrict_translation_by_poster_group" do
+        SiteSetting.restrict_translation_by_poster_group = "#{Group::AUTO_GROUPS[:moderators]}"
+
+        expect(guardian.poster_group_allow_translate?(post)).to eq(false)
+      end
+    end
+  end
+
+  describe "#can_detect_language?" do
+    fab!(:group)
+    fab!(:user) { Fabricate(:user, groups: [group]) }
+    fab!(:post) { Fabricate(:post, user: user, raw: "Hello, world!") }
+    let(:guardian) { Guardian.new(user) }
+
+    it "returns false when the post user is not in restrict_translation_by_poster_group" do
+      SiteSetting.restrict_translation_by_poster_group = "#{Fabricate(:group).id}"
+
+      expect(guardian.can_detect_language?(post)).to eq(false)
     end
 
-    describe "#authorized?" do
-      it "returns true with user in autorized groups" do
-        expect(guardian.authorized? user, [Group[:trust_level_1].id]).to eq(true)
+    context "when post author is in allowed groups" do
+      before do
+        SiteSetting.restrict_translation_by_group = "#{group.id}"
+        SiteSetting.restrict_translation_by_poster_group = "#{group.id}"
       end
 
-      it "returns false with user not in autoried groups" do
-        expect(guardian.authorized? user, ["not_in_the_list"]).to eq(false)
+      it "returns true when the post is not a small action post" do
+        expect(guardian.can_detect_language?(post)).to eq(true)
       end
+
+      it "returns false when the post is a small action post" do
+        post.update!(post_type: Post.types[:small_action])
+
+        expect(guardian.can_detect_language?(post)).to eq(false)
+      end
+
+      it "returns false when the post raw is empty" do
+        expect { post.update(raw: "") }.to change { guardian.can_detect_language?(post) }.from(
+          true,
+        ).to(false)
+      end
+    end
+  end
+
+  describe "#can_translate?" do
+    fab!(:group)
+    fab!(:user) { Fabricate(:user, locale: "en", groups: [group]) }
+    fab!(:post) { Fabricate(:post, updated_at: 5.minutes.ago) }
+
+    let(:guardian) { Guardian.new(user) }
+
+    it "returns false when translator disabled" do
+      SiteSetting.translator_enabled = false
+
+      expect(guardian.can_translate?(post)).to eq(false)
+    end
+
+    describe "when translator enabled and user locale is pt" do
+      before do
+        SiteSetting.translator_enabled = true
+        I18n.locale = :pt
+      end
+
+      it "cannot translate bot posts" do
+        post.update!(user: Discourse.system_user)
+        expect(Guardian.new.can_translate?(post)).to eq(false)
+      end
+
+      it "allows translation depending on when the post is updated" do
+        SiteSetting.restrict_translation_by_group = "#{group.id}"
+
+        post.update(updated_at: Time.now)
+        expect(guardian.can_translate?(post)).to eq(false)
+
+        post.set_detected_locale("jp")
+        expect(guardian.can_translate?(post)).to eq(true)
+
+        post.update(updated_at: 5.minutes.ago)
+        expect(guardian.can_translate?(post)).to eq(true)
+
+        post.set_detected_locale("pt")
+        expect(guardian.can_translate?(post)).to eq(false)
+      end
+
+      it "cannot translate when user is not in restrict_translation_by_group" do
+        SiteSetting.restrict_translation_by_group = "#{group.id + 1}"
+
+        expect(guardian.can_translate?(post)).to eq(false)
+      end
+
+      describe "user is in restrict_translation_by_group" do
+        before { SiteSetting.restrict_translation_by_group = "#{group.id}" }
+
+        it "can translate when post's detected locale does not match i18n locale, regardless of translation presence" do
+          post.set_detected_locale("jp")
+          expect(guardian.can_translate?(post)).to eq(true)
+
+          post.set_translation("pt", "Olá, mundo!")
+          expect(guardian.can_translate?(post)).to eq(true)
+        end
+
+        it "cannot translate if poster is not in restrict_translation_by_poster_group" do
+          SiteSetting.restrict_translation_by_poster_group = "#{Group::AUTO_GROUPS[:staff]}"
+
+          expect(guardian.can_translate?(post)).to eq(false)
+        end
+
+        it "can translate if poster is in restrict_translation_by_poster_group" do
+          poster = post.user
+          poster_group = Fabricate(:group, users: [poster])
+
+          SiteSetting.restrict_translation_by_poster_group = "#{poster_group.id}"
+          expect(guardian.can_translate?(post)).to eq(true)
+
+          SiteSetting.restrict_translation_by_poster_group = ""
+          expect(guardian.can_translate?(post)).to eq(true)
+        end
+      end
+    end
+
+    it "does not error out when post user is deleted" do
+      post.update(user: nil)
+
+      expect { guardian.can_translate?(post) }.not_to raise_error
     end
   end
 end

@@ -1,6 +1,15 @@
 en:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Discourse Translator"
   js:
     translator:
       view_translation: "View translation"
       hide_translation: "Hide translation"
+      content_not_translated: "Page not translated. Click to translate"
+      content_translated: "Page is machine-translated. Click to view original"
       translated_from: "Translated from %{language} by %{translator}"
+      translating: "Translating"
+      originally_written_in: "This post was originally written in %{language}"

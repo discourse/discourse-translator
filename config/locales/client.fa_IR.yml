@@ -5,8 +5,14 @@
 # https://translate.discourse.org/
 
 fa_IR:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "مترجم دیسکورس"
   js:
     translator:
       view_translation: "مشاهده ترجمه"
       hide_translation: "پنهان کردن ترجمه"
       translated_from: "ترجمه شده از %{language} توسط %{translator}"
+      translating: "در حال ترجمه"

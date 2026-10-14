@@ -1,14 +1,29 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-RSpec.describe DiscourseTranslator::Google do
+describe DiscourseTranslator::Provider::Google do
+  let(:api_key) { "12345" }
   let(:mock_response) { Struct.new(:status, :body) }
+
+  before do
+    SiteSetting.translator_enabled = true
+    SiteSetting.translator_google_api_key = api_key
+  end
+
+  def stub_translate_request(text, target_locale, translated_text)
+    stub_request(:post, DiscourseTranslator::Provider::Google::TRANSLATE_URI).with(
+      body: URI.encode_www_form({ q: text, target: target_locale, key: api_key }),
+      headers: {
+        "Content-Type" => "application/x-www-form-urlencoded",
+        "Referer" => "http://test.localhost",
+      },
+    ).to_return(
+      status: 200,
+      body: %{ { "data": { "translations": [ { "translatedText": "#{translated_text}" } ] } } },
+    )
+  end
 
   describe ".access_token" do
     describe "when set" do
-      api_key = "12345"
-      before { SiteSetting.translator_google_api_key = api_key }
       it "should return back translator_google_api_key" do
         expect(described_class.access_token).to eq(api_key)
       end
@@ -16,11 +31,11 @@ RSpec.describe DiscourseTranslator::Google do
   end
 
   describe ".detect" do
-    let(:post) { Fabricate(:post) }
+    fab!(:post)
 
     it "should store the detected language in a custom field" do
       detected_lang = "en"
-      described_class.expects(:access_token).returns("12345")
+      described_class.expects(:access_token).returns(api_key)
       Excon
         .expects(:post)
         .returns(
@@ -32,23 +47,22 @@ RSpec.describe DiscourseTranslator::Google do
         .once
 
       expect(described_class.detect(post)).to eq(detected_lang)
-
-      2.times do
-        expect(post.custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]).to eq(
-          detected_lang,
-        )
-      end
+      expect(post.detected_locale).to eq(detected_lang)
     end
 
-    it "should truncate string to 5000 characters" do
-      length = 6000
-      post.cooked = rand(36**length).to_s(36)
+    it "should truncate string to 1000 characters" do
+      length = 2000
+      post.raw = rand(36**length).to_s(36)
       detected_lang = "en"
 
-      request_url = "#{DiscourseTranslator::Google::DETECT_URI}"
+      request_url = "#{DiscourseTranslator::Provider::Google::DETECT_URI}"
       body = {
-        q: post.cooked.truncate(DiscourseTranslator::Google::MAXLENGTH, omission: nil),
-        key: "",
+        q:
+          post.raw.truncate(
+            DiscourseTranslator::Provider::Google::DETECTION_CHAR_LIMIT,
+            omission: nil,
+          ),
+        key: api_key,
       }
 
       Excon
@@ -58,6 +72,7 @@ RSpec.describe DiscourseTranslator::Google do
           body: URI.encode_www_form(body),
           headers: {
             "Content-Type" => "application/x-www-form-urlencoded",
+            "Referer" => "http://test.localhost",
           },
         )
         .returns(
@@ -73,43 +88,84 @@ RSpec.describe DiscourseTranslator::Google do
   end
 
   describe ".translate_supported?" do
-    it "should equate source language to target" do
+    let(:topic) { Fabricate(:topic, title: "This title is in english") }
+
+    it "equates source language to target" do
       source = "en"
       target = "fr"
-      Excon.expects(:post).returns(
-        mock_response.new(200, %{ { "data": { "languages": [ { "language": "#{source}" }] } } }),
+      stub_request(:post, DiscourseTranslator::Provider::Google::SUPPORT_URI).to_return(
+        status: 200,
+        body: %{ { "data": { "languages": [ { "language": "#{source}" }] } } },
       )
       expect(described_class.translate_supported?(source, target)).to be true
     end
-  end
 
-  describe ".translate" do
-    let(:post) { Fabricate(:post) }
-
-    it "raises an error on failure" do
-      described_class.expects(:access_token).returns("12345")
-      described_class.expects(:detect).returns("en")
-
-      Excon.expects(:post).returns(
-        mock_response.new(
-          400,
-          {
-            error: "something went wrong",
-            error_description: "you passed in a wrong param",
-          }.to_json,
-        ),
+    it "checks again without -* when the source language is not supported" do
+      source = "en"
+      target = "fr"
+      stub_request(:post, DiscourseTranslator::Provider::Google::SUPPORT_URI).to_return(
+        status: 200,
+        body: %{ { "data": { "languages": [ { "language": "#{source}" }] } } },
       )
 
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+      expect(described_class.translate_supported?("en-GB", target)).to be true
+    end
+  end
+
+  describe ".translate_post!" do
+    fab!(:post) { Fabricate(:post, raw: "rawraw rawrawraw", cooked: "coocoo coococooo") }
+
+    before do
+      post.set_detected_locale("en")
+      I18n.locale = :de
     end
 
-    it "raises an error when the response is not JSON" do
-      described_class.expects(:access_token).returns("12345")
-      described_class.expects(:detect).returns("en")
+    it "translates post with raw" do
+      translated_text = "translated raw"
+      stub_translate_request(post.raw, "de", translated_text)
 
-      Excon.expects(:post).returns(mock_response.new(413, "<html><body>some html</body></html>"))
+      expect(described_class.translate_post!(post, :de, { raw: true })).to eq(translated_text)
+    end
 
-      expect { described_class.translate(post) }.to raise_error DiscourseTranslator::TranslatorError
+    it "translates post with cooked" do
+      translated_text = "translated cooked"
+      stub_translate_request(post.cooked, "de", translated_text)
+
+      expect(described_class.translate_post!(post, :de, { cooked: true })).to eq(translated_text)
+    end
+
+    it "translates post with raw when unspecified" do
+      translated_text = "translated raw"
+      stub_translate_request(post.raw, "de", translated_text)
+
+      expect(described_class.translate_post!(post, :de)).to eq(translated_text)
+    end
+  end
+
+  describe ".translate_topic!" do
+    fab!(:topic)
+
+    before do
+      topic.set_detected_locale("en")
+      I18n.locale = :de
+    end
+
+    it "translates topic's title" do
+      translated_text = "translated title"
+      stub_translate_request(topic.title, "de", translated_text)
+
+      expect(described_class.translate_topic!(topic, :de)).to eq(translated_text)
+    end
+  end
+
+  describe ".translate_text!" do
+    it "translates plain text" do
+      text = "ABCDEFG"
+      target_locale = "ja"
+      translated_text = "あいうえお"
+      stub_translate_request(text, target_locale, translated_text)
+
+      expect(described_class.translate_text!(text, :ja)).to eq(translated_text)
     end
   end
 end

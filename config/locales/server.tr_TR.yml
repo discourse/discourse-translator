@@ -6,27 +6,43 @@
 
 tr_TR:
   site_settings:
-    translator_enabled: "Gönderilerin satır içi çevirisine izin verin."
-    translator: "Çeviri hizmetinin sağlayıcısı."
+    translator_enabled: "Çevirmen eklentisini etkinleştirin."
+    translator_provider: "Çeviri hizmetinin sağlayıcısı."
     translator_azure_subscription_key: "Azure Abonelik Anahtarı"
     translator_azure_region: "Azure Region"
     translator_google_api_key: "Google API Anahtarı"
     translator_yandex_api_key: "Yandex API Anahtarı"
+    max_characters_per_translation: "Çeviri için gönderilebilecek maksimum karakter sayısı. İçerik bundan daha uzunsa metin kesilir. Her sağlayıcının kendi limitleri olduğunu unutmayın."
     max_translations_per_minute: "Normal bir kullanıcının gerçekleştirebileceği dakika başına çeviri sayısı."
+    translator_libretranslate_endpoint: "LibreTranslate API Uç Noktası"
+    translator_libretranslate_api_key: "LibreTranslate API Anahtarı"
     translator_aws_region: "AWS Bölgesi"
     translator_aws_key_id: "AWS Anahtar Kimliği"
     translator_aws_secret_access: "AWS gizli erişim anahtarı"
     translator_aws_iam_role: "AWS IAM Rolü"
     translator_azure_custom_subdomain: "Azure Bilişsel Hizmetler için bir Sanal Ağ veya Güvenlik Duvarı kullanılıyorsa gereklidir. Not: Tam özel uç noktayı değil, yalnızca özel alt etki alanını girin."
     restrict_translation_by_group: "Yalnızca izin verilen gruplar çeviri yapabilir"
-    restrict_translation_by_poster_group: "Yalnızca izin verilen kullanıcılar tarafından yapılan gönderilerin çevirisine izin ver"
+    restrict_translation_by_poster_group: "Yalnızca izin verilen gruplardaki kullanıcılar tarafından oluşturulan gönderilerin çevirisine izin verin. Boşsa tüm kullanıcıların gönderilerinin çevrilmesine izin verin."
   translator:
-    failed: "Çevirmen bu dilde çeviri yapamıyor."
+    failed:
+      topic: "Çevirmen bu konunun başlığını (%{source_locale}) dilinize (%{target_locale}) çeviremiyor."
+      post: "Çevirmen bu gönderinin içeriğini (%{source_locale}) dilinize (%{target_locale}) çeviremiyor."
     not_supported: "Bu dil çevirmen tarafından desteklenmiyor."
     too_long: "Bu yazı çevirmen tarafından çevrilemeyecek kadar uzun."
+    not_available: "Çevirmen hizmeti şu anda kullanılamıyor."
+    api_timeout: "Çevirmen hizmetinin yanıt vermesi çok uzun sürdü. Lütfen daha sonra tekrar deneyin."
+    amazon:
+      invalid_credentials: "AWS çevirisi için sağlanan kimlik bilgileri geçersiz."
     microsoft:
       missing_token: "Çevirmen geçerli bir belirteç alamadı."
       missing_key: "Azure Abonelik Anahtarı sağlanmadı."
+    discourse_ai:
+      not_installed: "Bu özelliği kullanabilmek için discourse-ai eklentisini yüklemeniz gerekiyor."
+      ai_helper_required: 'Bu özelliği kullanmak için <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">yapay zekâ yardımcısını yapılandırmanız</a> gerekiyor.'
   not_in_group:
     user_not_in_group: "Çeviri yapmanıza izin verilen bir grupta değilsiniz."
-    poster_not_in_group: "Gönderi, izin verilenler listesindeki bir gruptaki bir kullanıcı tarafından yapılmadı. Boşsa devre dışı bırakılır."
+    poster_not_in_group: "Gönderi, izin verilen bir gruptaki bir kullanıcı tarafından yapılmadı."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} çevirmen olarak kullanıldı ancak %{key} sağlanmadı. <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">Site ayarlarına</a> bakın."
+      translator_error: "%{provider}, %{code} koduyla bir çeviri hatası bildirdi: %{message}"

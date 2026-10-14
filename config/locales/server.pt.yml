@@ -5,3 +5,44 @@
 # https://translate.discourse.org/
 
 pt:
+  site_settings:
+    translator_enabled: "Ative o plug-in do tradutor"
+    translator_provider: "O fornecedor do serviço de tradução."
+    translator_azure_subscription_key: "Código de Ativação do Azure"
+    translator_azure_region: "Região do Azure"
+    translator_google_api_key: "Chave de API Google"
+    translator_yandex_api_key: "Chave de API Yandex"
+    max_characters_per_translation: "O número máximo de carateres que podem ser enviados para tradução. Se o conteúdo for maior que isto, o texto será truncado. Note que cada provedor também tem os seus próprios limites."
+    max_translations_per_minute: "O número de traduções por minuto que um utilizador normal pode realizar."
+    translator_libretranslate_endpoint: "Ponto Final da API de LibreTranslate"
+    translator_libretranslate_api_key: "Chave de API de LIbre Translate"
+    translator_aws_region: "Região de AWS"
+    translator_aws_key_id: "Id. da Chave AWS"
+    translator_aws_secret_access: "Chave de acesso secreta AWS"
+    translator_aws_iam_role: "Função de IAM AWS"
+    translator_azure_custom_subdomain: "Necessário se estiver a utilizar uma Rede Virtual ou Firewall para os Serviços Cognitivos do Azure. Nota: insira apenas o subdomínio personalizado e não o ponto final personalizado completo."
+    restrict_translation_by_group: "Só os grupos autorizados podem traduzir"
+    restrict_translation_by_poster_group: "Só permite a tradução de publicações por utilizadores nos grupos autorizados. Se estiver vazio, permitir traduções de publicações de todos os utilizadores."
+  translator:
+    failed:
+      topic: "O tradutor não consegue traduzir o título deste tópico (%{source_locale}) para o seu idioma (%{target_locale})."
+      post: "O tradutor não consegue traduzir este conteúdo da publicação (%{source_locale}) para o seu idioma (%{target_locale})."
+    not_supported: "Este idioma não é suportado pelo tradutor."
+    too_long: "Está publicação é muito longa para ser traduzida pelo tradutor."
+    not_available: "Atualmente, o serviço do tradutor não está disponível."
+    api_timeout: "O serviço do tradutor demorou muito tempo a responder. Por favor, tente novamente mais tarde."
+    amazon:
+      invalid_credentials: "As credenciais fornecidas para traduzir de AWS são inválidas."
+    microsoft:
+      missing_token: "O tradutor não conseguiu obter um código válido."
+      missing_key: "Nenhum código de Subscrição Azure fornecido."
+    discourse_ai:
+      not_installed: "Tem de instalar o plug-in discourse-ai para utilizar esta funcionalidade."
+      ai_helper_required: 'Tem de <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">configurar o assistente de IA</a> para utilizar esta funcionalidade.'
+  not_in_group:
+    user_not_in_group: "Não pertence a um grupo com permissão para traduzir."
+    poster_not_in_group: "A publicação não foi efetuada por um utilizador num grupo autorizado."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} foi utilziado como o tradutor, mas não foi fornecida nenhuma %{key}. Consulte <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">definições do site</a>."
+      translator_error: "%{provider} reportou um erro de tradução com o código %{code}: %{message}"

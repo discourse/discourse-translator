@@ -6,27 +6,43 @@
 
 he:
   site_settings:
-    translator_enabled: "לאפשר תרגום מוטבע של פוסטים."
-    translator: "ספק שירות התרגום."
+    translator_enabled: "הפעלת תוסף ההמתרגם."
+    translator_provider: "ספק שירות התרגום."
     translator_azure_subscription_key: "מפתח מינוי ל־Azure"
     translator_azure_region: "אזור ב־Azure"
     translator_google_api_key: "מפתח API של Google"
     translator_yandex_api_key: "מפתח API של Yandex"
+    max_characters_per_translation: "מספר התווים המרבי שניתן לשלוח לתרגום. אם התוכן יותר ארוך מזה, הטקסט יקוצר. נא לשים לב שלכל ספק יש מגבלות משלו."
     max_translations_per_minute: "מספר התרגומים לדקה שמשתמש רגיל יכול לבצע."
+    translator_libretranslate_endpoint: "נק׳ קצה ל־API של LibreTranslate"
+    translator_libretranslate_api_key: "מפתח API ל־LibreTranslate"
     translator_aws_region: "אזור ב־AWS"
     translator_aws_key_id: "מזהה מפתח AWS"
     translator_aws_secret_access: "מפתח גישה סודי של AWS"
     translator_aws_iam_role: "תפקיד IAM ב־AWS"
     translator_azure_custom_subdomain: "נחוץ אם נעשה שימוש ברשת וירטואלית או בחומת אש לשירותי Azure Cognitive. לתשומת לבך: יש למלא רק את תת־שם התחום, לא את נקודת הגישה המותאמת אישית במלואה."
-    restrict_translation_by_group: "רק קבוצות ברשימת המורשות יכולות לתרגם"
-    restrict_translation_by_poster_group: "לאפשר תרגום של פוסטים שנכתבו על ידי משתמשים מרשימת המורשים"
+    restrict_translation_by_group: "רק קבוצות מורשות יכולות לתרגם"
+    restrict_translation_by_poster_group: "לאפשר תרגום של פוסטים שנוצרו על ידי משתמשים בקבוצות מורשות בלבד. אם ריק, לאפשר תרגומים של פוסטים מכל המשתמשים."
   translator:
-    failed: "המתרגם אינו מסוגל לתרגם שפה זו."
+    failed:
+      topic: "המתרגם לא מסוגל לתרגם את כותרת הנושא הזאת (%{source_locale}) לשפה שלך (%{target_locale})."
+      post: "המתרגם לא מסוגל לתרגם את תוכן הפוסט הזה (%{source_locale}) לשפה שלך (%{target_locale})."
     not_supported: "שפה זו אינה נתמכת על ידי המתרגם."
     too_long: "פוסט זה ארוך מכדי לתרגם אותו על ידי המתרגם."
+    not_available: "שירות התרגום אינו זמין כרגע."
+    api_timeout: "לשירות התרגום לקח יותר מדי זמן להגיב. נא לנסות שוב מאוחר יותר."
+    amazon:
+      invalid_credentials: "פרטי הגישה שצוינו למנגנון התרגום של AWS שגויים."
     microsoft:
       missing_token: "המתרגם לא הצליח לקבל אסימון תקף."
       missing_key: "לא סופק מפתח מינוי של Azure."
+    discourse_ai:
+      not_installed: "יש להתקין את התוסף discourse-ai כדי להשתמש ביכולת הזאת."
+      ai_helper_required: 'יש <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">להגדיר את מסייע הבינה המלאכותית</a> כדי להשתמש ביכולת הזאת.'
   not_in_group:
     user_not_in_group: "לא חברת לקבוצה שמורשית לתרגם."
-    poster_not_in_group: "הפוסט לא נכתב על ידי משתמש בקבוצה מרשימת המורשות. אם ריקה זה מושבת."
+    poster_not_in_group: "הפוסט לא פורסם על ידי משתמש בקבוצה מותרת."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} שימש כמתרגם אבל לא סופק %{key}. נא לגשת ל<a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">הגדרות האתר</a>."
+      translator_error: "%{provider} דיווח על שגיאת תרגום עם קוד %{code}: %{message}"

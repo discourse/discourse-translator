@@ -5,3 +5,44 @@
 # https://translate.discourse.org/
 
 ro:
+  site_settings:
+    translator_enabled: "Activează modulul pentru traduceri."
+    translator_provider: "Furnizorul serviciului de traducere."
+    translator_azure_subscription_key: "Cheie de abonament Azure"
+    translator_azure_region: "Regiune Azure"
+    translator_google_api_key: "Cheie API Google"
+    translator_yandex_api_key: "Cheie API Yandex"
+    max_characters_per_translation: "Numărul maxim de caractere care pot fi trimise pentru traducere. Dacă textul depășește această lungime, va fi trunchiat. Reține că fiecare furnizor are propriile sale limite."
+    max_translations_per_minute: "Numărul de traduceri pe minut pe care un utilizator obișnuit le poate efectua."
+    translator_libretranslate_endpoint: "Punct-final API LibreTranslate"
+    translator_libretranslate_api_key: "Cheie API LibreTranslate"
+    translator_aws_region: "Regiune AWS"
+    translator_aws_key_id: "ID cheie AWS"
+    translator_aws_secret_access: "Cheie de acces secretă AWS"
+    translator_aws_iam_role: "Rol AWS IAM"
+    translator_azure_custom_subdomain: "Necesar dacă utilizezi o rețea virtuală sau un firewall pentru Azure Cognitive Services. Notă: introdu numai subdomeniul personalizat, nu punctul-final personalizat complet."
+    restrict_translation_by_group: "Doar grupurile permise pot traduce"
+    restrict_translation_by_poster_group: "Permite traducerea numai a articolelor făcute de utilizatorii din grupurile permise. Dacă este gol, permite traducerea articolelor de la toți utilizatorii."
+  translator:
+    failed:
+      topic: "Traducătorul nu poate traduce titlul acestui subiect (%{source_locale}) în limba ta (%{target_locale})."
+      post: "Traducătorul nu poate traduce conținutul acestei postări (%{source_locale}) în limba ta (%{target_locale})."
+    not_supported: "Această limbă nu este acceptată de traducător."
+    too_long: "Acest articol este prea lung pentru a fi tradusă de către traducător."
+    not_available: "Momentan serviciul de traducere nu este disponibil."
+    api_timeout: "Serviciul de traducere a durat prea mult să răspundă. Te rog să încerci din nou mai târziu."
+    amazon:
+      invalid_credentials: "Datele de identificare furnizate pentru traducerea AWS nu sunt valide."
+    microsoft:
+      missing_token: "Traducătorul nu a putut să recupereze un jeton valid."
+      missing_key: "Nicio cheie de abonament Azure nu a fost furnizată."
+    discourse_ai:
+      not_installed: "Trebuie să instalezi modulul discourse-ai pentru a utiliza această funcționalitate."
+      ai_helper_required: 'Trebuie să <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">configurezi ajutorul IA</a> pentru a utiliza această funcționalitate.'
+  not_in_group:
+    user_not_in_group: "Nu faci parte dintr-un grup autorizat să traducă."
+    poster_not_in_group: "Articolul nu a fost făcut de un utilizator dintr-un grup permis."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} a fost utilizat ca traducător, dar %{key} nu a fost furnizat. Consultă <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">setările site-ului</a>."
+      translator_error: "%{provider} a raportat o eroare de traducere cu codul %{code}: %{message}"

@@ -6,8 +6,7 @@
 
 sv:
   site_settings:
-    translator_enabled: "Tillåt inbäddad översättning av inlägg."
-    translator: "Leverantören av översättningstjänsten."
+    translator_provider: "Leverantören av översättningstjänsten."
     translator_azure_subscription_key: "Azure -prenumerationsnyckel"
     translator_azure_region: "Azure-region"
     translator_google_api_key: "Google API-nyckel"
@@ -18,7 +17,6 @@ sv:
     translator_aws_secret_access: "AWS hemlig åtkomstnyckel"
     translator_aws_iam_role: "AWS IAM-roll"
   translator:
-    failed: "Översättaren kan inte översätta detta språk."
     not_supported: "Detta språk stöds inte av översättaren."
     too_long: "Det här inlägget är för långt för att översättas av översättaren."
     microsoft:

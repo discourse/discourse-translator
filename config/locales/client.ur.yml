@@ -5,3 +5,15 @@
 # https://translate.discourse.org/
 
 ur:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Discourse"
+  js:
+    translator:
+      view_translation: "ترجمہ دیکھیے!"
+      hide_translation: "ترجمہ چھپائیں"
+      content_not_translated: "غير مترجم صفحہ، ترجمے کے لیے کلک کیجیے"
+      content_translated: "صفحے کا مشینی ترجمہ کیا گیا ہے، اصلی متن دیکھیے"
+      translated_from: "ٹرانسلیٹر سے ترجمہ کیا گیا"

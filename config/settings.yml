@@ -1,8 +1,8 @@
-plugins:
+discourse_translator:
   translator_enabled:
     default: false
     client: true
-  translator:
+  translator_provider:
     default: 'Microsoft'
     client: true
     type: enum
@@ -12,6 +12,7 @@ plugins:
       - Amazon
       - Yandex
       - Deepl
+      - LibreTranslate
   translator_azure_subscription_key:
     default: ''
   translator_azure_region:
@@ -85,6 +86,13 @@ plugins:
     default: ''
   translator_deepl_api_key:
     default: ''
+  translator_libretranslate_endpoint:
+    default: ''
+  translator_libretranslate_api_key:
+    default: ''
+  max_characters_per_translation:
+    default: 5000
+    client: true
   max_translations_per_minute:
     default: 3
   restrict_translation_by_group:

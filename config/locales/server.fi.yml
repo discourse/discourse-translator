@@ -6,27 +6,43 @@
 
 fi:
   site_settings:
-    translator_enabled: "Salli viestien käännökset niiden yhteydessä."
-    translator: "Käännöspalveluntarjoaja."
+    translator_enabled: "Ota kääntäjälisäosa käyttöön."
+    translator_provider: "Käännöspalveluntarjoaja."
     translator_azure_subscription_key: "Azure Subscription Key -tilaustunniste"
     translator_azure_region: "Azure-alue"
     translator_google_api_key: "Googlen API-avain"
     translator_yandex_api_key: "Yandexin API-avain"
+    max_characters_per_translation: "Merkkien enimmäismäärä, joka voidaan lähettää käännettäväksi. Jos sisältö on tätä pidempi, teksti katkaistaan. Huomaa, että jokaisella palveluntarjoajalla on myös omat rajansa."
     max_translations_per_minute: "Käännösten määrä minuutissa, jonka tavallinen käyttäjä voi tehdä."
+    translator_libretranslate_endpoint: "LibreTranslaten API-päätepiste"
+    translator_libretranslate_api_key: "LibreTranslaten API-avain"
     translator_aws_region: "AWS-alue"
     translator_aws_key_id: "AWS-avaimen tunnus"
     translator_aws_secret_access: "AWS-salainen pääsyavain"
     translator_aws_iam_role: "AWS:n IAM-rooli"
     translator_azure_custom_subdomain: "Vaaditaan, jos käytät Azure Cognitive Services -palveluiden virtuaaliverkkoa tai palomuuria. Huomioi: syötä vain oma aliverkkotunnuksesi päätelaitteesi koko osoitteen sijaan."
-    restrict_translation_by_group: "Vain erikseen sallitut tyhmät voivat kääntää"
-    restrict_translation_by_poster_group: "Salli vain erikseen sallittujen käyttäjien kirjoittamien viestien kääntäminen"
+    restrict_translation_by_group: "Vain sallitut ryhmät voivat kääntää"
+    restrict_translation_by_poster_group: "Salli vain sallittujen ryhmien käyttäjien tekemien viestien kääntäminen. Jos tämä on tyhjä, salli kaikkien käyttäjien viestien käännökset."
   translator:
-    failed: "Kääntäjä ei osaa kääntää tätä kieltä."
+    failed:
+      topic: "Kääntäjä ei pysty kääntämään tämän ketjun otsikkoa (%{source_locale}) kielellesi (%{target_locale})."
+      post: "Kääntäjä ei pysty kääntämään tämän viestin sisältöä (%{source_locale}) kielellesi (%{target_locale})."
     not_supported: "Kääntäjä ei tue tätä kieltä."
     too_long: "Tämä viesti on liian pitkä kääntäjän käännettäväksi."
+    not_available: "Kääntäjäpalvelu ei ole tällä hetkellä käytettävissä."
+    api_timeout: "Kääntäjäpalvelun vastaus kesti liian kauan. Yritä myöhemmin uudelleen."
+    amazon:
+      invalid_credentials: "Ilmoitetut AWS Translate -tunnukset ovat virheelliset."
     microsoft:
       missing_token: "Kääntäjä ei voinut noutaa kelvollista tunnusta."
       missing_key: "Azure Subscription Key -tilaustunnistetta ei ole ilmoitettu."
+    discourse_ai:
+      not_installed: "Sinun täytyy asentaa discourse-ai-lisäosa tämän ominaisuuden käyttämiseksi."
+      ai_helper_required: 'Sinun täytyy <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">määrittää ai-apuohjelma</a> tämän ominaisuuden käyttämiseksi.'
   not_in_group:
     user_not_in_group: "Et kuulu ryhmään, jolla on oikeus kääntää."
-    poster_not_in_group: "Viesti ei ole sallittujen ryhmään lisätyn käyttäjän julkaisema. Jos ryhmä on tyhjä, se ei ole käytössä."
+    poster_not_in_group: "Viestiä ei tehnyt sallittuun ryhmään kuuluva käyttäjä."
+  dashboard:
+    problem:
+      missing_translator_api_key: "Kääntäjänä käytettiin palvelua %{provider}, mutta %{key} puuttuu. Katso <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">sivuston asetukset</a>."
+      translator_error: "%{provider} ilmoitti käännösvirheestä koodilla %{code}: %{message}"

@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 vi:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Trình dịch Discourse"
+  js:
+    translator:
+      view_translation: "Xem bản dịch"
+      hide_translation: "Ẩn bản dịch"
+      content_not_translated: "Trang chưa được dịch. Nhấn để dịch"
+      content_translated: "Trang được dịch tự động. Nhấn để xem bản gốc"
+      translated_from: "Đã dịch từ %{language} bằng %{translator}"
+      translating: "Đang dịch"
+      originally_written_in: "Nội dung gốc được viết bằng %{language}"

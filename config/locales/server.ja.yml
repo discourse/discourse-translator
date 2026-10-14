@@ -6,27 +6,43 @@
 
 ja:
   site_settings:
-    translator_enabled: "投稿のインライン翻訳を許可する。"
-    translator: "翻訳サービスのプロバイダー。"
+    translator_enabled: "翻訳ツールプラグインを有効にする。"
+    translator_provider: "翻訳サービスのプロバイダー。"
     translator_azure_subscription_key: "Azure サブスクリプションキー"
     translator_azure_region: "Azure リージョン"
     translator_google_api_key: "Google API キー"
     translator_yandex_api_key: "Yandex API キー"
+    max_characters_per_translation: "翻訳に送信できる最大文字数。コンテンツがこれより長い場合、テキストは切り捨てられます。各プロバイダーにも独自の制限があることに注意してください。"
     max_translations_per_minute: "レギュラーユーザーが実行できる 1 分当たりの翻訳数。"
+    translator_libretranslate_endpoint: "LibreTranslate API エンドポイント"
+    translator_libretranslate_api_key: "LibreTranslate API キー"
     translator_aws_region: "AWS リージョン"
     translator_aws_key_id: "AWS キー ID"
     translator_aws_secret_access: "AWS シークレットアクセスキー"
     translator_aws_iam_role: "AWS IAM ロール"
     translator_azure_custom_subdomain: "Azure Cognitive Services に仮想ネットワークまたはファイアウォールを使用している場合は必須です。注意: 完全なカスタムエンドポイントではなく、カスタムサブドメインのみを入力します。"
-    restrict_translation_by_group: "ホワイトリストに含まれるグループのみが翻訳できます"
-    restrict_translation_by_poster_group: "ホワイトリストに含まれるユーザーによる投稿の翻訳のみを許可する"
+    restrict_translation_by_group: "許可されたグループのみが翻訳できます"
+    restrict_translation_by_poster_group: "許可されたグループのユーザーによる投稿の翻訳のみを許可します。空白の場合、すべてのユーザーによる投稿の翻訳を許可します。"
   translator:
-    failed: "翻訳ツールはこの言語を翻訳できません。"
+    failed:
+      topic: "翻訳ツールはこのトピックのタイトル (%{source_locale}) をあなたの言語 (%{target_locale}) に翻訳できません。"
+      post: "翻訳ツールはこの投稿のコンテンツ (%{source_locale}) をあなたの言語 (%{target_locale}) に翻訳できません。"
     not_supported: "翻訳ツールはこの言語をサポートしていません。"
     too_long: "この投稿は翻訳ツールで翻訳するには長すぎます。"
+    not_available: "現在、翻訳ツールサービスは使用できません。"
+    api_timeout: "翻訳ツールサービスの応答に時間がかかっています。後でもう一度お試しください。"
+    amazon:
+      invalid_credentials: "指定された AWS Translate の資格情報は無効です。"
     microsoft:
       missing_token: "翻訳ツールは有効なトークンを取得できませんでした。"
       missing_key: "Azure サブスクリプションキーが指定されていません。"
+    discourse_ai:
+      not_installed: "この機能を使用するには、discourse-ai プラグインをインストールする必要があります。"
+      ai_helper_required: 'この機能を使用するには、<a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">ai ヘルパーを構成</a>する必要があります。'
   not_in_group:
     user_not_in_group: "翻訳が許可されたグループに属していません。"
-    poster_not_in_group: "投稿はホワイトリストに含まれるグループのユーザーによって行われたものではありません。空の場合は無効になります。"
+    poster_not_in_group: "許可されたグループのユーザーによる投稿ではありません。"
+  dashboard:
+    problem:
+      missing_translator_api_key: "翻訳ツールとして %{provider} が使用されましたが、%{key} が提供されていません。<a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">サイト設定</a>をご覧ください。"
+      translator_error: "%{provider} はコード %{code} の翻訳エラーを報告しました: %{message}"

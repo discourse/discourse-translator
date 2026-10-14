@@ -5,3 +5,17 @@
 # https://translate.discourse.org/
 
 sq:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_translator: "Përkthyes i Diskursit"
+  js:
+    translator:
+      view_translation: "Shiko përkthimin"
+      hide_translation: "Fshih përkthimin"
+      content_not_translated: "Faqja nuk është përkthyer. Kliko për ta përkthyer"
+      content_translated: "Faqja është përkthyer automatikisht. Klikoni për të parë origjinalin"
+      translated_from: "Përkthyer nga %{language} nga %{translator}"
+      translating: "Duke përkthyer"
+      originally_written_in: "Ky postim u shkrua fillimisht në %{language}"

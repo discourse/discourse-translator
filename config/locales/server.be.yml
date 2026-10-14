@@ -5,3 +5,44 @@
 # https://translate.discourse.org/
 
 be:
+  site_settings:
+    translator_enabled: "Уключыць убудову перакладчыка."
+    translator_provider: "Пастаўшчык сэрвісу перакладу."
+    translator_azure_subscription_key: "Ключ падпіскі Azure"
+    translator_azure_region: "Рэгіён Azure"
+    translator_google_api_key: "Ключ API Google"
+    translator_yandex_api_key: "Ключ API Яндэкс"
+    max_characters_per_translation: "Максімальная колькасць сімвалаў, якія можна адправіць на пераклад. Калі змест даўжэйшы за гэту колькасць, тэкст будзе абрэзаны. Звярніце ўвагу, што ў кожнага пастаўшчыка таксама ёсць свае ўласныя абмежаванні."
+    max_translations_per_minute: "Колькасць перакладаў у хвіліну, якія можа выканаць звычайны карыстальнік."
+    translator_libretranslate_endpoint: "Канцавая кропка API LibreTranslate"
+    translator_libretranslate_api_key: "Ключ API LibreTranslate"
+    translator_aws_region: "Рэгіён AWS"
+    translator_aws_key_id: "Ідэнтыфікатар ключа AWS"
+    translator_aws_secret_access: "Сакрэтны ключ доступу AWS"
+    translator_aws_iam_role: "Роля AWS IAM"
+    translator_azure_custom_subdomain: "Патрабуецца пры выкарыстанні віртуальнай сеткі або брандмаўэра для Azure Cognitive Services. Заўвага: увядзіце толькі карыстальніцкі паддамен, а не поўную карыстальніцкую канцавую кропку."
+    restrict_translation_by_group: "Перакладаць могуць толькі дазволеныя групы"
+    restrict_translation_by_poster_group: "Дазволіць пераклад толькі паведамленняў, зробленых карыстальнікамі ў дазволеных групах. Калі пуста, дазволіць пераклад паведамленняў ад усіх карыстальнікаў."
+  translator:
+    failed:
+      topic: "Перакладчык не можа перакласці назву гэтай тэмы (%{source_locale}) на вашу мову (%{target_locale})."
+      post: "Перакладчык не можа перакласці змест гэтага допісу (%{source_locale}) на вашу мову (%{target_locale})."
+    not_supported: "Гэтая мова не падтрымліваецца перакладчыкам."
+    too_long: "Гэты допіс занадта доўгі, каб яго мог перакласці перакладчык."
+    not_available: "Сэрвіс перакладу ў цяперашні час недаступны."
+    api_timeout: "Сэрвіс перакладу занадта доўга не адказваў. Паспрабуйце яшчэ раз пазней."
+    amazon:
+      invalid_credentials: "Прадстаўлены памылковыя ўліковыя даныя для перакладу AWS."
+    microsoft:
+      missing_token: "Перакладчык не змог атрымаць сапраўдны токен."
+      missing_key: "Ключ падпіскі Azure не прадастаўлены."
+    discourse_ai:
+      not_installed: "Каб карыстацца гэтай функцыяй, вам трэба ўсталяваць убудову discourse-ai."
+      ai_helper_required: 'Вам трэба <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">наладзіць памочніка са штучным інтэлектам</a> , каб выкарыстоўваць гэту функцыю.'
+  not_in_group:
+    user_not_in_group: "Вы не належыце да групы, якой дазволена перакладаць."
+    poster_not_in_group: "Допіс не быў зроблены карыстальнікам з дазволенай групы."
+  dashboard:
+    problem:
+      missing_translator_api_key: "У якасці перакладчыка выкарыстоўваўся %{provider} , але %{key} не быў прадастаўлены. Глядзіце <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">налады сайта</a>."
+      translator_error: "%{provider} паведаміў пра памылку перакладу з кодам %{code}: %{message}"

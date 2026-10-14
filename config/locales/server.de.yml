@@ -6,27 +6,43 @@
 
 de:
   site_settings:
-    translator_enabled: "Inline-Übersetzung von Beiträgen erlauben."
-    translator: "Der Anbieter des Übersetzungsdienstes."
+    translator_enabled: "Aktiviere das Übersetzer-Plug-in."
+    translator_provider: "Der Anbieter des Übersetzungsdienstes."
     translator_azure_subscription_key: "Azure-Abonnementschlüssel"
     translator_azure_region: "Azure-Region"
     translator_google_api_key: "Google-API-Schlüssel"
     translator_yandex_api_key: "Yandex-API-Schlüssel"
+    max_characters_per_translation: "Die maximale Anzahl von Zeichen, die zur Übersetzung gesendet werden können. Wenn der Inhalt länger als diese Zahl ist, wird der Text abgeschnitten. Beachte, dass jeder Anbieter auch seine eigenen Limits hat."
     max_translations_per_minute: "Die Anzahl der Übersetzungen pro Minute, die ein normaler Benutzer durchführen kann."
+    translator_libretranslate_endpoint: "LibreTranslate-API-Endpunkt"
+    translator_libretranslate_api_key: "LibreTranslate-API-Schlüssel"
     translator_aws_region: "AWS-Region"
     translator_aws_key_id: "AWS-Schlüssel-ID"
     translator_aws_secret_access: "AWS-Geheimnis-Zugriffsschlüssel"
     translator_aws_iam_role: "AWS-IAM-Rolle"
     translator_azure_custom_subdomain: "Erforderlich, wenn du ein virtuelles Netzwerk oder eine Firewall für Azure Cognitive Services verwendest. Hinweis: Gib nur die benutzerdefinierte Subdomain ein, nicht den vollständigen benutzerdefinierten Endpunkt."
-    restrict_translation_by_group: "Nur Gruppen auf der Positivliste können übersetzen"
-    restrict_translation_by_poster_group: "Nur die Übersetzung von Beiträgen, die von Benutzern auf der Positivliste erstellt wurden, erlauben"
+    restrict_translation_by_group: "Nur berechtigte Gruppen können übersetzen"
+    restrict_translation_by_poster_group: "Erlaube nur die Übersetzung von Beiträgen von Benutzern aus zulässigen Gruppen. Wenn das Feld leer ist, wird die Übersetzung von Beiträgen aller Benutzer erlaubt."
   translator:
-    failed: "Der Übersetzer ist nicht in der Lage, diese Sprache zu übersetzen."
+    failed:
+      topic: "Der Übersetzer kann diesen Thementitel (%{source_locale}) nicht in deine Sprache (%{target_locale}) übersetzen."
+      post: "Der Übersetzer kann den Inhalt dieses Beitrags (%{source_locale}) nicht in deine Sprache (%{target_locale}) übersetzen."
     not_supported: "Diese Sprache wird vom Übersetzer nicht unterstützt."
     too_long: "Dieser Beitrag ist zu lang, um vom Übersetzer übersetzt zu werden."
+    not_available: "Der Übersetzerdienst ist derzeit nicht verfügbar."
+    api_timeout: "Der Übersetzungsdienst hat zu lange gebraucht, um zu antworten. Bitte versuche es später noch einmal."
+    amazon:
+      invalid_credentials: "Die angegebenen Anmeldeinformationen für AWS translate sind ungültig."
     microsoft:
       missing_token: "Der Übersetzer konnte kein gültiges Token abrufen."
       missing_key: "Kein Azure-Abonnementschlüssel bereitgestellt."
+    discourse_ai:
+      not_installed: "Um diese Funktion zu nutzen, musst du das discourse-ai-Plug-in installieren."
+      ai_helper_required: 'Du musst <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">den KI-Helfer konfigurieren</a>, um diese Funktion zu nutzen.'
   not_in_group:
     user_not_in_group: "Du gehörst nicht zu einer Gruppe, die übersetzen darf."
-    poster_not_in_group: "Der Beitrag wurde nicht von einem Benutzer in einer Gruppe auf der Positivliste erstellt. Deaktiviert, wenn leer."
+    poster_not_in_group: "Der Beitrag wurde nicht von einem Benutzer einer zulässigen Gruppe erstellt."
+  dashboard:
+    problem:
+      missing_translator_api_key: "%{provider} wurde als Übersetzer verwendet, aber %{key} wurde nicht angegeben. Siehe <a href=\"/admin/site_settings/category/discourse_translator?filter=%{key_name}\">Website-Einstellungen</a>."
+      translator_error: "%{provider} meldete einen Übersetzungsfehler mit dem Code %{code}: %{message}"
